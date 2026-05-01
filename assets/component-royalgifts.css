@@ -188,7 +188,9 @@
 .royalgifts-media-card .product-media-container {
   aspect-ratio: 1 / 1 !important;
   width: 100%;
-  overflow: hidden;
+  /* Use clip instead of hidden so absolutely-positioned app overlays
+     (e.g. Zepto Product Personalizer canvas) are not clipped */
+  overflow: clip !important;
   position: relative !important;
 }
 
@@ -228,10 +230,23 @@
 /* ── Media items ── */
 .royalgifts-theme .product__media-item {
   border-radius: 16px;
-  overflow: hidden;
+  overflow: clip;
   background: transparent;
   box-shadow: 0 8px 30px rgba(0, 0, 0, 0.45), 0 0 0 1px rgba(212, 175, 55, 0.12);
   transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* ── Zepto Product Personalizer canvas support ──────────────────────────────
+   Dawn's section-main-product.css sets .js .product__media { overflow: hidden !important }
+   which clips any canvas/div that Zepto injects as an overlay on the product image.
+   Override to visible so the personalizer preview renders correctly.
+   The image is still visually contained by the parent .product__media-item border-radius.
+── */
+.royalgifts-theme .js .product__media {
+  overflow: visible !important;
+}
+.royalgifts-theme .product__media-list .media > * {
+  overflow: visible;
 }
 
 .royalgifts-theme .product__media img,
