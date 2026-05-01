@@ -299,6 +299,21 @@
     z-index: 10 !important;
   }
 
+  /* Dawn keeps width:100% only on first-child for some desktop gallery modes.
+     If user activates any non-first media, grid defaults can shrink it (~25%).
+     Force active media to remain full-width so main gallery never collapses. */
+  .royalgifts-theme .product--thumbnail .product__media-list .product__media-item.is-active,
+  .royalgifts-theme .product--thumbnail_slider .product__media-list .product__media-item.is-active {
+    width: 100% !important;
+    max-width: 100% !important;
+    display: block !important;
+  }
+
+  .royalgifts-theme .product--thumbnail .product__media-list,
+  .royalgifts-theme .product--thumbnail_slider .product__media-list {
+    width: 100% !important;
+  }
+
   .royalgifts-theme .product__media-list .product__media-item {
     overflow: visible !important;
   }
@@ -781,4 +796,3 @@
     text-align: left;
   }
 }
-
