@@ -379,6 +379,172 @@
           </div>
         {%- endif -%}
 
+        {%- comment %} Live Preview for font/text personalisation products {%- endcomment -%}
+        {%- assign rg_has_font_option = false -%}
+        {%- assign rg_font_option_index = 0 -%}
+        {%- for rg_opt in product.options -%}
+          {%- if rg_opt contains 'Font' or rg_opt contains 'font' -%}
+            {%- assign rg_has_font_option = true -%}
+            {%- assign rg_font_option_index = forloop.index0 -%}
+            {%- break -%}
+          {%- endif -%}
+        {%- endfor -%}
+        {%- if rg_has_font_option -%}
+          <div class="rg-live-preview" id="RgLivePreview-{{ section_id }}">
+            <p class="rg-live-preview__label">Live Preview</p>
+            <div class="rg-live-preview__plate">
+              <span class="rg-live-preview__text" id="RgPreviewText-{{ section_id }}">Your Text Here</span>
+            </div>
+          </div>
+          <style>
+            #RgLivePreview-{{ section_id }} {
+              margin: 16px 0;
+              padding: 14px 16px;
+              background: rgba(255,255,255,0.04);
+              border: 1px solid rgba(255,255,255,0.12);
+              border-radius: 6px;
+            }
+            .rg-live-preview__label {
+              font-size: 11px;
+              text-transform: uppercase;
+              letter-spacing: 0.08em;
+              color: rgba(255,255,255,0.4);
+              margin: 0 0 10px;
+            }
+            .rg-live-preview__plate {
+              min-height: 72px;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              background: #111;
+              border-radius: 4px;
+              padding: 12px 20px;
+              overflow: hidden;
+            }
+            .rg-live-preview__text {
+              font-size: 28px;
+              color: #c8a96e;
+              white-space: nowrap;
+              max-width: 100%;
+              overflow: hidden;
+              text-overflow: ellipsis;
+              transition: color 0.2s;
+            }
+          </style>
+          <script>
+          (function() {
+            var sectionId = {{ section_id | json }};
+            var productOptions = {{ product.options | json }};
+            var assetUrl = {{ 'component-royalgifts.css' | asset_url | json }};
+            var assetBase = assetUrl.substring(0, assetUrl.lastIndexOf('/') + 1);
+
+            function init() {
+              var previewEl = document.getElementById('RgPreviewText-' + sectionId);
+              if (!previewEl) return;
+
+              // Text input — any property whose name contains "Single Line"
+              var textInput = document.querySelector(
+                '[name="properties[Single Line Text]"], [name*="Single Line"]'
+              );
+              if (textInput) {
+                textInput.addEventListener('input', function() {
+                  previewEl.textContent = this.value.trim() || 'Your Text Here';
+                });
+                if (textInput.value.trim()) {
+                  previewEl.textContent = textInput.value.trim();
+                }
+              }
+
+              // Font selector — variant select whose associated label contains "Font"
+              var allSelects = document.querySelectorAll(
+                '#variant-selects-' + sectionId + ' select'
+              );
+              var fontSelect = null;
+              allSelects.forEach(function(sel) {
+                var wrapper = sel.closest('.product-form__input');
+                if (!wrapper) return;
+                var lbl = wrapper.querySelector('.form__label');
+                if (lbl && lbl.textContent.indexOf('Font') !== -1) {
+                  fontSelect = sel;
+                }
+              });
+
+              // Also check radio inputs for button-style picker
+              if (!fontSelect) {
+                var allFieldsets = document.querySelectorAll(
+                  '#variant-selects-' + sectionId + ' fieldset'
+                );
+                allFieldsets.forEach(function(fs) {
+                  var legend = fs.querySelector('legend');
+                  if (legend && legend.textContent.indexOf('Font') !== -1) {
+                    fontSelect = { _fieldset: fs };
+                  }
+                });
+              }
+
+              if (fontSelect && !fontSelect._fieldset) {
+                fontSelect.addEventListener('change', function() {
+                  loadAndApplyFont(this.value, previewEl);
+                });
+                loadAndApplyFont(fontSelect.value, previewEl);
+              } else if (fontSelect && fontSelect._fieldset) {
+                var radios = fontSelect._fieldset.querySelectorAll('input[type="radio"]');
+                radios.forEach(function(r) {
+                  r.addEventListener('change', function() {
+                    if (this.checked) loadAndApplyFont(this.value, previewEl);
+                  });
+                });
+                var checked = fontSelect._fieldset.querySelector('input[type="radio"]:checked');
+                if (checked) loadAndApplyFont(checked.value, previewEl);
+              }
+
+              // Also react to Shopify's variant:changed event
+              document.addEventListener('variant:changed', function(e) {
+                var variant = e.detail && e.detail.variant;
+                if (!variant) return;
+                productOptions.forEach(function(opt, i) {
+                  if (opt.indexOf('Font') !== -1) {
+                    var val = variant['option' + (i + 1)];
+                    if (val) loadAndApplyFont(val, previewEl);
+                  }
+                });
+              });
+            }
+
+            function loadAndApplyFont(fontName, el) {
+              if (!fontName || !el) return;
+              // Strip trailing " WOFF" / "WOFF2" suffix from option value to get CSS name
+              var cssName = fontName.replace(/\s+WOFF2?\s*$/i, '').trim();
+              // Derive filename: lowercase, spaces to hyphens, strip non-alphanum/hyphen
+              var slug = cssName.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9\-]/g, '');
+              var urlWoff2 = assetBase + slug + '.woff2';
+              var urlWoff  = assetBase + slug + '.woff';
+
+              if (window.FontFace) {
+                var face = new FontFace(
+                  cssName,
+                  'url("' + urlWoff2 + '") format("woff2"), url("' + urlWoff + '") format("woff")'
+                );
+                face.load().then(function(f) {
+                  document.fonts.add(f);
+                  el.style.fontFamily = '"' + cssName + '", serif';
+                }).catch(function() {
+                  el.style.fontFamily = cssName + ', serif';
+                });
+              } else {
+                el.style.fontFamily = cssName + ', serif';
+              }
+            }
+
+            if (document.readyState === 'loading') {
+              document.addEventListener('DOMContentLoaded', init);
+            } else {
+              init();
+            }
+          })();
+          </script>
+        {%- endif -%}
+
         <div class="product-form__buttons">
           {%- liquid
             assign check_against_inventory = true
