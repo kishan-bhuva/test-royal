@@ -395,7 +395,14 @@
           {%- endif -%}
         {%- endfor -%}
         {%- if rg_has_font_option -%}
-          {%- assign rg_preview_img = product.selected_or_first_available_variant.featured_media.preview_image -%}
+          {%- comment -%}
+            Use a dedicated metafield image (custom.preview_image) as the preview background.
+            This is a separate mockup/template image that does NOT overlap with the product
+            gallery, avoiding any conflict with media-gallery.js and variant media management.
+            Fall back to product.featured_image only — never use variant featured_media
+            so the gallery JS never touches the same object.
+          {%- endcomment -%}
+          {%- assign rg_preview_img = product.metafields.custom.preview_image | default: nil -%}
           {%- unless rg_preview_img -%}
             {%- assign rg_preview_img = product.featured_image -%}
           {%- endunless -%}
@@ -413,13 +420,11 @@
             <div class="rg-live-preview__stage">
               {%- if rg_preview_img -%}
                 <img
-                  src="{{ rg_preview_img | image_url: width: 600 }}"
+                  src="{{ rg_preview_img | image_url: width: 800 }}"
                   alt="{{ product.title | escape }} preview"
                   class="rg-live-preview__img"
                   id="RgPreviewImg-{{ section_id }}"
-                  loading="lazy"
-                  width="600"
-                  height="{{ 600 | divided_by: rg_preview_img.aspect_ratio | ceil }}"
+                  loading="eager"
                 >
               {%- else -%}
                 <div class="rg-live-preview__img-placeholder"></div>
@@ -450,21 +455,26 @@
             #RgLivePreview-{{ section_id }} .rg-live-preview__stage {
               position: relative;
               width: 100%;
+              height: 220px;
               border-radius: 8px;
               overflow: hidden;
-              background: #0e0e0e;
-              line-height: 0;
+              background: #141414;
+              border: 1px solid rgba(255,255,255,0.08);
+              display: flex;
+              align-items: center;
+              justify-content: center;
             }
             #RgLivePreview-{{ section_id }} .rg-live-preview__img {
-              width: 100%;
-              height: auto;
               display: block;
-              object-fit: cover;
-              line-height: 0;
+              max-width: 100%;
+              max-height: 100%;
+              width: auto;
+              height: auto;
+              object-fit: contain;
             }
             #RgLivePreview-{{ section_id }} .rg-live-preview__img-placeholder {
               width: 100%;
-              aspect-ratio: 1;
+              height: 100%;
               background: #1a1a1a;
             }
             #RgLivePreview-{{ section_id }} .rg-live-preview__overlay {
@@ -473,20 +483,18 @@
               display: flex;
               align-items: center;
               justify-content: center;
-              /* nudge: shift slightly above center to align with plate text area */
-              padding-top: 15%;
             }
             #RgLivePreview-{{ section_id }} .rg-live-preview__text {
-              font-size: clamp(14px, 4.5vw, 36px);
-              color: rgba(255, 255, 255, 0.92);
+              font-size: clamp(12px, 3.5vw, 28px);
+              color: rgba(255, 255, 255, 0.95);
               text-shadow:
-                0 0 12px rgba(0,0,0,0.8),
-                0 1px 2px rgba(0,0,0,0.9);
+                0 0 16px rgba(0,0,0,0.9),
+                0 1px 3px rgba(0,0,0,1);
               white-space: nowrap;
-              max-width: 80%;
+              max-width: 75%;
               overflow: hidden;
               text-overflow: ellipsis;
-              letter-spacing: 0.05em;
+              letter-spacing: 0.04em;
               line-height: 1;
               pointer-events: none;
               transition: font-family 0.15s ease;
@@ -501,8 +509,7 @@
             var assetBase = assetUrl.substring(0, assetUrl.lastIndexOf('/') + 1);
 
             function init() {
-              var previewEl  = document.getElementById('RgPreviewText-' + sectionId);
-              var previewImg = document.getElementById('RgPreviewImg-' + sectionId);
+              var previewEl = document.getElementById('RgPreviewText-' + sectionId);
               if (!previewEl) return;
 
               /* ── Text source ──────────────────────────────────────────
@@ -561,33 +568,25 @@
               }
               attachFontListener(fontPicker);
 
-              /* ── Variant changed (Shopify pubsub / custom event) ─────── */
+              /* ── Variant changed ─────────────────────────────────────────
+                 Only update font and text — never touch the preview image.
+                 Updating the image src here conflicts with media-gallery.js
+                 which manages variant media independently. The preview image
+                 is a static metafield/featured image set at render time.
+              ─────────────────────────────────────────────────────────────── */
               document.addEventListener('variant:changed', function(e) {
                 var variant = e.detail && e.detail.variant;
                 if (!variant) return;
 
-                /* update preview image when variant image changes */
-                var media = e.detail.variant && e.detail.variant.featured_media;
-                if (previewImg && media && media.preview_image) {
-                  var src = media.preview_image.src;
-                  if (src) {
-                    // append width param
-                    previewImg.src = src.split('?')[0] + '?width=600';
-                  }
-                }
-
-                /* update font */
                 productOptions.forEach(function(opt, i) {
                   if (opt.indexOf('Font') !== -1) {
                     var val = variant['option' + (i + 1)];
                     if (val) loadAndApplyFont(val, previewEl);
                   }
-                  /* update text if driven by variant option */
-                  if (!textInput && (opt.indexOf('Single Line') !== -1 || opt.indexOf('Name') !== -1)) {
-                    if (opt.indexOf('Font') === -1) {
-                      var tv = variant['option' + (i + 1)];
-                      if (tv) previewEl.textContent = tv;
-                    }
+                  if (!textInput && opt.indexOf('Font') === -1
+                      && (opt.indexOf('Single Line') !== -1 || opt.indexOf('Name') !== -1 || opt.indexOf('Text') !== -1)) {
+                    var tv = variant['option' + (i + 1)];
+                    if (tv) previewEl.textContent = tv;
                   }
                 });
               });
