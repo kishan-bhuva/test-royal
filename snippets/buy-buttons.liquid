@@ -396,16 +396,20 @@
         {%- endfor -%}
         {%- if rg_has_font_option -%}
           {%- comment -%}
-            Use a dedicated metafield image (custom.preview_image) as the preview background.
-            This is a separate mockup/template image that does NOT overlap with the product
-            gallery, avoiding any conflict with media-gallery.js and variant media management.
-            Fall back to product.featured_image only — never use variant featured_media
-            so the gallery JS never touches the same object.
+            Build the preview background URL.
+            Priority 1: product.metafields.custom.preview_image  (file_reference metafield)
+            Priority 2: product.featured_image
+            Uses CSS background-image — NOT an <img> tag — so media-gallery.js
+            never touches this element. Metafield must be checked with != blank
+            because the namespace object is always truthy even when empty.
           {%- endcomment -%}
-          {%- assign rg_preview_img = product.metafields.custom.preview_image | default: nil -%}
-          {%- unless rg_preview_img -%}
-            {%- assign rg_preview_img = product.featured_image -%}
-          {%- endunless -%}
+          {%- assign rg_preview_src = nil -%}
+          {%- if product.metafields.custom.preview_image != blank -%}
+            {%- assign rg_preview_src = product.metafields.custom.preview_image.value | image_url: width: 800 -%}
+          {%- elsif product.featured_image != blank -%}
+            {%- assign rg_preview_src = product.featured_image | image_url: width: 800 -%}
+          {%- endif -%}
+
           {%- assign rg_initial_font = product.selected_or_first_available_variant.options[rg_font_option_index] -%}
           {%- assign rg_initial_text = '' -%}
           {%- if rg_text_option_index >= 0 -%}
@@ -417,23 +421,15 @@
               <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
               Live Preview
             </p>
-            <div class="rg-live-preview__stage">
-              {%- if rg_preview_img -%}
-                <img
-                  src="{{ rg_preview_img | image_url: width: 800 }}"
-                  alt="{{ product.title | escape }} preview"
-                  class="rg-live-preview__img"
-                  id="RgPreviewImg-{{ section_id }}"
-                  loading="eager"
-                >
-              {%- else -%}
-                <div class="rg-live-preview__img-placeholder"></div>
-              {%- endif -%}
-              <div class="rg-live-preview__overlay" id="RgPreviewOverlay-{{ section_id }}">
-                <span class="rg-live-preview__text" id="RgPreviewText-{{ section_id }}">
-                  {{- rg_initial_text | default: 'YOUR TEXT' -}}
-                </span>
-              </div>
+            <div
+              class="rg-live-preview__stage"
+              {% if rg_preview_src %}
+                style="background-image: url('{{ rg_preview_src }}');"
+              {% endif %}
+            >
+              <span class="rg-live-preview__text" id="RgPreviewText-{{ section_id }}">
+                {{- rg_initial_text | default: 'YOUR TEXT' -}}
+              </span>
             </div>
           </div>
 
@@ -458,28 +454,11 @@
               height: 220px;
               border-radius: 8px;
               overflow: hidden;
-              background: #141414;
+              background-color: #141414;
+              background-size: contain;
+              background-repeat: no-repeat;
+              background-position: center center;
               border: 1px solid rgba(255,255,255,0.08);
-              display: flex;
-              align-items: center;
-              justify-content: center;
-            }
-            #RgLivePreview-{{ section_id }} .rg-live-preview__img {
-              display: block;
-              max-width: 100%;
-              max-height: 100%;
-              width: auto;
-              height: auto;
-              object-fit: contain;
-            }
-            #RgLivePreview-{{ section_id }} .rg-live-preview__img-placeholder {
-              width: 100%;
-              height: 100%;
-              background: #1a1a1a;
-            }
-            #RgLivePreview-{{ section_id }} .rg-live-preview__overlay {
-              position: absolute;
-              inset: 0;
               display: flex;
               align-items: center;
               justify-content: center;
