@@ -184,35 +184,36 @@
 
 /* ── Product page — 1:1 square image box ── */
 
-/* 1. Outer container: square anchor for everything inside */
+/* 1. Outer container: square anchor for everything inside.
+   overflow:visible so Zepto's canvas is never clipped.
+   clip-path handles the visual crop without blocking app overlays. */
 .royalgifts-media-card .product-media-container {
   aspect-ratio: 1 / 1 !important;
   width: 100%;
-  /* Use clip instead of hidden so absolutely-positioned app overlays
-     (e.g. Zepto Product Personalizer canvas) are not clipped */
-  overflow: clip !important;
+  overflow: visible !important;
   position: relative !important;
 }
 
-/* 2. modal-opener fills the square absolutely (was position:relative, display:block) */
+/* 2. modal-opener fills the square absolutely */
 .royalgifts-media-card .product-media-container .product__modal-opener {
   position: absolute !important;
   inset: 0 !important;
   width: 100% !important;
   height: 100% !important;
+  overflow: visible !important;
 }
 
-/* 3. Kill the padding-top height hack — media fills opener instead */
+/* 3. Kill the padding-top height hack — media fills opener */
 .royalgifts-media-card .product-media-container .media {
   padding-top: 0 !important;
   position: absolute !important;
   inset: 0 !important;
   width: 100% !important;
   height: 100% !important;
+  overflow: visible !important;
 }
 
 /* 4. Images fill the square */
-.royalgifts-media-card .product-media-container .media img,
 .royalgifts-media-card .product-media-container .media video {
   position: absolute !important;
   inset: 0 !important;
@@ -230,23 +231,66 @@
 /* ── Media items ── */
 .royalgifts-theme .product__media-item {
   border-radius: 16px;
-  overflow: clip;
+  /* overflow:visible so Zepto's canvas appended inside is not clipped.
+     The rounded corners are preserved by the border-radius on this element
+     and by clip-path on the inner product-media-container (below). */
+  overflow: visible;
   background: transparent;
   box-shadow: 0 8px 30px rgba(0, 0, 0, 0.45), 0 0 0 1px rgba(212, 175, 55, 0.12);
   transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
 /* ── Zepto Product Personalizer canvas support ──────────────────────────────
-   Dawn's section-main-product.css sets .js .product__media { overflow: hidden !important }
-   which clips any canvas/div that Zepto injects as an overlay on the product image.
-   Override to visible so the personalizer preview renders correctly.
-   The image is still visually contained by the parent .product__media-item border-radius.
+   Three issues prevented Zepto's canvas from showing:
+   1. overflow:hidden/clip on multiple ancestors clipped the canvas
+   2. .js .product__media had overflow:hidden !important (Dawn default)
+   3. No z-index layering — canvas could paint behind the image
+
+   Fix: open overflow on all ancestors of the product image, use
+   clip-path on the innermost container for the rounded-corner crop,
+   and ensure canvas elements get z-index above the image.
 ── */
+
+/* Remove overflow:hidden from Dawn's .js .product__media rule */
 .royalgifts-theme .js .product__media {
   overflow: visible !important;
 }
-.royalgifts-theme .product__media-list .media > * {
-  overflow: visible;
+
+/* Use clip-path for the rounded crop on the image container instead of
+   overflow:hidden — clip-path does NOT clip absolutely-positioned children */
+.royalgifts-media-card .product-media-container {
+  clip-path: inset(0 round 16px);
+  overflow: visible !important;
+}
+
+/* Image and video fill the container as before */
+.royalgifts-media-card .product-media-container .media,
+.royalgifts-media-card .product-media-container .product__modal-opener {
+  overflow: visible !important;
+}
+
+/* Any canvas Zepto (or other personalizer apps) inject inside the product
+   media area: fill the container and sit above the product image */
+.royalgifts-theme .product__media-item canvas,
+.royalgifts-theme .product-media-container canvas,
+.royalgifts-theme .product__media canvas {
+  position: absolute !important;
+  top: 0 !important;
+  left: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  z-index: 5 !important;
+  pointer-events: none;
+}
+
+/* Ensure the product image itself has z-index 0 (base layer) */
+.royalgifts-media-card .product-media-container .media img {
+  z-index: 0;
+  position: absolute !important;
+  inset: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
 }
 
 .royalgifts-theme .product__media img,
