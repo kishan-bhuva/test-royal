@@ -897,9 +897,12 @@
           }
 
           function ensureCanvasVisible() {
-            var gallery = document.getElementById(galleryId);
-            if (!gallery) return;
-            gallery.querySelectorAll('canvas').forEach(function(c) {
+            // Search the whole document — on desktop Zepto may place canvas
+            // outside the gallery element but still within the product section
+            var section = document.getElementById('MainProduct-' + sectionId);
+            var root = section || document.getElementById(galleryId);
+            if (!root) return;
+            root.querySelectorAll('canvas').forEach(function(c) {
               c.style.position = 'absolute';
               c.style.top = '0';
               c.style.left = '0';
@@ -907,6 +910,16 @@
               c.style.height = '100%';
               c.style.zIndex = '5';
               c.style.pointerEvents = 'none';
+              c.style.overflow = 'visible';
+              // Also unlock overflow on every ancestor up to the gallery
+              var el = c.parentElement;
+              while (el && el !== root) {
+                var computed = window.getComputedStyle(el);
+                if (computed.overflow === 'hidden' || computed.overflow === 'clip') {
+                  el.style.overflow = 'visible';
+                }
+                el = el.parentElement;
+              }
             });
           }
 
@@ -923,8 +936,15 @@
           window.addEventListener('load', function() {
             observeGallery();
             ensureCanvasVisible();
-            // Give deferred scripts time to finish DOM setup, then re-trigger Zepto
+            // 400ms: after deferred scripts settle on mobile
             setTimeout(triggerZeptoInit, 400);
+            // 800ms: extra pass for desktop thumbnail layout which initialises later
+            setTimeout(function() {
+              ensureCanvasVisible();
+              if (!document.querySelector('#MainProduct-' + sectionId + ' canvas')) {
+                triggerZeptoInit();
+              }
+            }, 800);
           });
         })();
       </script>
