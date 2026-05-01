@@ -880,42 +880,119 @@
         (function() {
           var sectionId = {{ section.id | json }};
           var galleryId = 'MediaGallery-' + sectionId;
+          var desktopMediaQuery = window.matchMedia('(min-width: 750px)');
+          var retryTimer = null;
+          var retryStopAt = 0;
+          var rootObserver = null;
+          var galleryObserver = null;
+          var scheduled = false;
+
+          function getSectionRoot() {
+            return document.getElementById('MainProduct-' + sectionId);
+          }
+
+          function getGallery() {
+            return document.getElementById(galleryId);
+          }
+
+          function getRoot() {
+            return getSectionRoot() || getGallery();
+          }
 
           function triggerZeptoInit() {
-            var gallery = document.getElementById(galleryId);
-            if (!gallery) return;
+            var gallery = getGallery();
+            var section = getSectionRoot();
+            if (!gallery && !section) return;
 
+            var detail = { sectionId: sectionId };
             // Fire shopify:section:load so Zepto re-scans the section
             document.dispatchEvent(new CustomEvent('shopify:section:load', {
               bubbles: true,
-              detail: { sectionId: sectionId }
+              detail: detail
             }));
-            gallery.dispatchEvent(new CustomEvent('shopify:section:load', {
-              bubbles: true,
-              detail: { sectionId: sectionId }
-            }));
+            if (section) {
+              section.dispatchEvent(new CustomEvent('shopify:section:load', {
+                bubbles: true,
+                detail: detail
+              }));
+            }
+            if (gallery) {
+              gallery.dispatchEvent(new CustomEvent('shopify:section:load', {
+                bubbles: true,
+                detail: detail
+              }));
+            }
           }
 
-          var isDesktop = window.matchMedia('(min-width: 750px)').matches;
+          function getActiveMediaItem(root) {
+            if (!root) return null;
+            return (
+              root.querySelector('#Slider-Gallery-' + sectionId + ' .product__media-item.is-active') ||
+              root.querySelector('.product__media-list .product__media-item.is-active') ||
+              root.querySelector('.product__media-list .product__media-item')
+            );
+          }
+
+          function getCanvasAnchor(root) {
+            var activeItem = getActiveMediaItem(root);
+            if (!activeItem) return null;
+            return activeItem.querySelector('.product-media-container') || activeItem;
+          }
+
+          function getCandidateCanvases(root) {
+            var selectors = [
+              '#GalleryViewer-' + sectionId + ' canvas',
+              '#Slider-Gallery-' + sectionId + ' canvas',
+              '.product__media-wrapper canvas',
+              '.product__media-list canvas',
+              '.product-media-container canvas'
+            ].join(',');
+            var nodes = root.querySelectorAll(selectors);
+            if (nodes.length) return Array.prototype.slice.call(nodes);
+            return Array.prototype.slice.call(root.querySelectorAll('canvas'));
+          }
+
+          function applyCanvasStyles(canvas) {
+            canvas.style.cssText += [
+              'position:absolute!important',
+              'top:0!important',
+              'left:0!important',
+              'width:100%!important',
+              'height:100%!important',
+              'z-index:10!important',
+              'pointer-events:' + (desktopMediaQuery.matches ? 'auto' : 'none') + '!important',
+              'display:block!important',
+              'visibility:visible!important',
+              'opacity:1!important'
+            ].join(';');
+          }
 
           function ensureCanvasVisible() {
             // Search the whole product section — Zepto may place canvas at any level
-            var section = document.getElementById('MainProduct-' + sectionId);
-            var root = section || document.getElementById(galleryId);
-            if (!root) return;
-            root.querySelectorAll('canvas').forEach(function(c) {
-              c.style.cssText += [
-                'position:absolute!important',
-                'top:0!important',
-                'left:0!important',
-                'width:100%!important',
-                'height:100%!important',
-                'z-index:10!important',
-                'pointer-events:none!important',
-                'display:block!important',
-                'visibility:visible!important',
-                'opacity:1!important'
-              ].join(';');
+            var root = getRoot();
+            if (!root) return false;
+            var anchor = getCanvasAnchor(root);
+            if (anchor) {
+              anchor.style.setProperty('position', 'relative', 'important');
+              anchor.style.setProperty('overflow', 'visible', 'important');
+            }
+            var activeMediaItem = getActiveMediaItem(root);
+            if (activeMediaItem && desktopMediaQuery.matches) {
+              activeMediaItem.style.setProperty('display', 'block', 'important');
+              activeMediaItem.style.setProperty('overflow', 'visible', 'important');
+            }
+
+            var foundCanvas = false;
+            getCandidateCanvases(root).forEach(function(c) {
+              foundCanvas = true;
+              if (anchor && desktopMediaQuery.matches) {
+                var hiddenByDesktopSlide = c.closest('.product__media-item:not(.is-active)');
+                var insideActiveSlide = c.closest('.product__media-item.is-active');
+                if (hiddenByDesktopSlide || !insideActiveSlide) {
+                  anchor.appendChild(c);
+                }
+              }
+              applyCanvasStyles(c);
               // Unlock any overflow:hidden/clip on every ancestor up to the section root
               var el = c.parentElement;
               while (el && el !== root) {
@@ -926,40 +1003,136 @@
                 el = el.parentElement;
               }
             });
+
+            return foundCanvas;
+          }
+
+          function scheduleEnsureCanvasVisible() {
+            if (scheduled) return;
+            scheduled = true;
+            window.requestAnimationFrame(function() {
+              scheduled = false;
+              ensureCanvasVisible();
+            });
+          }
+
+          function observeRoot() {
+            var root = getRoot();
+            if (!root) return;
+            if (rootObserver) rootObserver.disconnect();
+            rootObserver = new MutationObserver(function(mutations) {
+              for (var i = 0; i < mutations.length; i++) {
+                if (mutations[i].type === 'childList') {
+                  scheduleEnsureCanvasVisible();
+                  return;
+                }
+                if (mutations[i].type === 'attributes' && mutations[i].attributeName === 'class') {
+                  scheduleEnsureCanvasVisible();
+                  return;
+                }
+              }
+            });
+            rootObserver.observe(root, {
+              childList: true,
+              subtree: true,
+              attributes: true,
+              attributeFilter: ['class']
+            });
           }
 
           // Watch for canvas being added/moved and fix its styles
           function observeGallery() {
-            var gallery = document.getElementById(galleryId);
+            var gallery = getGallery();
             if (!gallery) return;
-            var observer = new MutationObserver(function() {
-              ensureCanvasVisible();
+            if (galleryObserver) galleryObserver.disconnect();
+            galleryObserver = new MutationObserver(function() {
+              scheduleEnsureCanvasVisible();
             });
-            observer.observe(gallery, { childList: true, subtree: true });
+            galleryObserver.observe(gallery, {
+              childList: true,
+              subtree: true,
+              attributes: true,
+              attributeFilter: ['class']
+            });
           }
 
-          window.addEventListener('load', function() {
+          function runRetryLoop() {
+            if (retryTimer) {
+              clearTimeout(retryTimer);
+              retryTimer = null;
+            }
+            retryStopAt = Date.now() + (desktopMediaQuery.matches ? 3600 : 1800);
+
+            function retryTick() {
+              var foundCanvas = ensureCanvasVisible();
+              if (!foundCanvas) {
+                triggerZeptoInit();
+              }
+              if (Date.now() < retryStopAt) {
+                retryTimer = setTimeout(retryTick, 250);
+              }
+            }
+
+            retryTick();
+          }
+
+          function boot() {
+            observeRoot();
             observeGallery();
             ensureCanvasVisible();
             // After deferred scripts settle, re-trigger Zepto
             setTimeout(triggerZeptoInit, 400);
             // Second pass: desktop needs more time (sticky init, thumbnail slider setup)
             setTimeout(function() {
-              ensureCanvasVisible();
-              if (!document.querySelector('#MainProduct-' + sectionId + ' canvas')) {
+              var foundCanvas = ensureCanvasVisible();
+              if (!foundCanvas) {
                 triggerZeptoInit();
               }
-            }, isDesktop ? 1200 : 800);
+            }, desktopMediaQuery.matches ? 1200 : 800);
             // Third pass on desktop only
-            if (isDesktop) {
+            if (desktopMediaQuery.matches) {
               setTimeout(function() {
-                ensureCanvasVisible();
-                if (!document.querySelector('#MainProduct-' + sectionId + ' canvas')) {
+                var foundCanvas = ensureCanvasVisible();
+                if (!foundCanvas) {
                   triggerZeptoInit();
                 }
               }, 2000);
             }
+            runRetryLoop();
+          }
+
+          if (desktopMediaQuery.addEventListener) {
+            desktopMediaQuery.addEventListener('change', function() {
+              runRetryLoop();
+            });
+          } else if (desktopMediaQuery.addListener) {
+            desktopMediaQuery.addListener(function() {
+              runRetryLoop();
+            });
+          }
+
+          document.addEventListener('product-info:loaded', function(event) {
+            var root = getRoot();
+            if (!root) return;
+            if (event && event.target && root !== event.target && !root.contains(event.target)) return;
+            observeRoot();
+            observeGallery();
+            runRetryLoop();
           });
+
+          document.addEventListener('click', function(event) {
+            var gallery = getGallery();
+            if (!gallery || !gallery.contains(event.target)) return;
+            if (!event.target.closest('.thumbnail') && !event.target.closest('.slider-button')) return;
+            setTimeout(ensureCanvasVisible, 30);
+            setTimeout(ensureCanvasVisible, 220);
+          });
+
+          if (document.readyState === 'complete') {
+            boot();
+          } else {
+            window.addEventListener('load', boot, { once: true });
+          }
         })();
       </script>
     {%- endif -%}
