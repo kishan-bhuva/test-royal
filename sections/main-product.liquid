@@ -676,6 +676,8 @@
                 </product-recommendations>
               {%- when 'icon-with-text' -%}
                 {% render 'icon-with-text', block: block %}
+              {%- when '@app' -%}
+                {% render block %}
             {%- endcase -%}
           {%- endfor -%}
           {%- unless engraving_rendered -%}
