@@ -949,7 +949,28 @@
             ].join(',');
             var nodes = root.querySelectorAll(selectors);
             if (nodes.length) return Array.prototype.slice.call(nodes);
-            return Array.prototype.slice.call(root.querySelectorAll('canvas'));
+            var fallbackNodes = Array.prototype.slice.call(root.querySelectorAll('canvas'));
+            if (fallbackNodes.length) return fallbackNodes;
+            // Some personalizer versions temporarily append preview canvas to <body>.
+            // Pull only likely preview canvases back into the active product media area.
+            return Array.prototype.slice.call(document.querySelectorAll('body > canvas')).filter(function(c) {
+              if (!desktopMediaQuery.matches) return false;
+              var width = c.width || c.clientWidth;
+              var height = c.height || c.clientHeight;
+              if (!width || !height) return false;
+              var cls = (c.className || '').toString().toLowerCase();
+              var id = (c.id || '').toString().toLowerCase();
+              var markerText = cls + ' ' + id;
+              var hasPersonalizerMarker =
+                markerText.indexOf('pplr') !== -1 ||
+                markerText.indexOf('zepto') !== -1 ||
+                markerText.indexOf('personal') !== -1 ||
+                markerText.indexOf('custom') !== -1 ||
+                markerText.indexOf('preview') !== -1;
+              if (hasPersonalizerMarker) return true;
+              var style = window.getComputedStyle(c);
+              return (style.position === 'absolute' || style.position === 'fixed') && width > 120 && height > 120;
+            });
           }
 
           function applyCanvasStyles(canvas) {
@@ -1061,7 +1082,7 @@
               clearTimeout(retryTimer);
               retryTimer = null;
             }
-            retryStopAt = Date.now() + (desktopMediaQuery.matches ? 3600 : 1800);
+            retryStopAt = Date.now() + (desktopMediaQuery.matches ? 7000 : 2500);
 
             function retryTick() {
               var foundCanvas = ensureCanvasVisible();
@@ -1118,6 +1139,12 @@
             observeRoot();
             observeGallery();
             runRetryLoop();
+          });
+
+          window.addEventListener('pplrAppInitiated', function() {
+            runRetryLoop();
+            setTimeout(ensureCanvasVisible, 120);
+            setTimeout(ensureCanvasVisible, 420);
           });
 
           document.addEventListener('click', function(event) {
