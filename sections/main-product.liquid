@@ -875,6 +875,61 @@
       <script src="{{ 'media-gallery.js' | asset_url }}" defer="defer"></script>
     {%- endif -%}
 
+    {%- if product.media.size > 0 -%}
+      <script>
+        (function() {
+          var sectionId = {{ section.id | json }};
+          var galleryId = 'MediaGallery-' + sectionId;
+
+          function triggerZeptoInit() {
+            var gallery = document.getElementById(galleryId);
+            if (!gallery) return;
+
+            // Fire shopify:section:load so Zepto re-scans the section
+            document.dispatchEvent(new CustomEvent('shopify:section:load', {
+              bubbles: true,
+              detail: { sectionId: sectionId }
+            }));
+            gallery.dispatchEvent(new CustomEvent('shopify:section:load', {
+              bubbles: true,
+              detail: { sectionId: sectionId }
+            }));
+          }
+
+          function ensureCanvasVisible() {
+            var gallery = document.getElementById(galleryId);
+            if (!gallery) return;
+            gallery.querySelectorAll('canvas').forEach(function(c) {
+              c.style.position = 'absolute';
+              c.style.top = '0';
+              c.style.left = '0';
+              c.style.width = '100%';
+              c.style.height = '100%';
+              c.style.zIndex = '5';
+              c.style.pointerEvents = 'none';
+            });
+          }
+
+          // Watch for canvas being added/moved and fix its styles
+          function observeGallery() {
+            var gallery = document.getElementById(galleryId);
+            if (!gallery) return;
+            var observer = new MutationObserver(function() {
+              ensureCanvasVisible();
+            });
+            observer.observe(gallery, { childList: true, subtree: true });
+          }
+
+          window.addEventListener('load', function() {
+            observeGallery();
+            ensureCanvasVisible();
+            // Give deferred scripts time to finish DOM setup, then re-trigger Zepto
+            setTimeout(triggerZeptoInit, 400);
+          });
+        })();
+      </script>
+    {%- endif -%}
+
     {%- if first_3d_model -%}
       <script type="application/json" id="ProductJSON-{{ product.id }}">
         {{ product.media | where: 'media_type', 'model' | json }}
