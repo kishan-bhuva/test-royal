@@ -1,0 +1,196 @@
+{%- comment -%}
+  Renders a single mega menu panel for one top-level navigation link.
+  Inputs:
+  - menu_link: top-level link object
+  - menu_item_slug: unique slug for IDs/data attributes
+{%- endcomment -%}
+
+{%- if menu_link != blank and menu_link.links != blank -%}
+  {%- assign parent_link_url_normalized = menu_link.url | split: '?' | first | remove: shop.url | remove: shop.secure_url -%}
+  {%- assign parent_link_url_handle = parent_link_url_normalized | handleize -%}
+  <div
+    class="mega-menu"
+    id="mega-menu-{{ menu_item_slug }}"
+    data-mega-menu
+    aria-hidden="true"
+    role="group"
+    aria-label="{{ menu_link.title | escape }}"
+  >
+    <div class="mega-menu__grid" role="menu" aria-label="{{ menu_link.title | escape }} submenu">
+      {%- for child in menu_link.links -%}
+        {%- assign menu_image = blank -%}
+        {%- assign editor_image = blank -%}
+        {%- assign child_title_handle = child.title | handleize -%}
+        {%- assign child_url_normalized = child.url | split: '?' | first | remove: shop.url | remove: shop.secure_url -%}
+        {%- assign child_url_handle = child_url_normalized | handleize -%}
+        {%- assign child_url_path = child_url_normalized | split: '#' | first -%}
+        {%- assign fallback_collection_handle = blank -%}
+        {%- assign fallback_collection = blank -%}
+        {%- assign display_title = child.title -%}
+
+        {%- if child.type == 'collection_link' and child.object != blank -%}
+          {%- assign fallback_collection = child.object -%}
+          {%- assign fallback_collection_handle = child.object.handle -%}
+        {%- elsif child_url_path contains '/collections/' -%}
+          {%- assign fallback_collection_handle = child_url_path | split: '/collections/' | last | split: '/' | first -%}
+          {%- if fallback_collection_handle != blank -%}
+            {%- assign fallback_collection = collections[fallback_collection_handle] -%}
+          {%- endif -%}
+        {%- elsif child.handle != blank -%}
+          {%- assign fallback_collection = collections[child.handle] -%}
+          {%- if fallback_collection != blank -%}
+            {%- assign fallback_collection_handle = child.handle -%}
+          {%- endif -%}
+        {%- endif -%}
+
+        {%- if fallback_collection != blank and fallback_collection.title != blank -%}
+          {%- assign display_title = fallback_collection.title -%}
+        {%- elsif child.object != blank and child.object.title != blank -%}
+          {%- assign display_title = child.object.title -%}
+        {%- endif -%}
+
+        {%- if mega_image_blocks != blank -%}
+          {%- for block in mega_image_blocks -%}
+            {%- if block.type == 'mega_submenu_image' and block.settings.image != blank -%}
+              {%- assign parent_match = true -%}
+              {%- assign block_parent_url_normalized = block.settings.parent_menu_url | split: '?' | first | remove: shop.url | remove: shop.secure_url -%}
+              {%- assign block_parent_url_handle = block_parent_url_normalized | handleize -%}
+
+              {%- if block_parent_url_normalized != blank and block_parent_url_normalized != parent_link_url_normalized and block_parent_url_handle != parent_link_url_handle -%}
+                {%- assign parent_match = false -%}
+              {%- endif -%}
+
+              {%- if block.settings.parent_menu_title != blank -%}
+                {%- assign block_parent_handle = block.settings.parent_menu_title | handleize -%}
+                {%- if block_parent_handle != menu_item_slug -%}
+                  {%- assign parent_match = false -%}
+                {%- endif -%}
+              {%- endif -%}
+
+              {%- if parent_match -%}
+                {%- assign url_match = false -%}
+                {%- assign title_match = false -%}
+                {%- assign block_url_normalized = block.settings.submenu_url | split: '?' | first | remove: shop.url | remove: shop.secure_url -%}
+                {%- assign block_url_handle = block_url_normalized | handleize -%}
+
+                {%- if block.settings.submenu_url != blank and block.settings.submenu_url == child.url -%}
+                  {%- assign url_match = true -%}
+                {%- elsif block_url_normalized != blank and block_url_normalized == child_url_normalized -%}
+                  {%- assign url_match = true -%}
+                {%- elsif block_url_normalized != blank and block_url_handle == child_url_handle -%}
+                  {%- assign url_match = true -%}
+                {%- endif -%}
+
+                {%- if block.settings.submenu_title != blank -%}
+                  {%- assign block_title_handle = block.settings.submenu_title | handleize -%}
+                  {%- if block_title_handle == child_title_handle -%}
+                    {%- assign title_match = true -%}
+                  {%- endif -%}
+                {%- endif -%}
+
+                {%- if url_match or title_match -%}
+                  {%- assign editor_image = block.settings.image -%}
+                  {%- break -%}
+                {%- endif -%}
+              {%- endif -%}
+            {%- endif -%}
+          {%- endfor -%}
+        {%- endif -%}
+
+        {%- if editor_image != blank -%}
+          {%- assign menu_image = editor_image -%}
+        {%- elsif child.object and child.object.metafields and child.object.metafields.custom.menu_image != blank -%}
+          {%- assign menu_image = child.object.metafields.custom.menu_image -%}
+        {%- elsif child.object and child.object.featured_image != blank -%}
+          {%- assign menu_image = child.object.featured_image -%}
+        {%- elsif child.object and child.object.image != blank -%}
+          {%- assign menu_image = child.object.image -%}
+        {%- elsif child.object and child.object.featured_media and child.object.featured_media.preview_image != blank -%}
+          {%- assign menu_image = child.object.featured_media.preview_image -%}
+        {%- else -%}
+          {%- if fallback_collection == blank and fallback_collection_handle != blank -%}
+            {%- assign fallback_collection = collections[fallback_collection_handle] -%}
+          {%- endif -%}
+
+          {%- if fallback_collection != blank and fallback_collection.featured_image != blank -%}
+            {%- assign menu_image = fallback_collection.featured_image -%}
+          {%- elsif fallback_collection != blank and fallback_collection.image != blank -%}
+            {%- assign menu_image = fallback_collection.image -%}
+          {%- elsif fallback_collection != blank and fallback_collection.products_count > 0 and fallback_collection.products.first.featured_image != blank -%}
+            {%- assign menu_image = fallback_collection.products.first.featured_image -%}
+          {%- endif -%}
+        {%- endif -%}
+
+        <div class="mega-menu__item{% if child.links != blank %} mega-menu__item--has-sub{% endif %}">
+          <a
+            href="{{ child.url }}"
+            class="mega-menu__item-link"
+            role="menuitem"
+            tabindex="-1"
+            {%- if child.links != blank %}aria-expanded="false"{% endif %}
+          >
+            <span class="mega-menu__media" aria-hidden="true">
+              {%- if menu_image != blank -%}
+                <img
+                  class="mega-menu__image"
+                  src="{{ menu_image | image_url: width: 240 }}"
+                  alt="{{ display_title | escape }}"
+                  loading="lazy"
+                  width="100"
+                  height="100"
+                >
+              {%- else -%}
+                <span class="mega-menu__image mega-menu__image--placeholder"></span>
+              {%- endif -%}
+            </span>
+            <span class="mega-menu__title">{{ display_title | escape }}</span>
+          </a>
+          {%- if child.links != blank -%}
+            <div class="mega-menu__subgrid" role="menu" aria-label="{{ display_title | escape }} submenu">
+              {%- for sub in child.links -%}
+                {%- assign sub_image = blank -%}
+                {%- if sub.object and sub.object.featured_image != blank -%}
+                  {%- assign sub_image = sub.object.featured_image -%}
+                {%- elsif sub.object and sub.object.image != blank -%}
+                  {%- assign sub_image = sub.object.image -%}
+                {%- elsif sub.object and sub.object.featured_media and sub.object.featured_media.preview_image != blank -%}
+                  {%- assign sub_image = sub.object.featured_media.preview_image -%}
+                {%- else -%}
+                  {%- assign sub_handle = sub.url | split: '/collections/' | last | split: '/' | first -%}
+                  {%- assign sub_collection = collections[sub_handle] -%}
+                  {%- if sub_collection != blank and sub_collection.featured_image != blank -%}
+                    {%- assign sub_image = sub_collection.featured_image -%}
+                  {%- elsif sub_collection != blank and sub_collection.image != blank -%}
+                    {%- assign sub_image = sub_collection.image -%}
+                  {%- endif -%}
+                {%- endif -%}
+                <a
+                  href="{{ sub.url }}"
+                  class="mega-menu__item mega-menu__item--sub"
+                  role="menuitem"
+                  tabindex="-1"
+                >
+                  <span class="mega-menu__media" aria-hidden="true">
+                    {%- if sub_image != blank -%}
+                      <img
+                        class="mega-menu__image"
+                        src="{{ sub_image | image_url: width: 240 }}"
+                        alt="{{ sub.title | escape }}"
+                        loading="lazy"
+                        width="100"
+                        height="100"
+                      >
+                    {%- else -%}
+                      <span class="mega-menu__image mega-menu__image--placeholder"></span>
+                    {%- endif -%}
+                  </span>
+                  <span class="mega-menu__title">{{ sub.title | escape }}</span>
+                </a>
+              {%- endfor -%}
+            </div>
+          {%- endif -%}
+        </div>
+      {%- endfor -%}
+    </div>
+  </div>
+{%- endif -%}

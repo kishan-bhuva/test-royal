@@ -1,0 +1,515 @@
+<style>
+  /* === Trigger Button === */
+  .faq-trigger-wrap {
+    position: fixed;
+    bottom: 90px;
+    z-index: 290;
+  }
+
+  .faq-trigger-wrap--left   { left: 20px; }
+  .faq-trigger-wrap--right  { right: 20px; }
+  .faq-trigger-wrap--center { left: 50%; transform: translateX(-50%); }
+
+  .faq-trigger-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 13px 22px;
+    background: linear-gradient(135deg, #e8cc7a 0%, #C6A13A 52%, #8a6b18 100%);
+    color: #0b0b0b;
+    font-family: 'Inter', sans-serif;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    border: none;
+    border-radius: 999px;
+    cursor: pointer;
+    box-shadow: 0 4px 20px rgba(198, 161, 58, 0.38);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    white-space: nowrap;
+  }
+
+  .faq-trigger-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 28px rgba(198, 161, 58, 0.52);
+  }
+
+  .faq-trigger-btn svg {
+    width: 16px;
+    height: 16px;
+    flex-shrink: 0;
+  }
+
+  /* === Overlay === */
+  .faq-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 500;
+    background: rgba(0, 0, 0, 0.78);
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    opacity: 0;
+    transition: opacity 0.28s ease;
+  }
+
+  .faq-overlay.is-open    { display: flex; }
+  .faq-overlay.is-visible { opacity: 1; }
+
+  /* === Modal === */
+  .faq-modal {
+    position: relative;
+    width: 100%;
+    max-width: 620px;
+    max-height: 82vh;
+    background: #111111;
+    border: 1px solid rgba(198, 161, 58, 0.2);
+    border-radius: 20px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    transform: translateY(28px) scale(0.97);
+    opacity: 0;
+    transition: transform 0.36s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.28s ease;
+  }
+
+  .faq-overlay.is-visible .faq-modal {
+    transform: translateY(0) scale(1);
+    opacity: 1;
+  }
+
+  /* === Modal Header === */
+  .faq-modal__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 24px 28px 20px;
+    border-bottom: 1px solid rgba(198, 161, 58, 0.1);
+    flex-shrink: 0;
+    background: linear-gradient(180deg, rgba(198, 161, 58, 0.06), transparent);
+  }
+
+  .faq-modal__eyebrow {
+    font-family: 'Inter', sans-serif;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 2.5px;
+    text-transform: uppercase;
+    color: #C6A13A;
+    margin: 0 0 4px;
+  }
+
+  .faq-modal__title {
+    font-family: 'Playfair Display', Georgia, serif;
+    font-size: 22px;
+    font-weight: 700;
+    color: #f5f4ef;
+    margin: 0;
+    line-height: 1.2;
+  }
+
+  .faq-modal__close {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 50%;
+    color: rgba(245, 244, 239, 0.6);
+    cursor: pointer;
+    flex-shrink: 0;
+    transition: background 0.2s, color 0.2s, border-color 0.2s;
+  }
+
+  .faq-modal__close:hover {
+    background: rgba(198, 161, 58, 0.14);
+    color: #C6A13A;
+    border-color: rgba(198, 161, 58, 0.35);
+  }
+
+  .faq-modal__close svg { width: 16px; height: 16px; }
+
+  /* === Modal Body / Scrollable === */
+  .faq-modal__body {
+    overflow-y: auto;
+    padding: 8px 28px 28px;
+    flex: 1;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(198, 161, 58, 0.25) transparent;
+  }
+
+  .faq-modal__body::-webkit-scrollbar       { width: 4px; }
+  .faq-modal__body::-webkit-scrollbar-track { background: transparent; }
+  .faq-modal__body::-webkit-scrollbar-thumb {
+    background: rgba(198, 161, 58, 0.25);
+    border-radius: 4px;
+  }
+
+  /* === Accordion Items === */
+  .faq-item {
+    border-bottom: 1px solid rgba(198, 161, 58, 0.1);
+  }
+
+  .faq-item:last-child { border-bottom: none; }
+
+  .faq-question {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+    width: 100%;
+    padding: 19px 0;
+    background: none;
+    border: none;
+    cursor: pointer;
+    text-align: left;
+    color: #f5f4ef;
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 1.5;
+    transition: color 0.2s;
+  }
+
+  .faq-question:hover,
+  .faq-item.is-active .faq-question { color: #C6A13A; }
+
+  .faq-question__icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 26px;
+    height: 26px;
+    border: 1px solid rgba(198, 161, 58, 0.3);
+    border-radius: 50%;
+    color: #C6A13A;
+    flex-shrink: 0;
+    transition: transform 0.3s ease, background 0.2s;
+  }
+
+  .faq-item.is-active .faq-question__icon {
+    transform: rotate(45deg);
+    background: rgba(198, 161, 58, 0.12);
+  }
+
+  .faq-question__icon svg { width: 13px; height: 13px; }
+
+  /* === Answer Panel === */
+  .faq-answer {
+    overflow: hidden;
+    max-height: 0;
+    transition: max-height 0.36s ease;
+  }
+
+  .faq-answer__inner {
+    padding: 0 0 20px;
+    color: rgba(245, 244, 239, 0.68);
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+    line-height: 1.78;
+  }
+
+  .faq-answer__inner p          { margin: 0 0 10px; }
+  .faq-answer__inner p:last-child { margin-bottom: 0; }
+  .faq-answer__inner a          { color: #C6A13A; text-decoration: underline; }
+  .faq-answer__inner ul,
+  .faq-answer__inner ol         { padding-left: 20px; margin: 8px 0; }
+  .faq-answer__inner li         { margin-bottom: 4px; }
+
+  /* === Empty state === */
+  .faq-empty {
+    padding: 32px 0;
+    text-align: center;
+    color: rgba(245, 244, 239, 0.35);
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+  }
+
+  /* === Responsive === */
+  @media screen and (max-width: 749px) {
+    .faq-trigger-wrap { bottom: 74px; }
+
+    .faq-overlay {
+      padding: 0;
+      align-items: flex-end;
+    }
+
+    .faq-modal {
+      max-height: 88vh;
+      border-radius: 20px 20px 0 0;
+      transform: translateY(60px);
+    }
+
+    .faq-overlay.is-visible .faq-modal { transform: translateY(0); }
+
+    .faq-modal__header { padding: 20px 20px 16px; }
+    .faq-modal__body   { padding: 8px 20px 32px; }
+  }
+</style>
+
+{%- assign btn_pos = section.settings.button_position -%}
+<div class="faq-trigger-wrap faq-trigger-wrap--{{ btn_pos }}">
+  <button
+    class="faq-trigger-btn"
+    id="faq-btn-{{ section.id }}"
+    aria-haspopup="dialog"
+    aria-controls="faq-dialog-{{ section.id }}"
+    aria-expanded="false"
+  >
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <circle cx="12" cy="12" r="10"/>
+      <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/>
+      <line x1="12" y1="17" x2="12.01" y2="17"/>
+    </svg>
+    {{ section.settings.button_text }}
+  </button>
+</div>
+
+<div
+  class="faq-overlay"
+  id="faq-dialog-{{ section.id }}"
+  role="dialog"
+  aria-modal="true"
+  aria-labelledby="faq-title-{{ section.id }}"
+>
+  <div class="faq-modal">
+
+    <div class="faq-modal__header">
+      <div>
+        <p class="faq-modal__eyebrow">Help Center</p>
+        <h2 class="faq-modal__title" id="faq-title-{{ section.id }}">
+          {{ section.settings.popup_heading }}
+        </h2>
+      </div>
+      <button
+        class="faq-modal__close"
+        id="faq-close-{{ section.id }}"
+        aria-label="Close"
+      >
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true">
+          <line x1="18" y1="6" x2="6" y2="18"/>
+          <line x1="6" y1="6" x2="18" y2="18"/>
+        </svg>
+      </button>
+    </div>
+
+    <div class="faq-modal__body">
+      {%- if section.blocks.size > 0 -%}
+        {%- for block in section.blocks -%}
+          {%- if block.type == 'faq_item' -%}
+            <div class="faq-item" {{ block.shopify_attributes }}>
+              <button class="faq-question" aria-expanded="false">
+                <span>{{ block.settings.question }}</span>
+                <span class="faq-question__icon" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="12" y1="5" x2="12" y2="19"/>
+                    <line x1="5" y1="12" x2="19" y2="12"/>
+                  </svg>
+                </span>
+              </button>
+              <div class="faq-answer" role="region">
+                <div class="faq-answer__inner rte">
+                  {{ block.settings.answer }}
+                </div>
+              </div>
+            </div>
+          {%- endif -%}
+        {%- endfor -%}
+      {%- else -%}
+        <p class="faq-empty">Add FAQ items from the theme editor to get started.</p>
+      {%- endif -%}
+    </div>
+
+  </div>
+</div>
+
+<script>
+(function () {
+  var id      = '{{ section.id }}';
+  var trigger = document.getElementById('faq-btn-'    + id);
+  var overlay = document.getElementById('faq-dialog-' + id);
+  var closeBtn= document.getElementById('faq-close-'  + id);
+  if (!trigger || !overlay) return;
+
+  var modal      = overlay.querySelector('.faq-modal');
+  var lastFocus  = null;
+  var isAnimating= false;
+
+  /* ---------- open / close ---------- */
+  function openModal() {
+    if (isAnimating) return;
+    lastFocus = document.activeElement;
+    overlay.classList.add('is-open');
+    document.body.style.overflow = 'hidden';
+    trigger.setAttribute('aria-expanded', 'true');
+    isAnimating = true;
+    requestAnimationFrame(function () {
+      requestAnimationFrame(function () {
+        overlay.classList.add('is-visible');
+        isAnimating = false;
+        if (closeBtn) closeBtn.focus();
+      });
+    });
+  }
+
+  function closeModal() {
+    if (isAnimating || !overlay.classList.contains('is-open')) return;
+    isAnimating = true;
+    overlay.classList.remove('is-visible');
+    trigger.setAttribute('aria-expanded', 'false');
+    document.body.style.overflow = '';
+    overlay.addEventListener('transitionend', function handler() {
+      overlay.classList.remove('is-open');
+      isAnimating = false;
+      overlay.removeEventListener('transitionend', handler);
+    }, { once: true });
+    if (lastFocus) lastFocus.focus();
+  }
+
+  trigger.addEventListener('click', openModal);
+  if (closeBtn) closeBtn.addEventListener('click', closeModal);
+
+  /* click outside modal box */
+  overlay.addEventListener('click', function (e) {
+    if (modal && !modal.contains(e.target)) closeModal();
+  });
+
+  /* Escape key */
+  document.addEventListener('keydown', function (e) {
+    if ((e.key === 'Escape' || e.key === 'Esc') && overlay.classList.contains('is-open')) {
+      closeModal();
+    }
+  });
+
+  /* ---------- accordion ---------- */
+  var items = overlay.querySelectorAll('.faq-item');
+
+  items.forEach(function (item) {
+    var btn    = item.querySelector('.faq-question');
+    var answer = item.querySelector('.faq-answer');
+    if (!btn || !answer) return;
+
+    btn.addEventListener('click', function () {
+      var alreadyOpen = item.classList.contains('is-active');
+
+      /* close all */
+      items.forEach(function (other) {
+        other.classList.remove('is-active');
+        var ob = other.querySelector('.faq-question');
+        var oa = other.querySelector('.faq-answer');
+        if (ob) ob.setAttribute('aria-expanded', 'false');
+        if (oa) oa.style.maxHeight = '0';
+      });
+
+      /* open clicked if it was closed */
+      if (!alreadyOpen) {
+        item.classList.add('is-active');
+        btn.setAttribute('aria-expanded', 'true');
+        answer.style.maxHeight = answer.scrollHeight + 'px';
+      }
+    });
+  });
+})();
+</script>
+
+{% schema %}
+{
+  "name": "FAQ Popup",
+  "tag": "div",
+  "class": "faq-popup-section",
+  "settings": [
+    {
+      "type": "text",
+      "id": "button_text",
+      "label": "Button text",
+      "default": "Need Help?"
+    },
+    {
+      "type": "text",
+      "id": "popup_heading",
+      "label": "Popup heading",
+      "default": "Frequently Asked Questions"
+    },
+    {
+      "type": "select",
+      "id": "button_position",
+      "label": "Button position",
+      "options": [
+        { "value": "left",   "label": "Left"   },
+        { "value": "center", "label": "Center" },
+        { "value": "right",  "label": "Right"  }
+      ],
+      "default": "right"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "faq_item",
+      "name": "FAQ Item",
+      "settings": [
+        {
+          "type": "text",
+          "id": "question",
+          "label": "Question",
+          "default": "What is your return policy?"
+        },
+        {
+          "type": "richtext",
+          "id": "answer",
+          "label": "Answer",
+          "default": "<p>We offer a 30-day return policy on all standard items. Custom and personalized products are non-returnable unless there is a manufacturing defect.</p>"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "FAQ Popup",
+      "blocks": [
+        {
+          "type": "faq_item",
+          "settings": {
+            "question": "What is your return policy?",
+            "answer": "<p>We offer a 30-day return policy on all standard items. Custom and personalized products are non-returnable unless there is a manufacturing defect.</p>"
+          }
+        },
+        {
+          "type": "faq_item",
+          "settings": {
+            "question": "How long does delivery take?",
+            "answer": "<p>Standard delivery takes 5–7 business days. Express delivery is available at checkout for 2–3 business days.</p>"
+          }
+        },
+        {
+          "type": "faq_item",
+          "settings": {
+            "question": "Can I customize my nameplate?",
+            "answer": "<p>Yes! All our nameplates are fully customizable. Choose your font, size, material, and finish. Share your requirements via the contact form and we'll handle the rest.</p>"
+          }
+        },
+        {
+          "type": "faq_item",
+          "settings": {
+            "question": "What materials do you use?",
+            "answer": "<p>We use premium stainless steel, brass, acrylic, and wood. Each material is available in multiple finishes including matte, gloss, and brushed metallic.</p>"
+          }
+        },
+        {
+          "type": "faq_item",
+          "settings": {
+            "question": "How do I track my order?",
+            "answer": "<p>Once your order is dispatched you will receive a tracking link via email and SMS. You can also check order status from your account dashboard.</p>"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

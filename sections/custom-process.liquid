@@ -1,0 +1,148 @@
+{{ 'luxury-theme.css' | asset_url | stylesheet_tag }}
+
+{%- style -%}
+  /* Section spacing only. Visual system is controlled by luxury-theme.css */
+  .section-{{ section.id }}-padding {
+    padding-top: {{ section.settings.padding_top | times: 0.75 | round: 0 }}px;
+    padding-bottom: {{ section.settings.padding_bottom | times: 0.75 | round: 0 }}px;
+  }
+
+  @media screen and (min-width: 750px) {
+    .section-{{ section.id }}-padding {
+      padding-top: {{ section.settings.padding_top }}px;
+      padding-bottom: {{ section.settings.padding_bottom }}px;
+    }
+  }
+{%- endstyle -%}
+
+<section class="dn-process dn-process--{{ section.id }} lux-home-section lux-home-section--process section-{{ section.id }}-padding">
+  <div class="page-width">
+    {%- if section.settings.heading != blank or section.settings.subheading != blank -%}
+      <header class="dn-process__header" data-lux-reveal>
+        {%- if section.settings.heading != blank -%}
+          <h2 class="dn-process__title">{{ section.settings.heading }}</h2>
+        {%- endif -%}
+        {%- if section.settings.subheading != blank -%}
+          <p class="dn-process__subtitle">{{ section.settings.subheading }}</p>
+        {%- endif -%}
+      </header>
+    {%- endif -%}
+
+    <div class="dn-process__grid" role="list">
+      {%- for block in section.blocks limit: 4 -%}
+        <article class="dn-process__step" role="listitem" data-lux-reveal {{ block.shopify_attributes }}>
+          <div class="dn-process__badge">
+            {{ forloop.index | prepend: '0' }}
+          </div>
+          {%- if block.settings.title != blank -%}
+            <h3 class="dn-process__step-title">{{ block.settings.title }}</h3>
+          {%- endif -%}
+          {%- if block.settings.text != blank -%}
+            <p class="dn-process__step-text">{{ block.settings.text }}</p>
+          {%- endif -%}
+        </article>
+      {%- endfor -%}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Custom Process",
+  "tag": "section",
+  "class": "section",
+  "disabled_on": {
+    "groups": ["header", "footer"]
+  },
+  "settings": [
+    {
+      "type": "inline_richtext",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Our Process"
+    },
+    {
+      "type": "textarea",
+      "id": "subheading",
+      "label": "Subheading",
+      "default": "A streamlined premium workflow from material selection to final delivery."
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "label": "Top padding",
+      "default": 68
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "label": "Bottom padding",
+      "default": 68
+    }
+  ],
+  "blocks": [
+    {
+      "type": "step",
+      "name": "Step",
+      "limit": 4,
+      "settings": [
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Step title",
+          "default": "Choose Material"
+        },
+        {
+          "type": "textarea",
+          "id": "text",
+          "label": "Step text",
+          "default": "Select finishes and dimensions that match your entrance."
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Custom Process",
+      "blocks": [
+        {
+          "type": "step",
+          "settings": {
+            "title": "Choose Material",
+            "text": "Select from brass, acrylic, wood, or hybrid premium options."
+          }
+        },
+        {
+          "type": "step",
+          "settings": {
+            "title": "Submit Design",
+            "text": "Share your preferred style, text, and placement details."
+          }
+        },
+        {
+          "type": "step",
+          "settings": {
+            "title": "We Craft",
+            "text": "Our artisans shape, engrave, and polish each piece by hand."
+          }
+        },
+        {
+          "type": "step",
+          "settings": {
+            "title": "Delivered to You",
+            "text": "Your finished nameplate is packed securely and shipped fast."
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,438 @@
+{{ 'luxury-theme.css' | asset_url | stylesheet_tag }}
+
+<section class="lux-hero lux-home-section lux-home-section--hero" data-section-id="{{ section.id }}">
+  <div class="lux-hero__bg-pattern" aria-hidden="true"></div>
+
+  <div class="lux-hero__inner">
+
+    {%- comment -%} ── LEFT: Content ── {%- endcomment -%}
+    <div class="lux-hero__content">
+
+      {%- if section.settings.badge_text != blank -%}
+        <div class="lux-hero__badge">
+          <span class="lux-hero__badge-dot"></span>
+          {{ section.settings.badge_text }}
+        </div>
+      {%- endif -%}
+
+      <h1 class="lux-hero__heading">
+        {%- if section.settings.heading_line_1 != blank -%}
+          {{ section.settings.heading_line_1 }}
+        {%- endif -%}
+        {%- if section.settings.heading_gold != blank -%}
+          <span class="lux-hero__heading-gold">{{ section.settings.heading_gold }}</span><br>
+        {%- endif -%}
+        {%- if section.settings.heading_line_2 != blank -%}
+          {{ section.settings.heading_line_2 }}
+        {%- endif -%}
+      </h1>
+
+      {%- if section.settings.subtext != blank -%}
+        <p class="lux-hero__subtext">{{ section.settings.subtext }}</p>
+      {%- endif -%}
+
+      <div class="lux-hero__cta-group">
+        {%- if section.settings.cta_text != blank -%}
+          <a href="{{ section.settings.cta_link }}" class="lux-hero__cta">
+            {{ section.settings.cta_text }}
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </a>
+        {%- endif -%}
+        {%- if section.settings.cta2_text != blank -%}
+          <a href="{{ section.settings.cta2_link }}" class="lux-hero__cta lux-hero__cta--ghost">
+            {{ section.settings.cta2_text }}
+          </a>
+        {%- endif -%}
+      </div>
+
+      {%- if section.settings.personalisation_hook != blank -%}
+        <p class="lux-hero__hook">
+          <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          {{ section.settings.personalisation_hook }}
+        </p>
+      {%- endif -%}
+
+      {%- comment -%} Trust strip {%- endcomment -%}
+      <div class="lux-hero__trust" aria-label="Why choose us">
+        {%- if section.settings.trust_1 != blank -%}
+          <div class="lux-hero__trust-item">
+            <svg class="lux-hero__trust-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+            <span>{{ section.settings.trust_1 }}</span>
+          </div>
+        {%- endif -%}
+        {%- if section.settings.trust_2 != blank -%}
+          <span class="lux-hero__trust-sep" aria-hidden="true"></span>
+          <div class="lux-hero__trust-item">
+            <svg class="lux-hero__trust-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="1" y="3" width="15" height="13" rx="1"/><path d="M16 8h4l3 5v3h-7V8zM5.5 21a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3zm13 0a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3z"/></svg>
+            <span>{{ section.settings.trust_2 }}</span>
+          </div>
+        {%- endif -%}
+        {%- if section.settings.trust_3 != blank -%}
+          <span class="lux-hero__trust-sep" aria-hidden="true"></span>
+          <div class="lux-hero__trust-item">
+            <svg class="lux-hero__trust-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+            <span>{{ section.settings.trust_3 }}</span>
+          </div>
+        {%- endif -%}
+      </div>
+
+      {%- comment -%} Stats row {%- endcomment -%}
+      {%- if section.settings.stat_1_number != blank
+          or section.settings.stat_2_number != blank
+          or section.settings.stat_3_number != blank -%}
+        <div class="lux-hero__stats">
+          {%- if section.settings.stat_1_number != blank -%}
+            <div class="lux-hero__stat">
+              <span class="lux-hero__stat-number">{{ section.settings.stat_1_number }}</span>
+              <span class="lux-hero__stat-label">{{ section.settings.stat_1_label }}</span>
+            </div>
+          {%- endif -%}
+          {%- if section.settings.stat_2_number != blank -%}
+            <div class="lux-hero__stat-divider" aria-hidden="true"></div>
+            <div class="lux-hero__stat">
+              <span class="lux-hero__stat-number">{{ section.settings.stat_2_number }}</span>
+              <span class="lux-hero__stat-label">{{ section.settings.stat_2_label }}</span>
+            </div>
+          {%- endif -%}
+          {%- if section.settings.stat_3_number != blank -%}
+            <div class="lux-hero__stat-divider" aria-hidden="true"></div>
+            <div class="lux-hero__stat">
+              <span class="lux-hero__stat-number">{{ section.settings.stat_3_number }}</span>
+              <span class="lux-hero__stat-label">{{ section.settings.stat_3_label }}</span>
+            </div>
+          {%- endif -%}
+        </div>
+      {%- endif -%}
+
+    </div>
+
+    {%- comment -%} ── RIGHT: Image Carousel ── {%- endcomment -%}
+    {%- assign slide_count = 0 -%}
+    {%- if section.settings.hero_image   != blank -%}{%- assign slide_count = slide_count | plus: 1 -%}{%- endif -%}
+    {%- if section.settings.hero_image_2 != blank -%}{%- assign slide_count = slide_count | plus: 1 -%}{%- endif -%}
+    {%- if section.settings.hero_image_3 != blank -%}{%- assign slide_count = slide_count | plus: 1 -%}{%- endif -%}
+    {%- if section.settings.hero_image_4 != blank -%}{%- assign slide_count = slide_count | plus: 1 -%}{%- endif -%}
+
+    <aside class="lux-hero__carousel-wrapper" aria-label="Product showcase">
+      <div class="lux-hero__carousel" data-lux-hero-carousel>
+
+        {%- if section.settings.float_label != blank -%}
+          <div class="lux-hero__float-label" aria-hidden="true">
+            <span class="lux-hero__float-dot"></span>
+            {{ section.settings.float_label }}
+          </div>
+        {%- endif -%}
+
+        <div class="lux-hero__carousel-track">
+          {%- assign rendered = 0 -%}
+
+          {%- if section.settings.hero_image != blank -%}
+            {%- assign rendered = rendered | plus: 1 -%}
+            <div class="lux-hero__carousel-slide{% if rendered == 1 %} is-active{% endif %}" data-lux-hero-slide>
+              <img
+                src="{{ section.settings.hero_image | image_url: width: 1400 }}"
+                srcset="{{ section.settings.hero_image | image_url: width: 700 }} 700w, {{ section.settings.hero_image | image_url: width: 1000 }} 1000w, {{ section.settings.hero_image | image_url: width: 1400 }} 1400w"
+                sizes="(max-width: 768px) 100vw, 50vw"
+                alt="{{ section.settings.hero_image.alt | default: section.settings.heading_line_1 | escape }}"
+                class="lux-hero__carousel-image"
+                loading="eager"
+                width="{{ section.settings.hero_image.width }}"
+                height="{{ section.settings.hero_image.height }}"
+              >
+            </div>
+          {%- endif -%}
+
+          {%- if section.settings.hero_image_2 != blank -%}
+            {%- assign rendered = rendered | plus: 1 -%}
+            <div class="lux-hero__carousel-slide{% if rendered == 1 %} is-active{% endif %}" data-lux-hero-slide>
+              <img
+                src="{{ section.settings.hero_image_2 | image_url: width: 1400 }}"
+                srcset="{{ section.settings.hero_image_2 | image_url: width: 700 }} 700w, {{ section.settings.hero_image_2 | image_url: width: 1000 }} 1000w, {{ section.settings.hero_image_2 | image_url: width: 1400 }} 1400w"
+                sizes="(max-width: 768px) 100vw, 50vw"
+                alt="{{ section.settings.hero_image_2.alt | default: section.settings.heading_line_1 | escape }}"
+                class="lux-hero__carousel-image"
+                loading="lazy"
+                width="{{ section.settings.hero_image_2.width }}"
+                height="{{ section.settings.hero_image_2.height }}"
+              >
+            </div>
+          {%- endif -%}
+
+          {%- if section.settings.hero_image_3 != blank -%}
+            {%- assign rendered = rendered | plus: 1 -%}
+            <div class="lux-hero__carousel-slide{% if rendered == 1 %} is-active{% endif %}" data-lux-hero-slide>
+              <img
+                src="{{ section.settings.hero_image_3 | image_url: width: 1400 }}"
+                srcset="{{ section.settings.hero_image_3 | image_url: width: 700 }} 700w, {{ section.settings.hero_image_3 | image_url: width: 1000 }} 1000w, {{ section.settings.hero_image_3 | image_url: width: 1400 }} 1400w"
+                sizes="(max-width: 768px) 100vw, 50vw"
+                alt="{{ section.settings.hero_image_3.alt | default: section.settings.heading_line_1 | escape }}"
+                class="lux-hero__carousel-image"
+                loading="lazy"
+                width="{{ section.settings.hero_image_3.width }}"
+                height="{{ section.settings.hero_image_3.height }}"
+              >
+            </div>
+          {%- endif -%}
+
+          {%- if section.settings.hero_image_4 != blank -%}
+            {%- assign rendered = rendered | plus: 1 -%}
+            <div class="lux-hero__carousel-slide{% if rendered == 1 %} is-active{% endif %}" data-lux-hero-slide>
+              <img
+                src="{{ section.settings.hero_image_4 | image_url: width: 1400 }}"
+                srcset="{{ section.settings.hero_image_4 | image_url: width: 700 }} 700w, {{ section.settings.hero_image_4 | image_url: width: 1000 }} 1000w, {{ section.settings.hero_image_4 | image_url: width: 1400 }} 1400w"
+                sizes="(max-width: 768px) 100vw, 50vw"
+                alt="{{ section.settings.hero_image_4.alt | default: section.settings.heading_line_1 | escape }}"
+                class="lux-hero__carousel-image"
+                loading="lazy"
+                width="{{ section.settings.hero_image_4.width }}"
+                height="{{ section.settings.hero_image_4.height }}"
+              >
+            </div>
+          {%- endif -%}
+
+          {%- if slide_count == 0 -%}
+            {%- for i in (1..4) -%}
+              <div class="lux-hero__carousel-slide{% if forloop.first %} is-active{% endif %}" data-lux-hero-slide>
+                {{ 'lifestyle-1' | placeholder_svg_tag: 'lux-hero__carousel-placeholder' }}
+              </div>
+            {%- endfor -%}
+          {%- endif -%}
+        </div>
+
+        {%- if section.settings.edition_text != blank -%}
+          <div class="lux-hero__edition-badge" aria-hidden="true">
+            {%- if section.settings.edition_sub != blank -%}
+              <span class="lux-hero__edition-sub">{{ section.settings.edition_sub }}</span>
+            {%- endif -%}
+            <strong class="lux-hero__edition-title">{{ section.settings.edition_text }}</strong>
+          </div>
+        {%- endif -%}
+
+        {%- if slide_count > 1 -%}
+          <div class="lux-hero__carousel-dots" role="tablist" aria-label="Select image">
+            {%- for i in (1..slide_count) -%}
+              <button
+                type="button"
+                role="tab"
+                class="lux-hero__carousel-dot{% if forloop.first %} is-active{% endif %}"
+                data-lux-hero-dot="{{ forloop.index0 }}"
+                aria-label="Image {{ forloop.index }}"
+                {% if forloop.first %}aria-selected="true"{% else %}aria-selected="false"{% endif %}
+              ></button>
+            {%- endfor -%}
+          </div>
+        {%- endif -%}
+
+      </div>
+    </aside>
+
+  </div>
+</section>
+
+<script>
+(function () {
+  var section = document.querySelector('.lux-hero[data-section-id="{{ section.id }}"]');
+  if (!section || section.dataset.luxHeroInit === 'true') return;
+  section.dataset.luxHeroInit = 'true';
+
+  var carousel = section.querySelector('[data-lux-hero-carousel]');
+  if (!carousel) return;
+
+  var slides  = Array.prototype.slice.call(carousel.querySelectorAll('[data-lux-hero-slide]'));
+  if (slides.length <= 1) return;
+
+  var dots    = Array.prototype.slice.call(carousel.querySelectorAll('[data-lux-hero-dot]'));
+  var current = 0;
+  var timer   = null;
+  var delay   = 4800;
+  var reduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  function goTo(index) {
+    slides[current].classList.remove('is-active');
+    if (dots[current]) { dots[current].classList.remove('is-active'); dots[current].setAttribute('aria-selected', 'false'); }
+    current = (index + slides.length) % slides.length;
+    slides[current].classList.add('is-active');
+    if (dots[current]) { dots[current].classList.add('is-active'); dots[current].setAttribute('aria-selected', 'true'); }
+  }
+
+  function stop()  { clearInterval(timer); timer = null; }
+  function start() {
+    stop();
+    if (reduced) return;
+    timer = setInterval(function () { goTo(current + 1); }, delay);
+  }
+
+  dots.forEach(function (dot) {
+    dot.addEventListener('click', function () {
+      var idx = Number(dot.getAttribute('data-lux-hero-dot'));
+      if (!Number.isNaN(idx)) { goTo(idx); start(); }
+    });
+  });
+
+  carousel.addEventListener('mouseenter', stop);
+  carousel.addEventListener('mouseleave', start);
+
+  start();
+
+  document.addEventListener('shopify:section:unload', function (e) {
+    if (e.detail && e.detail.sectionId === '{{ section.id }}') stop();
+  });
+})();
+</script>
+
+{% schema %}
+{
+  "name": "Luxury Hero",
+  "tag": "section",
+  "class": "luxury-hero-section",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Headline"
+    },
+    {
+      "type": "text",
+      "id": "badge_text",
+      "label": "Eyebrow badge",
+      "default": "NEW 2026 COLLECTION"
+    },
+    {
+      "type": "text",
+      "id": "heading_line_1",
+      "label": "Heading — line 1",
+      "default": "Custom Premium"
+    },
+    {
+      "type": "text",
+      "id": "heading_gold",
+      "label": "Heading — gold italic word",
+      "default": "Nameplates"
+    },
+    {
+      "type": "text",
+      "id": "heading_line_2",
+      "label": "Heading — line 2",
+      "default": "for Homes & Offices"
+    },
+    {
+      "type": "textarea",
+      "id": "subtext",
+      "label": "Subtext",
+      "default": "Crafted to elevate your entrance with premium finishes and personalized elegance."
+    },
+    {
+      "type": "header",
+      "content": "Buttons"
+    },
+    {
+      "type": "text",
+      "id": "cta_text",
+      "label": "Primary button text",
+      "default": "Customize Your Nameplate"
+    },
+    {
+      "type": "url",
+      "id": "cta_link",
+      "label": "Primary button link"
+    },
+    {
+      "type": "text",
+      "id": "cta2_text",
+      "label": "Secondary button text",
+      "default": "View Designs"
+    },
+    {
+      "type": "url",
+      "id": "cta2_link",
+      "label": "Secondary button link"
+    },
+    {
+      "type": "text",
+      "id": "stat_1_number",
+      "label": "Stat 1 number",
+      "default": "5000+"
+    },
+    {
+      "type": "text",
+      "id": "stat_1_label",
+      "label": "Stat 1 label",
+      "default": "Happy Customers"
+    },
+    {
+      "type": "text",
+      "id": "stat_2_number",
+      "label": "Stat 2 number",
+      "default": "12+"
+    },
+    {
+      "type": "text",
+      "id": "stat_2_label",
+      "label": "Stat 2 label",
+      "default": "Years of Craftsmanship"
+    },
+    {
+      "type": "text",
+      "id": "stat_3_number",
+      "label": "Stat 3 number",
+      "default": "100%"
+    },
+    {
+      "type": "text",
+      "id": "stat_3_label",
+      "label": "Stat 3 label",
+      "default": "Handmade"
+    },
+    {
+      "type": "header",
+      "content": "Carousel Images"
+    },
+    {
+      "type": "image_picker",
+      "id": "hero_image",
+      "label": "Image 1"
+    },
+    {
+      "type": "image_picker",
+      "id": "hero_image_2",
+      "label": "Image 2"
+    },
+    {
+      "type": "image_picker",
+      "id": "hero_image_3",
+      "label": "Image 3"
+    },
+    {
+      "type": "image_picker",
+      "id": "hero_image_4",
+      "label": "Image 4"
+    },
+    {
+      "type": "header",
+      "content": "Image Labels"
+    },
+    {
+      "type": "text",
+      "id": "float_label",
+      "label": "Floating top label",
+      "default": "Handcrafted"
+    },
+    {
+      "type": "text",
+      "id": "edition_text",
+      "label": "Edition badge title",
+      "default": "Limited Royal Edition"
+    },
+    {
+      "type": "text",
+      "id": "edition_sub",
+      "label": "Edition badge subtitle",
+      "default": "Exclusive Collection"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Luxury Hero"
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,329 @@
+{{ 'luxury-theme.css' | asset_url | stylesheet_tag }}
+
+{%- style -%}
+  /* Section spacing only. Visual system is controlled by luxury-theme.css */
+  .section-{{ section.id }}-padding {
+    padding-top: {{ section.settings.padding_top | times: 0.75 | round: 0 }}px;
+    padding-bottom: {{ section.settings.padding_bottom | times: 0.75 | round: 0 }}px;
+  }
+
+  @media screen and (min-width: 750px) {
+    .section-{{ section.id }}-padding {
+      padding-top: {{ section.settings.padding_top }}px;
+      padding-bottom: {{ section.settings.padding_bottom }}px;
+    }
+  }
+{%- endstyle -%}
+
+<section class="dn-testimonials dn-testimonials--{{ section.id }} lux-home-section lux-home-section--slider section-{{ section.id }}-padding">
+  <div class="page-width">
+    {%- if section.settings.heading != blank or section.settings.subheading != blank -%}
+      <header class="dn-testimonials__header" data-lux-reveal>
+        {%- if section.settings.heading != blank -%}
+          <h2 class="dn-testimonials__title">{{ section.settings.heading }}</h2>
+        {%- endif -%}
+        {%- if section.settings.subheading != blank -%}
+          <p class="dn-testimonials__subtitle">{{ section.settings.subheading }}</p>
+        {%- endif -%}
+      </header>
+    {%- endif -%}
+
+    <div class="dn-testimonials__viewport">
+      <div class="dn-testimonials__track" data-dn-track>
+        {%- for block in section.blocks -%}
+          <div class="dn-testimonials__slide" {{ block.shopify_attributes }}>
+            <article class="dn-testimonials__card" data-lux-reveal>
+              <div class="dn-testimonials__stars" aria-label="{{ block.settings.rating }} out of 5 stars">
+                {%- for i in (1..5) -%}
+                  <svg class="dn-testimonials__star{% if i <= block.settings.rating %} is-active{% endif %}" viewBox="0 0 24 24" aria-hidden="true">
+                    <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+                  </svg>
+                {%- endfor -%}
+              </div>
+
+              {%- if block.settings.quote != blank -%}
+                <p class="dn-testimonials__quote">"{{ block.settings.quote }}"</p>
+              {%- endif -%}
+
+              <div class="dn-testimonials__author">
+                <div class="dn-testimonials__avatar">
+                  {%- if block.settings.image != blank -%}
+                    {{
+                      block.settings.image
+                      | image_url: width: 200
+                      | image_tag: loading: 'lazy', widths: '80, 120, 160, 200'
+                    }}
+                  {%- else -%}
+                    {{ 'image' | placeholder_svg_tag: 'dn-testimonials__avatar-placeholder' }}
+                  {%- endif -%}
+                </div>
+                <div>
+                  {%- if block.settings.name != blank -%}
+                    <p class="dn-testimonials__author-name">{{ block.settings.name }}</p>
+                  {%- endif -%}
+                  {%- if block.settings.city != blank -%}
+                    <p class="dn-testimonials__author-city">{{ block.settings.city }}</p>
+                  {%- endif -%}
+                </div>
+              </div>
+            </article>
+          </div>
+        {%- endfor -%}
+      </div>
+    </div>
+
+    {%- if section.blocks.size > 1 -%}
+      <div class="dn-testimonials__controls" data-lux-reveal>
+        <button type="button" class="button button--secondary dn-testimonials__nav" data-dn-prev>
+          Previous
+        </button>
+        <div class="dn-testimonials__dots">
+          {%- for block in section.blocks -%}
+            <button
+              type="button"
+              class="dn-testimonials__dot{% if forloop.first %} is-active{% endif %}"
+              data-dn-dot="{{ forloop.index0 }}"
+              aria-label="Go to testimonial {{ forloop.index }}"
+              {% if forloop.first %}
+                aria-current="true"
+              {% endif %}
+            ></button>
+          {%- endfor -%}
+        </div>
+        <button type="button" class="button button--secondary dn-testimonials__nav" data-dn-next>
+          Next
+        </button>
+      </div>
+    {%- endif -%}
+  </div>
+</section>
+
+<script>
+  (function () {
+    var section = document.querySelector('.dn-testimonials--{{ section.id }}');
+    if (!section || section.dataset.dnSliderInit === 'true') {
+      return;
+    }
+    section.dataset.dnSliderInit = 'true';
+
+    var track = section.querySelector('[data-dn-track]');
+    if (!track) {
+      return;
+    }
+
+    var slides = Array.prototype.slice.call(track.children);
+    if (slides.length <= 1) {
+      return;
+    }
+
+    var prevButton = section.querySelector('[data-dn-prev]');
+    var nextButton = section.querySelector('[data-dn-next]');
+    var dots = Array.prototype.slice.call(section.querySelectorAll('[data-dn-dot]'));
+    var currentIndex = 0;
+    var autoplayTimer = null;
+    var autoplayEnabled = {{ section.settings.autoplay | json }};
+    var autoplayDelay = {{ section.settings.autoplay_seconds | times: 1000 }};
+
+    function updateSlider() {
+      track.style.transform = 'translate3d(-' + currentIndex * 100 + '%, 0, 0)';
+      dots.forEach(function (dot, index) {
+        var isActive = index === currentIndex;
+        dot.classList.toggle('is-active', isActive);
+        dot.setAttribute('aria-current', isActive ? 'true' : 'false');
+      });
+    }
+
+    function goTo(index) {
+      currentIndex = (index + slides.length) % slides.length;
+      updateSlider();
+    }
+
+    function stopAutoplay() {
+      if (autoplayTimer) {
+        clearInterval(autoplayTimer);
+        autoplayTimer = null;
+      }
+    }
+
+    function startAutoplay() {
+      if (!autoplayEnabled) {
+        return;
+      }
+      stopAutoplay();
+      autoplayTimer = setInterval(function () {
+        goTo(currentIndex + 1);
+      }, autoplayDelay);
+    }
+
+    if (prevButton) {
+      prevButton.addEventListener('click', function () {
+        goTo(currentIndex - 1);
+        startAutoplay();
+      });
+    }
+
+    if (nextButton) {
+      nextButton.addEventListener('click', function () {
+        goTo(currentIndex + 1);
+        startAutoplay();
+      });
+    }
+
+    dots.forEach(function (dot) {
+      dot.addEventListener('click', function () {
+        var dotIndex = Number(dot.getAttribute('data-dn-dot'));
+        if (Number.isNaN(dotIndex)) {
+          return;
+        }
+        goTo(dotIndex);
+        startAutoplay();
+      });
+    });
+
+    section.addEventListener('mouseenter', stopAutoplay);
+    section.addEventListener('mouseleave', startAutoplay);
+
+    updateSlider();
+    startAutoplay();
+
+    document.addEventListener('shopify:section:unload', function (event) {
+      if (event.detail && event.detail.sectionId === '{{ section.id }}') {
+        stopAutoplay();
+      }
+    });
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Custom Testimonials",
+  "tag": "section",
+  "class": "section",
+  "disabled_on": {
+    "groups": ["header", "footer"]
+  },
+  "settings": [
+    {
+      "type": "inline_richtext",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Client Testimonials"
+    },
+    {
+      "type": "textarea",
+      "id": "subheading",
+      "label": "Subheading",
+      "default": "Hear from customers who upgraded their entrances with us."
+    },
+    {
+      "type": "checkbox",
+      "id": "autoplay",
+      "label": "Enable autoplay",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "autoplay_seconds",
+      "min": 3,
+      "max": 10,
+      "step": 1,
+      "label": "Autoplay delay (seconds)",
+      "default": 5
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "label": "Top padding",
+      "default": 72
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "label": "Bottom padding",
+      "default": 72
+    }
+  ],
+  "blocks": [
+    {
+      "type": "testimonial",
+      "name": "Testimonial",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Customer image"
+        },
+        {
+          "type": "text",
+          "id": "name",
+          "label": "Name",
+          "default": "Aarav Sharma"
+        },
+        {
+          "type": "text",
+          "id": "city",
+          "label": "City",
+          "default": "Mumbai"
+        },
+        {
+          "type": "textarea",
+          "id": "quote",
+          "label": "Quote",
+          "default": "The craftsmanship is exceptional and the finish looks premium at our entrance."
+        },
+        {
+          "type": "range",
+          "id": "rating",
+          "label": "Star rating",
+          "min": 1,
+          "max": 5,
+          "step": 1,
+          "default": 5
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Custom Testimonials",
+      "blocks": [
+        {
+          "type": "testimonial",
+          "settings": {
+            "name": "Aarav Sharma",
+            "city": "Mumbai",
+            "quote": "The craftsmanship is exceptional and the finish looks premium at our entrance.",
+            "rating": 5
+          }
+        },
+        {
+          "type": "testimonial",
+          "settings": {
+            "name": "Naina Verma",
+            "city": "Delhi",
+            "quote": "Our custom nameplate was delivered quickly and looked exactly as approved.",
+            "rating": 5
+          }
+        },
+        {
+          "type": "testimonial",
+          "settings": {
+            "name": "Rohan Mehta",
+            "city": "Bengaluru",
+            "quote": "From design to delivery, the process felt premium and highly professional.",
+            "rating": 5
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

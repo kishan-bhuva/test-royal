@@ -1,0 +1,487 @@
+{{ 'section-contact-form.css' | asset_url | stylesheet_tag }}
+
+{%- style -%}
+  .section-{{ section.id }}-padding {
+    padding-top: {{ section.settings.padding_top | times: 0.75 | round: 0 }}px;
+    padding-bottom: {{ section.settings.padding_bottom | times: 0.75 | round: 0 }}px;
+  }
+
+  @media screen and (min-width: 750px) {
+    .section-{{ section.id }}-padding {
+      padding-top: {{ section.settings.padding_top }}px;
+      padding-bottom: {{ section.settings.padding_bottom }}px;
+    }
+  }
+{%- endstyle -%}
+
+<div class="color-{{ section.settings.color_scheme }} gradient">
+  <div class="lux-contact section-{{ section.id }}-padding">
+    <div class="page-width">
+      {%- comment -%} HEADER {%- endcomment -%}
+      <div class="lux-contact__header{% if settings.animations_reveal_on_scroll %} scroll-trigger animate--slide-in{% endif %}">
+        {%- if section.settings.heading != blank -%}
+          <h2 class="lux-contact__title">
+            {{ section.settings.heading }}
+          </h2>
+        {%- else -%}
+          <h2 class="lux-contact__title">Connect With Our Concierge</h2>
+        {%- endif -%}
+        <p class="lux-contact__subtitle">EXQUISITE SUPPORT FOR YOUR DISTINGUISHED REQUESTS</p>
+      </div>
+
+      {%- comment -%} TWO COLUMN LAYOUT {%- endcomment -%}
+      <div class="lux-contact__grid{% if settings.animations_reveal_on_scroll %} scroll-trigger animate--slide-in{% endif %}">
+
+        {%- comment -%} LEFT — Contact Info + Map {%- endcomment -%}
+        <div class="lux-contact__info">
+
+          {%- comment -%} Heritage Atelier — Address {%- endcomment -%}
+          <div class="lux-contact__info-item">
+            <div class="lux-contact__info-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+            </div>
+            <div class="lux-contact__info-text">
+              <h3 class="lux-contact__info-label">{{ section.settings.address_title }}</h3>
+              {%- if section.settings.address_line_1 != blank -%}<p>{{ section.settings.address_line_1 }}</p>{%- endif -%}
+              {%- if section.settings.address_line_2 != blank -%}<p>{{ section.settings.address_line_2 }}</p>{%- endif -%}
+              {%- if section.settings.address_city != blank -%}<p>{{ section.settings.address_city }}</p>{%- endif -%}
+            </div>
+          </div>
+
+          {%- comment -%} Private Line — Phone {%- endcomment -%}
+          <div class="lux-contact__info-item">
+            <div class="lux-contact__info-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
+            </div>
+            <div class="lux-contact__info-text">
+              <h3 class="lux-contact__info-label">{{ section.settings.phone_title }}</h3>
+              {%- if section.settings.phone_number != blank -%}<p>{{ section.settings.phone_number }}</p>{%- endif -%}
+              {%- if section.settings.phone_hours != blank -%}<p>{{ section.settings.phone_hours }}</p>{%- endif -%}
+            </div>
+          </div>
+
+          {%- comment -%} Direct Inquiry — Email {%- endcomment -%}
+          <div class="lux-contact__info-item">
+            <div class="lux-contact__info-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+            </div>
+            <div class="lux-contact__info-text">
+              <h3 class="lux-contact__info-label">{{ section.settings.email_title }}</h3>
+              {%- if section.settings.email_primary != blank -%}
+                <p><a href="mailto:{{ section.settings.email_primary }}">{{ section.settings.email_primary }}</a></p>
+              {%- endif -%}
+              {%- if section.settings.show_secondary_email and section.settings.email_secondary != blank -%}
+                <p><a href="mailto:{{ section.settings.email_secondary }}">{{ section.settings.email_secondary }}</a></p>
+              {%- endif -%}
+            </div>
+          </div>
+
+          {%- if section.settings.show_map and section.settings.map_embed_url != blank -%}
+          <div class="lux-contact__map">
+            <iframe
+              src="{{ section.settings.map_embed_url }}"
+              width="100%"
+              height="{{ section.settings.map_height }}"
+              style="border:0; border-radius: 16px;"
+              allowfullscreen=""
+              loading="lazy"
+              referrerpolicy="no-referrer-when-downgrade"
+              title="{{ section.settings.map_title | escape }}"
+            ></iframe>
+          </div>
+          {%- endif -%}
+        </div>
+
+        {%- comment -%} RIGHT — Inquiry Form (Glass Card) {%- endcomment -%}
+        <div class="lux-contact__form-card">
+          <div class="lux-contact__form-badge">{{ section.settings.badge_text }}</div>
+
+          {%- liquid
+            assign contact_form_class = 'lux-contact__form'
+            if settings.animations_reveal_on_scroll
+              assign contact_form_class = 'lux-contact__form scroll-trigger animate--slide-in'
+            endif
+          -%}
+
+          {%- form 'contact', id: 'ContactForm', class: contact_form_class -%}
+            {%- if form.posted_successfully? -%}
+              <h2 class="form-status form-status-list form__message lux-contact__success" tabindex="-1" autofocus>
+                {{- 'icon-success.svg' | inline_asset_content -}}
+                {{ 'templates.contact.form.post_success' | t }}
+              </h2>
+            {%- elsif form.errors -%}
+              <div class="form__message lux-contact__error">
+                <h2 class="form-status caption-large text-body" role="alert" tabindex="-1" autofocus>
+                  {{- 'icon-error.svg' | inline_asset_content -}}
+                  {{ 'templates.contact.form.error_heading' | t }}
+                </h2>
+              </div>
+              <ul class="form-status-list caption-large" role="list">
+                <li>
+                  <a href="#ContactForm-email" class="link">
+                    {{ form.errors.translated_fields.email | capitalize }}
+                    {{ form.errors.messages.email }}
+                  </a>
+                </li>
+              </ul>
+            {%- endif -%}
+
+            {%- comment -%} Row: Full Name + Email {%- endcomment -%}
+            <div class="lux-contact__form-row">
+              <div class="lux-contact__form-group">
+                <label class="lux-contact__form-label" for="ContactForm-name">{{ section.settings.label_name }}</label>
+                <input
+                  class="lux-contact__form-input"
+                  autocomplete="name"
+                  type="text"
+                  id="ContactForm-name"
+                  name="contact[{{ 'templates.contact.form.name' | t }}]"
+                  value="{% if form.name %}{{ form.name }}{% elsif customer %}{{ customer.name }}{% endif %}"
+                  placeholder="{{ section.settings.placeholder_name | escape }}"
+                >
+              </div>
+              <div class="lux-contact__form-group">
+                <label class="lux-contact__form-label" for="ContactForm-email">{{ section.settings.label_email }} <span class="lux-contact__required">*</span></label>
+                <input
+                  autocomplete="email"
+                  type="email"
+                  id="ContactForm-email"
+                  class="lux-contact__form-input"
+                  name="contact[email]"
+                  spellcheck="false"
+                  autocapitalize="off"
+                  value="{% if form.email %}{{ form.email }}{% elsif customer %}{{ customer.email }}{% endif %}"
+                  aria-required="true"
+                  {% if form.errors contains 'email' %}
+                    aria-invalid="true"
+                    aria-describedby="ContactForm-email-error"
+                  {% endif %}
+                  placeholder="{{ section.settings.placeholder_email | escape }}"
+                >
+                {%- if form.errors contains 'email' -%}
+                  <small class="lux-contact__field-error" id="ContactForm-email-error">
+                    <span class="visually-hidden">{{ 'accessibility.error' | t }}</span>
+                    <span class="form__message">
+                      <span class="svg-wrapper">
+                        {{- 'icon-error.svg' | inline_asset_content -}}
+                      </span>
+                      {{- form.errors.translated_fields.email | capitalize }}
+                      {{ form.errors.messages.email -}}
+                    </span>
+                  </small>
+                {%- endif -%}
+              </div>
+            </div>
+
+            {%- comment -%} Subject Dropdown {%- endcomment -%}
+            <div class="lux-contact__form-group">
+              <label class="lux-contact__form-label" for="ContactForm-subject">{{ section.settings.label_subject }}</label>
+              <div class="lux-contact__select-wrapper">
+                <select
+                  id="ContactForm-subject"
+                  class="lux-contact__form-select"
+                  name="contact[Subject]"
+                >
+                  {%- assign subject_options = section.settings.subject_options | split: ',' -%}
+                  {%- for opt in subject_options -%}
+                    {%- assign opt_trimmed = opt | strip -%}
+                    <option value="{{ opt_trimmed | escape }}">{{ opt_trimmed }}</option>
+                  {%- endfor -%}
+                </select>
+                <span class="lux-contact__select-arrow">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                </span>
+              </div>
+            </div>
+
+            {%- comment -%} Message {%- endcomment -%}
+            <div class="lux-contact__form-group">
+              <label class="lux-contact__form-label" for="ContactForm-body">{{ section.settings.label_message }}</label>
+              <textarea
+                rows="6"
+                id="ContactForm-body"
+                class="lux-contact__form-textarea"
+                name="contact[{{ 'templates.contact.form.comment' | t }}]"
+                placeholder="{{ section.settings.placeholder_message | escape }}"
+              >{{- form.body -}}</textarea>
+            </div>
+
+            {%- comment -%} Submit {%- endcomment -%}
+            <div class="lux-contact__form-submit">
+              <button type="submit" class="lux-contact__btn">
+                {{ section.settings.button_label }}
+              </button>
+            </div>
+
+            {%- if section.settings.footer_link_label != blank -%}
+            <p class="lux-contact__form-footer">
+              <a href="{{ section.settings.footer_link_url | default: '/pages/faq' }}" class="lux-contact__form-footer-link">{{ section.settings.footer_link_label }}</a>
+            </p>
+            {%- endif -%}
+          {%- endform -%}
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "t:sections.contact-form.name",
+  "tag": "section",
+  "class": "section",
+  "disabled_on": {
+    "groups": ["header", "footer"]
+  },
+  "settings": [
+    {
+      "type": "inline_richtext",
+      "id": "heading",
+      "default": "t:sections.contact-form.settings.title.default",
+      "label": "t:sections.contact-form.settings.title.label"
+    },
+    {
+      "type": "select",
+      "id": "heading_size",
+      "options": [
+        {
+          "value": "h2",
+          "label": "t:sections.all.heading_size.options__1.label"
+        },
+        {
+          "value": "h1",
+          "label": "t:sections.all.heading_size.options__2.label"
+        },
+        {
+          "value": "h0",
+          "label": "t:sections.all.heading_size.options__3.label"
+        },
+        {
+          "value": "hxl",
+          "label": "t:sections.all.heading_size.options__4.label"
+        },
+        {
+          "value": "hxxl",
+          "label": "t:sections.all.heading_size.options__5.label"
+        }
+      ],
+      "default": "h1",
+      "label": "t:sections.all.heading_size.label"
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "t:sections.all.colors.label",
+      "default": "scheme-1"
+    },
+    {
+      "type": "text",
+      "id": "badge_text",
+      "label": "Badge text",
+      "default": "SEND AN INQUIRY"
+    },
+    {
+      "type": "header",
+      "content": "Contact info"
+    },
+    {
+      "type": "text",
+      "id": "address_title",
+      "label": "Address title",
+      "default": "Heritage Atelier"
+    },
+    {
+      "type": "text",
+      "id": "address_line_1",
+      "label": "Address line 1",
+      "default": "7th Floor, Royal Towers, MG Road"
+    },
+    {
+      "type": "text",
+      "id": "address_line_2",
+      "label": "Address line 2",
+      "default": "Indiranagar, Bangalore, KA 560038"
+    },
+    {
+      "type": "text",
+      "id": "address_city",
+      "label": "City / Region",
+      "default": "India"
+    },
+    {
+      "type": "text",
+      "id": "address_country",
+      "label": "Country",
+      "default": "India"
+    },
+    {
+      "type": "text",
+      "id": "phone_title",
+      "label": "Phone title",
+      "default": "Private Line"
+    },
+    {
+      "type": "text",
+      "id": "phone_number",
+      "label": "Phone number",
+      "default": "+91 1800-ROYAL-GIFTS"
+    },
+    {
+      "type": "text",
+      "id": "phone_hours",
+      "label": "Hours",
+      "default": "Mon - Sat: 10:00 AM - 07:00 PM IST"
+    },
+    {
+      "type": "text",
+      "id": "email_title",
+      "label": "Email title",
+      "default": "Direct Inquiry"
+    },
+    {
+      "type": "text",
+      "id": "email_primary",
+      "label": "Primary email",
+      "default": "concierge@royalgifts.com"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_secondary_email",
+      "label": "Show secondary email",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "email_secondary",
+      "label": "Secondary email",
+      "default": "corporate@royalgifts.com"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_map",
+      "label": "Show map",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "map_embed_url",
+      "label": "Map embed URL",
+      "default": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3888.016!2d77.6408!3d12.9716!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMTLCsDU4JzE3LjgiTiA3N8KwMzgnMjcuMCJF!5e0!3m2!1sen!2sin!4v1"
+    },
+    {
+      "type": "range",
+      "id": "map_height",
+      "label": "Map height (px)",
+      "min": 120,
+      "max": 420,
+      "step": 10,
+      "default": 220
+    },
+    {
+      "type": "text",
+      "id": "map_title",
+      "label": "Map title attribute",
+      "default": "RoyalGifts Heritage Atelier Location"
+    },
+    {
+      "type": "header",
+      "content": "Form labels & options"
+    },
+    {
+      "type": "text",
+      "id": "label_name",
+      "label": "Name label",
+      "default": "FULL NAME"
+    },
+    {
+      "type": "text",
+      "id": "placeholder_name",
+      "label": "Name placeholder",
+      "default": "E.g. Alexander Knight"
+    },
+    {
+      "type": "text",
+      "id": "label_email",
+      "label": "Email label",
+      "default": "EMAIL ADDRESS"
+    },
+    {
+      "type": "text",
+      "id": "placeholder_email",
+      "label": "Email placeholder",
+      "default": "knight@example.com"
+    },
+    {
+      "type": "text",
+      "id": "label_subject",
+      "label": "Subject label",
+      "default": "SUBJECT OF INQUIRY"
+    },
+    {
+      "type": "textarea",
+      "id": "subject_options",
+      "label": "Subject options (comma separated)",
+      "default": "Custom Home Nameplate,Corporate Gifting,Bulk Order Inquiry,Product Customization,Order Status,Returns & Exchange,General Inquiry"
+    },
+    {
+      "type": "text",
+      "id": "label_message",
+      "label": "Message label",
+      "default": "YOUR MESSAGE"
+    },
+    {
+      "type": "text",
+      "id": "placeholder_message",
+      "label": "Message placeholder",
+      "default": "Describe your vision or requirements..."
+    },
+    {
+      "type": "text",
+      "id": "button_label",
+      "label": "Submit button label",
+      "default": "SUBMIT REQUEST"
+    },
+    {
+      "type": "text",
+      "id": "footer_link_label",
+      "label": "Footer link label",
+      "default": "Visit our Help Center for Instant FAQ"
+    },
+    {
+      "type": "url",
+      "id": "footer_link_url",
+      "label": "Footer link URL"
+    },
+    {
+      "type": "header",
+      "content": "t:sections.all.padding.section_padding_heading"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "t:sections.all.padding.padding_top",
+      "default": 36
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "t:sections.all.padding.padding_bottom",
+      "default": 36
+    }
+  ],
+  "presets": [
+    {
+      "name": "t:sections.contact-form.presets.name"
+    }
+  ]
+}
+{% endschema %}

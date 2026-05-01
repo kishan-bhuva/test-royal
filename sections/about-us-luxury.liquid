@@ -1,0 +1,977 @@
+{%- liquid
+  assign hero_label        = section.settings.hero_label | default: 'ROYAL GIFTS & NAMEPLATES'
+  assign hero_heading      = section.settings.hero_heading | default: 'Crafted to Give Every Home a Royal Identity'
+  assign hero_text         = section.settings.hero_text | default: 'At Royal Gifts & Nameplates, we believe every home deserves a name as distinguished as the people who live in it. We craft premium metal nameplates and personalized gifts — combining artisan precision with timeless design.'
+  assign hero_button_label = section.settings.hero_button_label | default: 'Explore Our Collection'
+  assign hero_button_link  = section.settings.hero_button_link | default: routes.all_products_collection_url
+  assign hero_bg_image     = section.settings.hero_bg_image
+
+  assign story_heading         = section.settings.story_heading | default: 'Our Story'
+  assign story_text            = section.settings.story_text | default: 'Royal Gifts was founded with a simple vision — to create personalized products that combine craftsmanship, design, and meaning. Born from a passion for fine metal art, every piece we create carries the mark of our artisans and the story of the home it belongs to.'
+  assign story_text_secondary  = section.settings.story_text_secondary | default: 'From raw stainless steel to a finished nameplate on your doorstep — every step is guided by our commitment to precision, premium materials, and timeless design. We believe your home deserves a name as distinguished as yours.'
+  assign story_image           = section.settings.story_image
+  assign story_image_alt       = story_image.alt | default: shop.name | escape
+
+  assign standard_heading   = section.settings.standard_heading | default: 'Built to the Royal Standard'
+  assign standard_text      = section.settings.standard_text | default: 'Every nameplate we craft is engineered to endure. Premium-grade stainless steel resists weathering, corrosion, and the test of time — so your home always makes a strong first impression, season after season. From the weight of the metal to the precision of the lettering, every detail is held to the highest standard.'
+  assign standard_image     = section.settings.standard_image
+  assign standard_image_alt = standard_image.alt | default: shop.name | escape
+
+  assign trust_heading = section.settings.trust_heading | default: 'A Brand You Can Trust'
+
+  assign cta_heading      = section.settings.cta_heading | default: 'Make Your Home Truly Yours'
+  assign cta_text         = section.settings.cta_text | default: 'Discover beautifully crafted nameplates and personalized gifts — designed to impress, built to last.'
+  assign cta_button_label = section.settings.cta_button_label | default: 'Explore Nameplates'
+  assign cta_button_link  = section.settings.cta_button_link | default: routes.all_products_collection_url
+-%}
+
+{% style %}
+  /* ─── CSS tokens ─────────────────────────────────────────── */
+  .rg-about-luxury {
+    --rg-gold:    #C6A13A;
+    --rg-gold-lt: #e8cc7a;
+    --rg-gold-dk: #8a6b18;
+    --rg-line:    rgba(198, 161, 58, 0.2);
+    --rg-surface: rgba(255, 255, 255, 0.04);
+    --rg-text:    #f5f4ef;
+    --rg-muted:   rgba(245, 244, 239, 0.75);
+    --rg-subtle:  rgba(245, 244, 239, 0.45);
+    --rg-shadow:  0 2.4rem 5rem rgba(0, 0, 0, 0.5);
+    --rg-fh:      var(--lux-font-heading, 'Playfair Display', Georgia, serif);
+    --rg-fb:      var(--lux-font-body, 'Inter', system-ui, sans-serif);
+    background: linear-gradient(160deg, #0d0d0d 0%, #070707 100%);
+    color: var(--rg-text);
+    overflow: hidden;
+  }
+
+  .rg-about-luxury *,
+  .rg-about-luxury *::before,
+  .rg-about-luxury *::after { box-sizing: border-box; }
+
+  .rg-about-luxury .page-width { max-width: 128rem; }
+
+  /* ─── Scroll-reveal system ───────────────────────────────── */
+  .rg-rv {
+    opacity: 0;
+    transform: translateY(2.8rem);
+    transition:
+      opacity  0.9s cubic-bezier(0.16, 1, 0.3, 1) var(--rv-d, 0s),
+      transform 0.9s cubic-bezier(0.16, 1, 0.3, 1) var(--rv-d, 0s);
+  }
+  .rg-rv.rg-rv--in { opacity: 1; transform: translateY(0); }
+
+  /* ─── Shared typography ──────────────────────────────────── */
+  .rg-about__eyebrow,
+  .rg-about__label,
+  .rg-about__step-number {
+    margin: 0 0 1.6rem;
+    font: 600 1.2rem/1.4 var(--rg-fb);
+    letter-spacing: 0.32rem;
+    text-transform: uppercase;
+    color: var(--rg-gold);
+  }
+
+  .rg-about__label--center { display: block; text-align: center; }
+
+  .rg-about__title,
+  .rg-about__section-title,
+  .rg-about__card-title,
+  .rg-about__step-title,
+  .rg-about__cta-title,
+  .rg-about__stat-number,
+  .rg-about__placeholder-title {
+    margin: 0;
+    font-family: var(--rg-fh);
+    letter-spacing: 0.02em;
+    color: var(--rg-text);
+  }
+
+  .rg-about__lead,
+  .rg-about__text,
+  .rg-about__card-text,
+  .rg-about__step-text,
+  .rg-about__section-copy,
+  .rg-about__cta-copy,
+  .rg-about__trust-label,
+  .rg-about__stat-label,
+  .rg-about__placeholder-copy {
+    margin: 0;
+    font-family: var(--rg-fb);
+    color: var(--rg-muted);
+  }
+
+  /* ─── Shared buttons ─────────────────────────────────────── */
+  .rg-about__btn,
+  .rg-about__btn--dark {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 5.4rem;
+    padding: 1.4rem 3.2rem;
+    border-radius: 999px;
+    border: 0.1rem solid transparent;
+    text-decoration: none;
+    font: 600 1.3rem/1 var(--rg-fb);
+    letter-spacing: 0.22rem;
+    text-transform: uppercase;
+    transition: transform 0.35s ease, box-shadow 0.35s ease, background 0.35s ease, color 0.35s ease;
+  }
+
+  .rg-about__btn {
+    margin-top: 3.2rem;
+    background: linear-gradient(135deg, var(--rg-gold-lt) 0%, var(--rg-gold) 52%, var(--rg-gold-dk) 100%);
+    color: #0b0b0b;
+    box-shadow: 0 1.6rem 3.6rem rgba(198, 161, 58, 0.22);
+  }
+  .rg-about__btn:hover,
+  .rg-about__btn:focus-visible { transform: translateY(-0.3rem); box-shadow: 0 2rem 4rem rgba(198, 161, 58, 0.32); }
+  .rg-about__btn:focus-visible,
+  .rg-about__btn--dark:focus-visible { outline: 0.2rem solid rgba(255,255,255,0.8); outline-offset: 0.3rem; }
+
+  /* ─── SECTION 1: HERO ────────────────────────────────────── */
+  .rg-about__hero {
+    position: relative;
+    min-height: 92vh;
+    display: flex;
+    align-items: center;
+    padding: clamp(12rem, 18vw, 20rem) 0 clamp(8rem, 12vw, 14rem);
+    overflow: hidden;
+    background:
+      radial-gradient(circle at 14% 22%, rgba(198,161,58,0.12), transparent 30%),
+      radial-gradient(circle at 86% 8%,  rgba(198,161,58,0.07), transparent 22%),
+      linear-gradient(160deg, #0d0d0d 0%, #050505 100%);
+  }
+
+  .rg-about__hero-bg {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+  }
+  .rg-about__hero-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+  }
+  .rg-about__hero-overlay {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    background: linear-gradient(to bottom, rgba(5,5,5,0.62) 0%, rgba(5,5,5,0.48) 45%, rgba(5,5,5,0.82) 100%);
+  }
+  .rg-about__hero > .page-width {
+    position: relative;
+    z-index: 2;
+    width: 100%;
+  }
+  .rg-about__hero-inner {
+    max-width: 82rem;
+    margin: 0 auto;
+    text-align: center;
+  }
+
+  .rg-about__title {
+    max-width: 78rem;
+    margin-inline: auto;
+    font-size: clamp(4rem, 6.5vw, 7.4rem);
+    line-height: 1.04;
+  }
+  .rg-about__lead {
+    max-width: 66rem;
+    margin: 2.4rem auto 0;
+    font-size: 1.75rem;
+    line-height: 1.8;
+  }
+
+  /* Hero items animate on page load */
+  .rg-about__hero-inner > * {
+    opacity: 0;
+    transform: translateY(2rem);
+    animation: rg-hero-in 0.9s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  }
+  .rg-about__hero-inner > *:nth-child(1) { animation-delay: 0.08s; }
+  .rg-about__hero-inner > *:nth-child(2) { animation-delay: 0.24s; }
+  .rg-about__hero-inner > *:nth-child(3) { animation-delay: 0.40s; }
+  .rg-about__hero-inner > *:nth-child(4) { animation-delay: 0.54s; }
+
+  @keyframes rg-hero-in {
+    from { opacity: 0; transform: translateY(2rem); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ─── Section spacing ────────────────────────────────────── */
+  .rg-about__story,
+  .rg-about__standard,
+  .rg-about__values,
+  .rg-about__process,
+  .rg-about__cta { padding-bottom: clamp(6rem, 9vw, 10rem); }
+
+  /* ─── Split grids (story + standard) ────────────────────── */
+  .rg-about__story-grid,
+  .rg-about__standard-grid {
+    display: grid;
+    gap: clamp(3rem, 5.5vw, 7.5rem);
+    align-items: center;
+  }
+  .rg-about__story-grid    { grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.05fr); }
+  .rg-about__standard-grid { grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr); }
+
+  .rg-about__section-title       { font-size: clamp(3rem, 4.3vw, 4.8rem); line-height: 1.1; }
+  .rg-about__section-title--center,
+  .rg-about__section-copy        { text-align: center; }
+  .rg-about__section-copy        { max-width: 66rem; margin: 2rem auto 0; font-size: 1.65rem; line-height: 1.75; }
+  .rg-about__story-copy          { display: grid; gap: 1.8rem; margin-top: 2.2rem; }
+  .rg-about__text                { font-size: 1.65rem; line-height: 1.82; }
+
+  /* ─── Media frame ────────────────────────────────────────── */
+  .rg-about__media {
+    position: relative;
+    min-height: 52rem;
+    aspect-ratio: 4 / 5;
+    border-radius: 2.8rem;
+    overflow: hidden;
+    background: linear-gradient(150deg, rgba(198,161,58,0.16), rgba(198,161,58,0.02)), rgba(5,12,10,0.92);
+    border: 0.1rem solid rgba(255,255,255,0.07);
+    box-shadow: var(--rg-shadow);
+  }
+  .rg-about__media::after {
+    content: '';
+    position: absolute;
+    inset: 1.6rem;
+    border: 0.1rem solid rgba(198,161,58,0.2);
+    border-radius: 1.8rem;
+    pointer-events: none;
+    z-index: 1;
+  }
+  .rg-about__image {
+    width: 100%;
+    height: 100%;
+    min-height: 52rem;
+    display: block;
+    object-fit: cover;
+    transition: transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .rg-about__media:hover .rg-about__image { transform: scale(1.04); }
+  .rg-about__placeholder {
+    width: 100%;
+    height: 100%;
+    min-height: 52rem;
+    display: grid;
+    place-items: center;
+    padding: 4rem;
+    text-align: center;
+    background: radial-gradient(circle at 50% 16%, rgba(198,161,58,0.1), transparent 32%), linear-gradient(180deg, rgba(13,13,13,0.95), rgba(8,8,8,0.99));
+  }
+  .rg-about__placeholder-icon {
+    display: grid;
+    place-items: center;
+    width: 8rem;
+    height: 8rem;
+    margin: 0 auto 2rem;
+    border: 0.1rem solid var(--rg-line);
+    border-radius: 50%;
+    background: rgba(198,161,58,0.08);
+    color: var(--rg-gold);
+  }
+  .rg-about__placeholder-icon svg,
+  .rg-about__icon svg,
+  .rg-about__step-icon svg { width: 3.4rem; height: 3.4rem; }
+  .rg-about__placeholder-title { font-size: 2.4rem; line-height: 1.2; }
+  .rg-about__placeholder-copy { max-width: 32rem; margin: 1.2rem auto 0; font-size: 1.5rem; line-height: 1.7; color: var(--rg-subtle); }
+
+  /* Badge overlay on story image */
+  .rg-about__badge {
+    position: absolute;
+    left: 3rem; right: 3rem; bottom: 3rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.6rem;
+    padding: 1.6rem 1.8rem;
+    border: 0.1rem solid rgba(255,255,255,0.08);
+    border-radius: 1.8rem;
+    background: rgba(4,10,9,0.8);
+    backdrop-filter: blur(8px);
+    z-index: 2;
+  }
+  .rg-about__badge-title { font: 600 1.2rem/1.2 var(--rg-fb); letter-spacing: 0.24rem; text-transform: uppercase; color: var(--rg-gold); }
+  .rg-about__badge-copy  { font: 400 1.4rem/1.4 var(--rg-fb); color: var(--rg-muted); }
+
+  /* ─── SECTION 4: 4-col feature grid ─────────────────────── */
+  .rg-about__grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 2rem;
+    margin-top: 4.6rem;
+  }
+  .rg-about__card {
+    position: relative;
+    padding: 3rem 2.4rem;
+    border: 0.1rem solid var(--rg-line);
+    border-radius: 2.4rem;
+    background: linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.015)), var(--rg-surface);
+    box-shadow: var(--rg-shadow);
+    transition: transform 0.35s ease, border-color 0.35s ease, box-shadow 0.35s ease;
+  }
+  .rg-about__card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: linear-gradient(140deg, rgba(198,161,58,0.12), rgba(198,161,58,0));
+    opacity: 0;
+    transition: opacity 0.35s ease;
+    pointer-events: none;
+  }
+  .rg-about__card:hover,
+  .rg-about__card:focus-within {
+    transform: translateY(-0.8rem);
+    border-color: rgba(198,161,58,0.55);
+    box-shadow: 0 2.8rem 5.2rem rgba(0,0,0,0.44), 0 0 0 0.1rem rgba(198,161,58,0.14);
+  }
+  .rg-about__card:hover::before,
+  .rg-about__card:focus-within::before { opacity: 1; }
+
+  .rg-about__icon {
+    display: grid;
+    place-items: center;
+    width: 6.2rem;
+    height: 6.2rem;
+    border: 0.1rem solid var(--rg-line);
+    border-radius: 1.8rem;
+    background: rgba(198,161,58,0.08);
+    color: var(--rg-gold);
+  }
+  .rg-about__card-title { margin-top: 2rem; font-size: 2.2rem; line-height: 1.18; }
+  .rg-about__card-text  { margin-top: 1.4rem; font-size: 1.5rem; line-height: 1.75; }
+
+  /* ─── SECTION 5: Process timeline ───────────────────────── */
+  .rg-about__timeline {
+    position: relative;
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 2rem;
+    margin: 4.8rem 0 0;
+    padding: 0;
+    list-style: none;
+  }
+  .rg-about__timeline::before {
+    content: '';
+    position: absolute;
+    top: 3.1rem;
+    left: 12.5%;
+    right: 12.5%;
+    height: 0.1rem;
+    background: linear-gradient(90deg, rgba(198,161,58,0.08), rgba(198,161,58,0.55), rgba(198,161,58,0.08));
+  }
+  .rg-about__step { position: relative; padding: 0 0.8rem; text-align: center; }
+  .rg-about__step-icon {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    place-items: center;
+    width: 6.2rem;
+    height: 6.2rem;
+    margin: 0 auto 2rem;
+    border: 0.1rem solid rgba(198,161,58,0.42);
+    border-radius: 50%;
+    background: rgba(13,13,13,0.96);
+    color: var(--rg-gold);
+    box-shadow: 0 0 0 1rem rgba(7,7,7,0.9);
+    transition: transform 0.35s ease, box-shadow 0.35s ease, border-color 0.35s ease;
+  }
+  .rg-about__step:hover .rg-about__step-icon,
+  .rg-about__step:focus-within .rg-about__step-icon {
+    transform: translateY(-0.4rem);
+    border-color: rgba(198,161,58,0.68);
+    box-shadow: 0 0 0 1rem rgba(7,7,7,0.9), 0 0 2.6rem rgba(198,161,58,0.2);
+  }
+  .rg-about__step-number { margin-bottom: 0.8rem; font-size: 1.15rem; }
+  .rg-about__step-title  { font-size: 2.1rem; line-height: 1.2; }
+  .rg-about__step-text   { margin-top: 1.2rem; font-size: 1.5rem; line-height: 1.72; color: var(--rg-subtle); }
+
+  /* ─── SECTION 6: Brand trust ─────────────────────────────── */
+  .rg-about__trust {
+    padding: clamp(6rem, 9vw, 10rem) 0;
+    border-top:    0.1rem solid var(--rg-line);
+    border-bottom: 0.1rem solid var(--rg-line);
+    background: radial-gradient(circle at 50% 0%, rgba(198,161,58,0.06), transparent 40%);
+  }
+  .rg-about__trust-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 2.2rem;
+    margin-top: 4rem;
+  }
+  .rg-about__trust-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 1.4rem;
+    padding: 2.4rem;
+    border: 0.1rem solid var(--rg-line);
+    border-radius: 2rem;
+    background: var(--rg-surface);
+    transition: border-color 0.3s ease, background 0.3s ease;
+  }
+  .rg-about__trust-item:hover {
+    border-color: rgba(198,161,58,0.45);
+    background: rgba(198,161,58,0.05);
+  }
+  .rg-about__trust-check {
+    flex-shrink: 0;
+    display: grid;
+    place-items: center;
+    width: 4.6rem;
+    height: 4.6rem;
+    border: 0.1rem solid rgba(198,161,58,0.5);
+    border-radius: 50%;
+    background: rgba(198,161,58,0.1);
+    color: var(--rg-gold);
+  }
+  .rg-about__trust-check svg { width: 2.2rem; height: 2.2rem; }
+  .rg-about__trust-label {
+    font-size: 1.6rem;
+    line-height: 1.5;
+    padding-top: 0.9rem;
+    color: var(--rg-text);
+    font-weight: 500;
+  }
+
+  /* ─── SECTION 7: Brand stats ─────────────────────────────── */
+  .rg-about__stats {
+    padding: clamp(6rem, 9vw, 10rem) 0;
+    background: #0a0a0a;
+  }
+  .rg-about__stats-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 0;
+  }
+  .rg-about__stat {
+    padding: 4rem 2.4rem;
+    text-align: center;
+    border-right: 0.1rem solid var(--rg-line);
+  }
+  .rg-about__stat:last-child { border-right: none; }
+  .rg-about__stat-number {
+    font-size: clamp(4rem, 5.2vw, 6rem);
+    line-height: 1;
+    background: linear-gradient(135deg, var(--rg-gold-lt) 0%, var(--rg-gold) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .rg-about__stat-label {
+    margin-top: 1rem;
+    font-size: 1.4rem;
+    line-height: 1.4;
+    letter-spacing: 0.14rem;
+    text-transform: uppercase;
+    color: var(--rg-subtle);
+  }
+
+  /* ─── SECTION 8: CTA ─────────────────────────────────────── */
+  .rg-about__cta { padding: clamp(2rem, 4vw, 4rem) 0 clamp(7rem, 10vw, 11rem); }
+  .rg-about__cta-panel {
+    padding: clamp(4rem, 5.5vw, 6rem);
+    border-radius: 3.2rem;
+    background:
+      radial-gradient(circle at 18% 18%, rgba(255,255,255,0.24), rgba(255,255,255,0) 20%),
+      linear-gradient(135deg, var(--rg-gold-dk) 0%, var(--rg-gold) 36%, var(--rg-gold-lt) 64%, #a07820 100%);
+    box-shadow: 0 2rem 5rem rgba(0,0,0,0.3);
+    text-align: center;
+  }
+  .rg-about__cta-title {
+    font-size: clamp(3rem, 4.6vw, 5.2rem);
+    line-height: 1.06;
+    color: #061714;
+  }
+  .rg-about__cta-copy {
+    max-width: 58rem;
+    margin: 1.8rem auto 0;
+    font-size: 1.7rem;
+    line-height: 1.72;
+    color: rgba(6,23,20,0.88);
+  }
+  .rg-about__btn--dark {
+    margin-top: 3rem;
+    background: #0d0d0d;
+    color: var(--rg-gold-lt);
+    border-color: rgba(198,161,58,0.2);
+    box-shadow: 0 1.4rem 2.8rem rgba(0,0,0,0.36);
+  }
+  .rg-about__btn--dark:hover,
+  .rg-about__btn--dark:focus-visible {
+    background: #181818;
+    transform: translateY(-0.3rem);
+    box-shadow: 0 1.8rem 3.6rem rgba(0,0,0,0.3);
+  }
+
+  /* ─── Responsive: 1100px (2-col features) ───────────────── */
+  @media screen and (max-width: 1100px) {
+    .rg-about__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 2.2rem; }
+  }
+
+  /* ─── Responsive: 989px (tablet stack) ──────────────────── */
+  @media screen and (max-width: 989px) {
+    .rg-about__story-grid,
+    .rg-about__standard-grid { grid-template-columns: 1fr; }
+
+    .rg-about__standard-grid > *:first-child { order: 2; }
+    .rg-about__standard-grid > *:last-child  { order: 1; }
+
+    .rg-about__media,
+    .rg-about__image,
+    .rg-about__placeholder { min-height: 44rem; }
+
+    .rg-about__timeline { grid-template-columns: 1fr; gap: 3rem; }
+    .rg-about__timeline::before {
+      top: 0; bottom: 0;
+      left: 3.1rem; right: auto;
+      width: 0.1rem; height: auto;
+      background: linear-gradient(180deg, rgba(198,161,58,0.08), rgba(198,161,58,0.55), rgba(198,161,58,0.08));
+    }
+    .rg-about__step { padding: 0 0 0 8.6rem; text-align: left; }
+    .rg-about__step-icon { position: absolute; top: 0; left: 0; margin: 0; }
+
+    .rg-about__trust-grid  { grid-template-columns: 1fr 1fr; }
+    .rg-about__stats-grid  { grid-template-columns: 1fr 1fr; }
+    .rg-about__stat        { border-right: 0.1rem solid var(--rg-line); border-bottom: 0.1rem solid var(--rg-line); }
+    .rg-about__stat:nth-child(2n)      { border-right: none; }
+    .rg-about__stat:nth-last-child(-n+2) { border-bottom: none; }
+  }
+
+  /* ─── Responsive: 749px (mobile) ────────────────────────── */
+  @media screen and (max-width: 749px) {
+    .rg-about-luxury .page-width { padding-inline: 2rem; }
+    .rg-about__hero { min-height: 75vh; }
+    .rg-about__media,
+    .rg-about__card,
+    .rg-about__cta-panel { border-radius: 2rem; }
+    .rg-about__lead,
+    .rg-about__text,
+    .rg-about__card-text,
+    .rg-about__step-text,
+    .rg-about__section-copy,
+    .rg-about__cta-copy { font-size: 1.5rem; }
+    .rg-about__badge { left: 2rem; right: 2rem; bottom: 2rem; flex-direction: column; align-items: flex-start; }
+    .rg-about__grid { grid-template-columns: 1fr; }
+    .rg-about__trust-grid { grid-template-columns: 1fr; }
+    .rg-about__stats-grid { grid-template-columns: repeat(2, 1fr); }
+  }
+
+  /* ─── Reduced motion ─────────────────────────────────────── */
+  @media (prefers-reduced-motion: reduce) {
+    .rg-about__hero-inner > * { opacity: 1; transform: none; animation: none; }
+    .rg-rv { opacity: 1; transform: none; transition: none; }
+    .rg-about__btn,
+    .rg-about__btn--dark,
+    .rg-about__card,
+    .rg-about__step-icon,
+    .rg-about__image,
+    .rg-about__trust-item { transition: none; }
+  }
+{% endstyle %}
+
+<section class="rg-about-luxury rg-about-luxury--{{ section.id }}">
+
+  {%- comment -%} ── SECTION 1: HERO ─────────────────────────────────── {%- endcomment -%}
+  <header class="rg-about__hero">
+    {%- if hero_bg_image != blank -%}
+      <div class="rg-about__hero-bg" aria-hidden="true">
+        {{- hero_bg_image | image_url: width: 1920 | image_tag: loading: 'eager', fetchpriority: 'high', class: 'rg-about__hero-img', alt: '' -}}
+      </div>
+      <div class="rg-about__hero-overlay" aria-hidden="true"></div>
+    {%- endif -%}
+    <div class="page-width">
+      <div class="rg-about__hero-inner">
+        <p class="rg-about__eyebrow">{{ hero_label }}</p>
+        <h1 class="rg-about__title">{{ hero_heading }}</h1>
+        <p class="rg-about__lead">{{ hero_text }}</p>
+        {%- if hero_button_label != blank -%}
+          <a class="rg-about__btn" href="{{ hero_button_link }}">{{ hero_button_label }}</a>
+        {%- endif -%}
+      </div>
+    </div>
+  </header>
+
+  {%- comment -%} ── SECTION 2: OUR STORY ────────────────────────────── {%- endcomment -%}
+  <section class="rg-about__story" aria-labelledby="rg-story-{{ section.id }}">
+    <div class="page-width">
+      <div class="rg-about__story-grid">
+
+        <figure class="rg-about__media rg-rv" style="--rv-d:0.05s">
+          {%- if story_image != blank -%}
+            {{- story_image | image_url: width: 1200 | image_tag: class: 'rg-about__image', loading: 'lazy', alt: story_image_alt -}}
+          {%- else -%}
+            <div class="rg-about__placeholder" role="img" aria-label="Craftsmanship image placeholder">
+              <div>
+                <div class="rg-about__placeholder-icon" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4">
+                    <path d="M12 2 2 7l10 5 10-5-10-5Z"/><path d="m2 17 10 5 10-5"/><path d="m2 12 10 5 10-5"/>
+                  </svg>
+                </div>
+                <p class="rg-about__placeholder-title">Handcrafted with precision</p>
+                <p class="rg-about__placeholder-copy">Add your story image from the theme editor.</p>
+              </div>
+            </div>
+          {%- endif -%}
+          <figcaption class="rg-about__badge">
+            <span class="rg-about__badge-title">Crafted with precision</span>
+            <span class="rg-about__badge-copy">Luxury finishes for homes &amp; businesses</span>
+          </figcaption>
+        </figure>
+
+        <div class="rg-rv" style="--rv-d:0.22s">
+          <p class="rg-about__label">Signature craftsmanship</p>
+          <h2 class="rg-about__section-title" id="rg-story-{{ section.id }}">{{ story_heading }}</h2>
+          <div class="rg-about__story-copy">
+            <p class="rg-about__text">{{ story_text }}</p>
+            <p class="rg-about__text">{{ story_text_secondary }}</p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  {%- comment -%} ── SECTION 3: BUILT TO THE ROYAL STANDARD ──────────── {%- endcomment -%}
+  <section class="rg-about__standard" aria-labelledby="rg-standard-{{ section.id }}">
+    <div class="page-width">
+      <div class="rg-about__standard-grid">
+
+        <div class="rg-rv" style="--rv-d:0.05s">
+          <p class="rg-about__label">The Royal Standard</p>
+          <h2 class="rg-about__section-title" id="rg-standard-{{ section.id }}">{{ standard_heading }}</h2>
+          <div class="rg-about__story-copy">
+            <p class="rg-about__text">{{ standard_text }}</p>
+          </div>
+        </div>
+
+        <figure class="rg-about__media rg-rv" style="--rv-d:0.22s">
+          {%- if standard_image != blank -%}
+            {{- standard_image | image_url: width: 1200 | image_tag: class: 'rg-about__image', loading: 'lazy', alt: standard_image_alt -}}
+          {%- else -%}
+            <div class="rg-about__placeholder" role="img" aria-label="Royal Standard quality image placeholder">
+              <div>
+                <div class="rg-about__placeholder-icon" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4">
+                    <path d="M12 3 5 6v6c0 4.5 2.9 7.8 7 9 4.1-1.2 7-4.5 7-9V6l-7-3Z"/>
+                    <path d="m9.5 12 1.8 1.8L15 10"/>
+                  </svg>
+                </div>
+                <p class="rg-about__placeholder-title">Premium quality guaranteed</p>
+                <p class="rg-about__placeholder-copy">Add your product showcase image from the theme editor.</p>
+              </div>
+            </div>
+          {%- endif -%}
+        </figure>
+
+      </div>
+    </div>
+  </section>
+
+  {%- comment -%} ── SECTION 4: WHY CHOOSE ROYAL GIFTS (4-col) ──────── {%- endcomment -%}
+  <section class="rg-about__values" aria-labelledby="rg-values-{{ section.id }}">
+    <div class="page-width">
+      <p class="rg-about__label rg-about__label--center rg-rv">Royal standards</p>
+      <h2 class="rg-about__section-title rg-about__section-title--center rg-rv" style="--rv-d:0.12s" id="rg-values-{{ section.id }}">Why Choose Royal Gifts</h2>
+      <p class="rg-about__section-copy rg-rv" style="--rv-d:0.22s">Luxury personalization built on enduring materials, refined execution, and a design-first approach that sets your home apart.</p>
+
+      <div class="rg-about__grid">
+        {%- assign feat_i = 0 -%}
+        {%- for block in section.blocks -%}
+          {%- if block.type == 'value_card' -%}
+            {%- assign feat_i = feat_i | plus: 1 -%}
+            <article class="rg-about__card rg-rv" style="--rv-d: {{ feat_i | times: 0.1 }}s" {{ block.shopify_attributes }}>
+              <div class="rg-about__icon" aria-hidden="true">
+                {%- case block.settings.icon -%}
+                  {%- when 'craft' -%}
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 19 19 5"/><path d="m7 7-3-3"/><path d="m20 20-7-7"/><path d="M14 4h6v6"/></svg>
+                  {%- when 'materials' -%}
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 8 12 4l8 4-8 4-8-4Z"/><path d="M4 12l8 4 8-4"/><path d="M4 16l8 4 8-4"/></svg>
+                  {%- when 'custom' -%}
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 18 15.5 6.5a2.1 2.1 0 0 1 3 3L7 21H4v-3Z"/><path d="M13 9l2 2"/></svg>
+                  {%- when 'design' -%}
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.93 4.93l2.12 2.12M16.95 16.95l2.12 2.12M4.93 19.07l2.12-2.12M16.95 7.05l2.12-2.12"/></svg>
+                  {%- else -%}
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 3 5 6v6c0 4.5 2.9 7.8 7 9 4.1-1.2 7-4.5 7-9V6l-7-3Z"/><path d="m9.5 12 1.8 1.8L15 10"/></svg>
+                {%- endcase -%}
+              </div>
+              <h3 class="rg-about__card-title">{{ block.settings.title }}</h3>
+              <p class="rg-about__card-text">{{ block.settings.text }}</p>
+            </article>
+          {%- endif -%}
+        {%- endfor -%}
+      </div>
+    </div>
+  </section>
+
+  {%- comment -%} ── SECTION 5: THE MAKING OF A MASTERPIECE ──────────── {%- endcomment -%}
+  <section class="rg-about__process" aria-labelledby="rg-process-{{ section.id }}">
+    <div class="page-width">
+      <p class="rg-about__label rg-about__label--center rg-rv">Luxury workflow</p>
+      <h2 class="rg-about__section-title rg-about__section-title--center rg-rv" style="--rv-d:0.12s" id="rg-process-{{ section.id }}">The Making of a Masterpiece</h2>
+
+      <ol class="rg-about__timeline">
+        {%- assign step_i = 0 -%}
+        {%- for block in section.blocks -%}
+          {%- if block.type == 'process_step' -%}
+            {%- assign step_i = step_i | plus: 1 -%}
+            <li class="rg-about__step rg-rv" style="--rv-d: {{ step_i | times: 0.12 }}s" {{ block.shopify_attributes }}>
+              <div class="rg-about__step-icon" aria-hidden="true">
+                {%- case block.settings.icon -%}
+                  {%- when 'consultation' -%}
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 6h16v10H7l-3 3V6Z"/><path d="M8 10h8"/><path d="M8 13h5"/></svg>
+                  {%- when 'material' -%}
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 8 12 4l8 4-8 4-8-4Z"/><path d="M4 12l8 4 8-4"/><path d="M4 16l8 4 8-4"/></svg>
+                  {%- when 'crafting' -%}
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="m5 19 5.5-5.5"/><path d="m14 7 3-3 3 3-3 3-3-3Z"/><path d="m10.5 13.5 4-4"/><path d="M3 21h6"/></svg>
+                  {%- else -%}
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="m5 13 4 4L19 7"/><path d="M4 4h6"/><path d="M14 20h6"/></svg>
+                {%- endcase -%}
+              </div>
+              <p class="rg-about__step-number">Step {{ step_i }}</p>
+              <h3 class="rg-about__step-title">{{ block.settings.title }}</h3>
+              <p class="rg-about__step-text">{{ block.settings.text }}</p>
+            </li>
+          {%- endif -%}
+        {%- endfor -%}
+      </ol>
+    </div>
+  </section>
+
+  {%- comment -%} ── SECTION 6: BRAND TRUST ──────────────────────────── {%- endcomment -%}
+  <section class="rg-about__trust" aria-labelledby="rg-trust-{{ section.id }}">
+    <div class="page-width">
+      <p class="rg-about__label rg-about__label--center rg-rv">Why we stand out</p>
+      <h2 class="rg-about__section-title rg-about__section-title--center rg-rv" style="--rv-d:0.12s" id="rg-trust-{{ section.id }}">{{ trust_heading }}</h2>
+
+      <div class="rg-about__trust-grid">
+        {%- assign trust_items = section.settings.trust_1 | append: '|||' | append: section.settings.trust_2 | append: '|||' | append: section.settings.trust_3 | append: '|||' | append: section.settings.trust_4 -%}
+        {%- assign trust_split = trust_items | split: '|||' -%}
+        {%- for item in trust_split -%}
+          {%- unless item == blank -%}
+            <div class="rg-about__trust-item rg-rv" style="--rv-d: {{ forloop.index | times: 0.1 }}s">
+              <span class="rg-about__trust-check" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m5 13 4 4L19 7"/></svg>
+              </span>
+              <span class="rg-about__trust-label">{{ item }}</span>
+            </div>
+          {%- endunless -%}
+        {%- endfor -%}
+      </div>
+    </div>
+  </section>
+
+  {%- comment -%} ── SECTION 7: BRAND STATS ──────────────────────────── {%- endcomment -%}
+  <section class="rg-about__stats" aria-label="Brand statistics">
+    <div class="page-width">
+      <div class="rg-about__stats-grid">
+        <div class="rg-about__stat rg-rv" style="--rv-d:0.05s">
+          <p class="rg-about__stat-number" data-stat="{{ section.settings.stat_1_number }}">{{ section.settings.stat_1_number }}</p>
+          <p class="rg-about__stat-label">{{ section.settings.stat_1_label }}</p>
+        </div>
+        <div class="rg-about__stat rg-rv" style="--rv-d:0.15s">
+          <p class="rg-about__stat-number" data-stat="{{ section.settings.stat_2_number }}">{{ section.settings.stat_2_number }}</p>
+          <p class="rg-about__stat-label">{{ section.settings.stat_2_label }}</p>
+        </div>
+        <div class="rg-about__stat rg-rv" style="--rv-d:0.25s">
+          <p class="rg-about__stat-number" data-stat="{{ section.settings.stat_3_number }}">{{ section.settings.stat_3_number }}</p>
+          <p class="rg-about__stat-label">{{ section.settings.stat_3_label }}</p>
+        </div>
+        <div class="rg-about__stat rg-rv" style="--rv-d:0.35s">
+          <p class="rg-about__stat-number" data-stat="{{ section.settings.stat_4_number }}">{{ section.settings.stat_4_number }}</p>
+          <p class="rg-about__stat-label">{{ section.settings.stat_4_label }}</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  {%- comment -%} ── SECTION 8: CALL TO ACTION ────────────────────────── {%- endcomment -%}
+  <section class="rg-about__cta" aria-labelledby="rg-cta-{{ section.id }}">
+    <div class="page-width">
+      <div class="rg-about__cta-panel rg-rv">
+        <h2 class="rg-about__cta-title" id="rg-cta-{{ section.id }}">{{ cta_heading }}</h2>
+        <p class="rg-about__cta-copy">{{ cta_text }}</p>
+        {%- if cta_button_label != blank -%}
+          <a class="rg-about__btn--dark" href="{{ cta_button_link }}">{{ cta_button_label }}</a>
+        {%- endif -%}
+      </div>
+    </div>
+  </section>
+
+</section>
+
+<script>
+(function () {
+  'use strict';
+
+  var root = document.querySelector('.rg-about-luxury--{{ section.id }}');
+  if (!root) return;
+
+  /* ── Scroll reveal ── */
+  var allRv = root.querySelectorAll('.rg-rv');
+
+  if (!window.IntersectionObserver) {
+    allRv.forEach(function (el) { el.classList.add('rg-rv--in'); });
+    return;
+  }
+
+  var revealObs = new IntersectionObserver(function (entries) {
+    entries.forEach(function (entry) {
+      if (!entry.isIntersecting) return;
+      entry.target.classList.add('rg-rv--in');
+      revealObs.unobserve(entry.target);
+    });
+  }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+
+  allRv.forEach(function (el) { revealObs.observe(el); });
+
+  /* ── Stat counter animation ── */
+  function animateStat(el) {
+    var raw   = el.dataset.stat || el.textContent;
+    var match = raw.match(/^([0-9.]+)(.*)/);
+    if (!match) return;
+    var target    = parseFloat(match[1]);
+    var suffix    = match[2] || '';
+    var isDecimal = match[1].indexOf('.') !== -1;
+    var duration  = 2200;
+    var startTs   = null;
+
+    function tick(ts) {
+      if (!startTs) startTs = ts;
+      var progress = Math.min((ts - startTs) / duration, 1);
+      var eased    = 1 - Math.pow(1 - progress, 3);
+      var current  = eased * target;
+      el.textContent = (isDecimal ? current.toFixed(1) : Math.floor(current).toString()) + suffix;
+      if (progress < 1) requestAnimationFrame(tick);
+    }
+    requestAnimationFrame(tick);
+  }
+
+  var statObs = new IntersectionObserver(function (entries) {
+    entries.forEach(function (entry) {
+      if (!entry.isIntersecting) return;
+      animateStat(entry.target);
+      statObs.unobserve(entry.target);
+    });
+  }, { threshold: 0.5 });
+
+  root.querySelectorAll('.rg-about__stat-number[data-stat]').forEach(function (el) {
+    statObs.observe(el);
+  });
+}());
+</script>
+
+{% schema %}
+{
+  "name": "About Us Luxury",
+  "tag": "section",
+  "class": "section",
+  "disabled_on": { "groups": ["header", "footer"] },
+  "settings": [
+    { "type": "header", "content": "Hero" },
+    { "type": "image_picker", "id": "hero_bg_image", "label": "Background image" },
+    { "type": "text",     "id": "hero_label",        "label": "Eyebrow label",  "default": "ROYAL GIFTS & NAMEPLATES" },
+    { "type": "text",     "id": "hero_heading",       "label": "Heading",        "default": "Crafted to Give Every Home a Royal Identity" },
+    { "type": "textarea", "id": "hero_text",          "label": "Paragraph",      "default": "At Royal Gifts & Nameplates, we believe every home deserves a name as distinguished as the people who live in it. We craft premium metal nameplates and personalized gifts — combining artisan precision with timeless design." },
+    { "type": "text",     "id": "hero_button_label",  "label": "Button label",   "default": "Explore Our Collection" },
+    { "type": "url",      "id": "hero_button_link",   "label": "Button link" },
+
+    { "type": "header", "content": "Our Story" },
+    { "type": "image_picker", "id": "story_image",           "label": "Story image" },
+    { "type": "text",         "id": "story_heading",         "label": "Heading",      "default": "Our Story" },
+    { "type": "textarea",     "id": "story_text",            "label": "Paragraph 1",  "default": "Royal Gifts was founded with a simple vision — to create personalized products that combine craftsmanship, design, and meaning. Born from a passion for fine metal art, every piece we create carries the mark of our artisans and the story of the home it belongs to." },
+    { "type": "textarea",     "id": "story_text_secondary",  "label": "Paragraph 2",  "default": "From raw stainless steel to a finished nameplate on your doorstep — every step is guided by our commitment to precision, premium materials, and timeless design. We believe your home deserves a name as distinguished as yours." },
+
+    { "type": "header", "content": "Built to the Royal Standard" },
+    { "type": "text",         "id": "standard_heading",  "label": "Heading",     "default": "Built to the Royal Standard" },
+    { "type": "textarea",     "id": "standard_text",     "label": "Description", "default": "Every nameplate we craft is engineered to endure. Premium-grade stainless steel resists weathering, corrosion, and the test of time — so your home always makes a strong first impression, season after season. From the weight of the metal to the precision of the lettering, every detail is held to the highest standard." },
+    { "type": "image_picker", "id": "standard_image",   "label": "Image" },
+
+    { "type": "header", "content": "Brand Trust" },
+    { "type": "text", "id": "trust_heading", "label": "Heading",       "default": "A Brand You Can Trust" },
+    { "type": "text", "id": "trust_1",       "label": "Trust point 1", "default": "Weather Resistant Nameplates" },
+    { "type": "text", "id": "trust_2",       "label": "Trust point 2", "default": "Premium Stainless Steel" },
+    { "type": "text", "id": "trust_3",       "label": "Trust point 3", "default": "Handcrafted Finishing" },
+    { "type": "text", "id": "trust_4",       "label": "Trust point 4", "default": "Perfect for Modern Homes" },
+
+    { "type": "header", "content": "Brand Statistics" },
+    { "type": "text", "id": "stat_1_number", "label": "Stat 1 — number", "default": "5000+" },
+    { "type": "text", "id": "stat_1_label",  "label": "Stat 1 — label",  "default": "Happy Customers" },
+    { "type": "text", "id": "stat_2_number", "label": "Stat 2 — number", "default": "2000+" },
+    { "type": "text", "id": "stat_2_label",  "label": "Stat 2 — label",  "default": "Custom Nameplates" },
+    { "type": "text", "id": "stat_3_number", "label": "Stat 3 — number", "default": "100+" },
+    { "type": "text", "id": "stat_3_label",  "label": "Stat 3 — label",  "default": "Unique Designs" },
+    { "type": "text", "id": "stat_4_number", "label": "Stat 4 — number", "default": "4.8★" },
+    { "type": "text", "id": "stat_4_label",  "label": "Stat 4 — label",  "default": "Customer Rating" },
+
+    { "type": "header", "content": "Call to Action" },
+    { "type": "text",     "id": "cta_heading",      "label": "Heading",      "default": "Make Your Home Truly Yours" },
+    { "type": "textarea", "id": "cta_text",         "label": "Description",  "default": "Discover beautifully crafted nameplates and personalized gifts — designed to impress, built to last." },
+    { "type": "text",     "id": "cta_button_label", "label": "Button label", "default": "Explore Nameplates" },
+    { "type": "url",      "id": "cta_button_link",  "label": "Button link" }
+  ],
+  "blocks": [
+    {
+      "type": "value_card",
+      "name": "Feature card",
+      "limit": 4,
+      "settings": [
+        {
+          "type": "select",
+          "id": "icon",
+          "label": "Icon",
+          "options": [
+            { "value": "craft",      "label": "Craftsmanship" },
+            { "value": "materials",  "label": "Materials" },
+            { "value": "custom",     "label": "Customization" },
+            { "value": "design",     "label": "Design" },
+            { "value": "quality",    "label": "Quality" }
+          ],
+          "default": "craft"
+        },
+        { "type": "text",     "id": "title", "label": "Title", "default": "Premium Craftsmanship" },
+        { "type": "textarea", "id": "text",  "label": "Text",  "default": "Every product is carefully crafted with attention to detail." }
+      ]
+    },
+    {
+      "type": "process_step",
+      "name": "Process step",
+      "limit": 4,
+      "settings": [
+        {
+          "type": "select",
+          "id": "icon",
+          "label": "Icon",
+          "options": [
+            { "value": "consultation", "label": "Design concept" },
+            { "value": "material",     "label": "Precision cutting" },
+            { "value": "crafting",     "label": "Hand finishing" },
+            { "value": "finishing",    "label": "Quality inspection" }
+          ],
+          "default": "consultation"
+        },
+        { "type": "text",     "id": "title", "label": "Title", "default": "Design Concept" },
+        { "type": "textarea", "id": "text",  "label": "Text",  "default": "We work with you to design the perfect nameplate." }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "About Us Luxury",
+      "blocks": [
+        { "type": "value_card",   "settings": { "icon": "craft",     "title": "Premium Craftsmanship",    "text": "Every product is carefully handcrafted with artisan-level attention to detail." } },
+        { "type": "value_card",   "settings": { "icon": "materials", "title": "High Quality Materials",   "text": "We source only the finest stainless steel and premium metals for lasting elegance." } },
+        { "type": "value_card",   "settings": { "icon": "custom",    "title": "Custom Personalization",   "text": "Each piece is tailored to your exact specifications — truly one of a kind." } },
+        { "type": "value_card",   "settings": { "icon": "design",    "title": "Elegant Modern Designs",   "text": "Our designs blend timeless craftsmanship with contemporary aesthetics." } },
+        { "type": "process_step", "settings": { "icon": "consultation", "title": "Design Concept",       "text": "We align dimensions, typography, and finish details before production begins." } },
+        { "type": "process_step", "settings": { "icon": "material",     "title": "Precision Cutting",    "text": "Premium metals are laser-cut to exact specifications for a perfect finish." } },
+        { "type": "process_step", "settings": { "icon": "crafting",     "title": "Hand Finishing",       "text": "Each detail is polished and refined by skilled artisan hands." } },
+        { "type": "process_step", "settings": { "icon": "finishing",    "title": "Quality Inspection",   "text": "Every piece is inspected before packaging to ensure perfect quality." } }
+      ]
+    }
+  ]
+}
+{% endschema %}

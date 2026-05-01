@@ -1,0 +1,411 @@
+{%- if section.settings.enable_popup -%}
+<style>
+  .rg-popup-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.65);
+    backdrop-filter: blur(4px);
+    z-index: 9998;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.4s ease, visibility 0.4s ease;
+  }
+
+  .rg-popup-overlay.is-open {
+    opacity: 1;
+    visibility: visible;
+  }
+
+  .rg-popup {
+    position: relative;
+    background: {{ section.settings.bg_color }};
+    border: 1px solid rgba(212, 175, 55, 0.35);
+    border-radius: 20px;
+    max-width: 480px;
+    width: 100%;
+    padding: 44px 36px 36px;
+    text-align: center;
+    box-shadow: 0 24px 64px rgba(0, 0, 0, 0.6);
+    transform: translateY(24px) scale(0.97);
+    transition: transform 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+    overflow: hidden;
+  }
+
+  .rg-popup-overlay.is-open .rg-popup {
+    transform: translateY(0) scale(1);
+  }
+
+  .rg-popup__close {
+    position: absolute;
+    top: 14px;
+    right: 16px;
+    background: none;
+    border: none;
+    color: #8f9a92;
+    font-size: 22px;
+    line-height: 1;
+    cursor: pointer;
+    padding: 4px 8px;
+    transition: color 0.2s;
+  }
+
+  .rg-popup__close:hover {
+    color: #d4af37;
+  }
+
+  .rg-popup__badge {
+    display: inline-block;
+    background: linear-gradient(135deg, #d4af37, #f0d060);
+    color: #0f1512;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    padding: 5px 14px;
+    border-radius: 50px;
+    margin-bottom: 18px;
+  }
+
+  .rg-popup__heading {
+    color: #d4af37;
+    font-size: clamp(26px, 5vw, 34px);
+    font-weight: 800;
+    line-height: 1.15;
+    margin: 0 0 10px;
+    letter-spacing: -0.01em;
+  }
+
+  .rg-popup__subtext {
+    color: #c8d4ca;
+    font-size: 15px;
+    line-height: 1.6;
+    margin: 0 0 24px;
+  }
+
+  .rg-popup__code-wrap {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    background: rgba(212, 175, 55, 0.08);
+    border: 1px dashed rgba(212, 175, 55, 0.5);
+    border-radius: 10px;
+    padding: 14px 18px;
+    margin-bottom: 24px;
+  }
+
+  .rg-popup__code-label {
+    color: #8f9a92;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    display: block;
+    margin-bottom: 2px;
+  }
+
+  .rg-popup__code {
+    color: #d4af37;
+    font-size: 22px;
+    font-weight: 800;
+    letter-spacing: 0.1em;
+  }
+
+  .rg-popup__copy-btn {
+    background: none;
+    border: 1px solid rgba(212, 175, 55, 0.4);
+    border-radius: 6px;
+    color: #d4af37;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    padding: 6px 12px;
+    cursor: pointer;
+    transition: background 0.2s, color 0.2s;
+    white-space: nowrap;
+  }
+
+  .rg-popup__copy-btn:hover,
+  .rg-popup__copy-btn.copied {
+    background: #d4af37;
+    color: #0f1512;
+    border-color: #d4af37;
+  }
+
+  .rg-popup__cta {
+    display: block;
+    width: 100%;
+    background: linear-gradient(135deg, #d4af37, #b8932a);
+    color: #0f1512;
+    font-size: 15px;
+    font-weight: 800;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    padding: 15px 24px;
+    border-radius: 10px;
+    text-decoration: none;
+    margin-bottom: 14px;
+    transition: opacity 0.2s, transform 0.2s;
+  }
+
+  .rg-popup__cta:hover {
+    opacity: 0.9;
+    transform: translateY(-1px);
+  }
+
+  .rg-popup__dismiss {
+    background: none;
+    border: none;
+    color: #8f9a92;
+    font-size: 13px;
+    cursor: pointer;
+    padding: 4px;
+    text-decoration: underline;
+    transition: color 0.2s;
+  }
+
+  .rg-popup__dismiss:hover {
+    color: #c8d4ca;
+  }
+
+  .rg-popup__decor {
+    position: absolute;
+    top: -40px;
+    right: -40px;
+    width: 160px;
+    height: 160px;
+    background: radial-gradient(circle, rgba(212,175,55,0.12) 0%, transparent 70%);
+    border-radius: 50%;
+    pointer-events: none;
+  }
+
+  .rg-popup__decor-2 {
+    position: absolute;
+    bottom: -30px;
+    left: -30px;
+    width: 120px;
+    height: 120px;
+    background: radial-gradient(circle, rgba(212,175,55,0.08) 0%, transparent 70%);
+    border-radius: 50%;
+    pointer-events: none;
+  }
+
+  @media screen and (max-width: 480px) {
+    .rg-popup {
+      padding: 40px 22px 28px;
+    }
+    .rg-popup__code-wrap {
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+  }
+</style>
+
+<div class="rg-popup-overlay" id="RgPopupOverlay" role="dialog" aria-modal="true" aria-label="{{ section.settings.heading | escape }}">
+  <div class="rg-popup">
+    <span class="rg-popup__decor" aria-hidden="true"></span>
+    <span class="rg-popup__decor-2" aria-hidden="true"></span>
+
+    <button class="rg-popup__close" id="RgPopupClose" aria-label="Close offer">&#x2715;</button>
+
+    {%- if section.settings.badge != blank -%}
+      <span class="rg-popup__badge">{{ section.settings.badge }}</span>
+    {%- endif -%}
+
+    <h2 class="rg-popup__heading">{{ section.settings.heading }}</h2>
+
+    {%- if section.settings.subtext != blank -%}
+      <p class="rg-popup__subtext">{{ section.settings.subtext }}</p>
+    {%- endif -%}
+
+    {%- if section.settings.discount_code != blank -%}
+      <div class="rg-popup__code-wrap">
+        <div>
+          <span class="rg-popup__code-label">Use Code</span>
+          <span class="rg-popup__code" id="RgPopupCode">{{ section.settings.discount_code }}</span>
+        </div>
+        <button class="rg-popup__copy-btn" id="RgPopupCopyBtn" type="button">Copy</button>
+      </div>
+    {%- endif -%}
+
+    <a
+      href="{{ section.settings.cta_url }}"
+      class="rg-popup__cta"
+      id="RgPopupCta"
+    >
+      {{ section.settings.cta_text }}
+    </a>
+
+    <button class="rg-popup__dismiss" id="RgPopupDismiss" type="button">
+      {{ section.settings.dismiss_text }}
+    </button>
+  </div>
+</div>
+
+<script>
+(function () {
+  var STORAGE_KEY = 'rg_popup_shown';
+  var DAYS = {{ section.settings.show_again_days }};
+  var DELAY = {{ section.settings.delay_seconds }} * 1000;
+
+  function shouldShow() {
+    try {
+      var stored = localStorage.getItem(STORAGE_KEY);
+      if (!stored) return true;
+      var ts = parseInt(stored, 10);
+      return Date.now() - ts > DAYS * 24 * 60 * 60 * 1000;
+    } catch (e) {
+      return true;
+    }
+  }
+
+  function markShown() {
+    try { localStorage.setItem(STORAGE_KEY, Date.now()); } catch (e) {}
+  }
+
+  function closePopup() {
+    document.getElementById('RgPopupOverlay').classList.remove('is-open');
+    markShown();
+  }
+
+  if (!shouldShow()) return;
+
+  setTimeout(function () {
+    document.getElementById('RgPopupOverlay').classList.add('is-open');
+  }, DELAY);
+
+  document.getElementById('RgPopupClose').addEventListener('click', closePopup);
+  document.getElementById('RgPopupDismiss').addEventListener('click', closePopup);
+
+  document.getElementById('RgPopupOverlay').addEventListener('click', function (e) {
+    if (e.target === this) closePopup();
+  });
+
+  // CTA closes popup too (discount code goes with them)
+  var ctaBtn = document.getElementById('RgPopupCta');
+  if (ctaBtn) ctaBtn.addEventListener('click', markShown);
+
+  // Copy code button
+  var copyBtn = document.getElementById('RgPopupCopyBtn');
+  var codeEl = document.getElementById('RgPopupCode');
+  if (copyBtn && codeEl) {
+    copyBtn.addEventListener('click', function () {
+      navigator.clipboard.writeText(codeEl.textContent.trim()).then(function () {
+        copyBtn.textContent = 'Copied!';
+        copyBtn.classList.add('copied');
+        setTimeout(function () {
+          copyBtn.textContent = 'Copy';
+          copyBtn.classList.remove('copied');
+        }, 2000);
+      }).catch(function () {
+        copyBtn.textContent = 'Copied!';
+        setTimeout(function () { copyBtn.textContent = 'Copy'; }, 2000);
+      });
+    });
+  }
+})();
+</script>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "Discount Popup",
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "enable_popup",
+      "label": "Enable popup",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "Content"
+    },
+    {
+      "type": "text",
+      "id": "badge",
+      "label": "Badge label",
+      "default": "Limited Time Offer"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Flat 15% OFF"
+    },
+    {
+      "type": "textarea",
+      "id": "subtext",
+      "label": "Description",
+      "default": "Use the code below at checkout and enjoy an exclusive 15% discount on your order."
+    },
+    {
+      "type": "text",
+      "id": "discount_code",
+      "label": "Discount code",
+      "default": "EXTRA15"
+    },
+    {
+      "type": "header",
+      "content": "Button"
+    },
+    {
+      "type": "text",
+      "id": "cta_text",
+      "label": "Button text",
+      "default": "Shop Now & Save 15%"
+    },
+    {
+      "type": "url",
+      "id": "cta_url",
+      "label": "Button link"
+    },
+    {
+      "type": "text",
+      "id": "dismiss_text",
+      "label": "Dismiss link text",
+      "default": "No thanks, I'll pay full price"
+    },
+    {
+      "type": "header",
+      "content": "Appearance"
+    },
+    {
+      "type": "color",
+      "id": "bg_color",
+      "label": "Popup background",
+      "default": "#0f1512"
+    },
+    {
+      "type": "header",
+      "content": "Behaviour"
+    },
+    {
+      "type": "range",
+      "id": "delay_seconds",
+      "label": "Delay before showing (seconds)",
+      "min": 0,
+      "max": 15,
+      "step": 1,
+      "default": 3
+    },
+    {
+      "type": "range",
+      "id": "show_again_days",
+      "label": "Show again after (days)",
+      "min": 1,
+      "max": 30,
+      "step": 1,
+      "default": 7
+    }
+  ],
+  "presets": [
+    {
+      "name": "Discount Popup"
+    }
+  ]
+}
+{% endschema %}

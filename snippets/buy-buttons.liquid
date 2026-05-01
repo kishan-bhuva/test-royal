@@ -1,0 +1,470 @@
+{% comment %}
+  Renders product buy-buttons.
+  Accepts:
+  - product: {Object} product object.
+  - block: {Object} passing the block information.
+  - product_form_id: {String} product form id.
+  - section_id: {String} id of section to which this snippet belongs.
+  - show_pickup_availability: {Boolean} for the pickup availability. If true the pickup availability is rendered, false - not rendered (optional).
+
+  Usage:
+  {% render 'buy-buttons', block: block, product: product, product_form_id: product_form_id, section_id: section.id, show_pickup_availability: true %}
+{% endcomment %}
+<div {{ block.shopify_attributes }}>
+  {%- if product != blank -%}
+    {%- liquid
+      assign gift_card_recipient_feature_active = false
+      if block.settings.show_gift_card_recipient and product.gift_card?
+        assign gift_card_recipient_feature_active = true
+      endif
+
+      assign show_dynamic_checkout = false
+      if block.settings.show_dynamic_checkout and gift_card_recipient_feature_active == false
+        assign show_dynamic_checkout = true
+      endif
+    -%}
+
+    <product-form
+      class="product-form"
+      data-hide-errors="{{ gift_card_recipient_feature_active }}"
+      data-section-id="{{ section.id }}"
+    >
+      <div class="product-form__error-message-wrapper" role="alert" hidden>
+        <span class="svg-wrapper">
+          {{- 'icon-error.svg' | inline_asset_content -}}
+        </span>
+        <span class="product-form__error-message"></span>
+      </div>
+
+      {%- form 'product',
+        product,
+        id: product_form_id,
+        class: 'form',
+        novalidate: 'novalidate',
+        data-type: 'add-to-cart-form'
+      -%}
+        <input
+          type="hidden"
+          name="id"
+          value="{{ product.selected_or_first_available_variant.id }}"
+          {% if product.selected_or_first_available_variant.available == false
+            or quantity_rule_soldout
+            or product.selected_or_first_available_variant == null
+          %}
+            disabled
+          {% endif %}
+          class="product-variant-id"
+        >
+
+        {%- if gift_card_recipient_feature_active -%}
+          {%- render 'gift-card-recipient-form', product: product, form: form, section: section -%}
+        {%- endif -%}
+
+        {%- assign show_personalisation = true -%}
+        {%- assign in_metal_name_plates = false -%}
+        {%- for col in product.collections -%}
+          {%- if col.handle == 'metal-wall-art' -%}
+            {%- assign show_personalisation = false -%}
+            {%- break -%}
+          {%- endif -%}
+          {%- if col.handle == 'metal-name-plates' -%}
+            {%- assign in_metal_name_plates = true -%}
+          {%- endif -%}
+        {%- endfor -%}
+
+        {%- assign show_name = product.metafields.custom.show_name.value | default: false, allow_false: true -%}
+        {%- assign show_surname = product.metafields.custom.show_surname.value | default: false, allow_false: true -%}
+        {%- assign show_house_no = product.metafields.custom.show_house_no.value | default: false, allow_false: true -%}
+        {%- assign show_details = product.metafields.custom.show_details.value | default: false, allow_false: true -%}
+        {%- assign show_instructions = product.metafields.custom.show_instructions.value | default: false, allow_false: true -%}
+        {%- assign show_color = product.metafields.custom.show_color.value | default: false, allow_false: true -%}
+        {%- assign has_visible_personalisation_fields = false -%}
+        {%- if show_name or show_surname or show_house_no or show_details or show_instructions -%}
+          {%- assign has_visible_personalisation_fields = true -%}
+        {%- endif -%}
+        {%- if show_color -%}
+          {%- assign has_visible_personalisation_fields = true -%}
+        {%- endif -%}
+
+        {%- if show_personalisation and has_visible_personalisation_fields -%}
+          <div class="nameplate-fields" data-nameplate-properties>
+            <h3 class="nameplate-fields__heading">Personalisation Details</h3>
+
+            <div class="nameplate-fields__grid">
+              {%- if show_name -%}
+              <div
+                class="nameplate-field"
+                data-property-wrapper
+                data-property-name="properties[Name]"
+                data-property-required="true"
+              >
+                <label class="nameplate-field__label" for="np-name-{{ section_id }}">
+                  Enter Your Name/Surname <span class="nameplate-field__required" aria-hidden="true">*</span>
+                </label>
+                <input
+                  id="np-name-{{ section_id }}"
+                  class="nameplate-field__input"
+                  type="text"
+                  name="properties[Name]"
+                  placeholder="e.g. Ali Asgar"
+                  autocomplete="off"
+                  required
+                  aria-describedby="np-name-error-{{ section_id }}"
+                >
+                <p class="nameplate-field__error" id="np-name-error-{{ section_id }}" hidden role="alert">
+                  Please enter Name.
+                </p>
+              </div>
+              {%- endif -%}
+
+              {%- if show_surname -%}
+              <div
+                class="nameplate-field"
+                data-property-wrapper
+                data-property-name="properties[Surname]"
+                data-property-required="true"
+              >
+                <label class="nameplate-field__label" for="np-surname-{{ section_id }}">
+                  Surname <span class="nameplate-field__required" aria-hidden="true">*</span>
+                </label>
+                <input
+                  id="np-surname-{{ section_id }}"
+                  class="nameplate-field__input"
+                  type="text"
+                  name="properties[Surname]"
+                  placeholder="Enter the surname for your plate"
+                  autocomplete="off"
+                  required
+                  aria-describedby="np-surname-error-{{ section_id }}"
+                >
+                <p class="nameplate-field__error" id="np-surname-error-{{ section_id }}" hidden role="alert">
+                  Please enter Surname.
+                </p>
+              </div>
+              {%- endif -%}
+
+              {%- if show_house_no -%}
+              <div
+                class="nameplate-field"
+                data-property-wrapper
+                data-property-name="properties[House No]"
+                data-property-required="true"
+              >
+                <label class="nameplate-field__label" for="np-house-{{ section_id }}">
+                  Enter House/Flat No <span class="nameplate-field__required" aria-hidden="true">*</span>
+                </label>
+                <input
+                  id="np-house-{{ section_id }}"
+                  class="nameplate-field__input"
+                  type="text"
+                  name="properties[House No]"
+                  placeholder="e.g. 12A, Flat 301"
+                  autocomplete="off"
+                  required
+                  aria-describedby="np-house-error-{{ section_id }}"
+                >
+                <p class="nameplate-field__error" id="np-house-error-{{ section_id }}" hidden role="alert">
+                  Please enter House No.
+                </p>
+              </div>
+              {%- endif -%}
+
+              {%- if show_details -%}
+              <div
+                class="nameplate-field"
+                data-property-wrapper
+                data-property-name="properties[Details]"
+                data-property-required="true"
+              >
+                <label class="nameplate-field__label" for="np-details-{{ section_id }}">
+                  Enter Details <span class="nameplate-field__required" aria-hidden="true">*</span>
+                </label>
+                <input
+                  id="np-details-{{ section_id }}"
+                  class="nameplate-field__input"
+                  type="text"
+                  name="properties[Details]"
+                  placeholder="Enter detail text for your nameplate"
+                  autocomplete="off"
+                  required
+                  aria-describedby="np-details-error-{{ section_id }}"
+                >
+                <p class="nameplate-field__error" id="np-details-error-{{ section_id }}" hidden role="alert">
+                  Please enter Details.
+                </p>
+              </div>
+              {%- endif -%}
+
+              {%- if show_instructions -%}
+              <div
+                class="nameplate-field"
+                data-property-wrapper
+                data-property-name="properties[Instructions]"
+              >
+                <label class="nameplate-field__label" for="np-instructions-{{ section_id }}">
+                  Instructions
+                </label>
+                <textarea
+                  id="np-instructions-{{ section_id }}"
+                  class="nameplate-field__textarea"
+                  name="properties[Instructions]"
+                  placeholder="Special instructions for our team..."
+                  rows="3"
+                ></textarea>
+              </div>
+              {%- endif -%}
+            </div>
+
+            {%- if show_color -%}
+            <fieldset
+              class="nameplate-field nameplate-field--swatch"
+              data-property-wrapper
+              data-property-name="properties[Choose Color]"
+              data-property-required="true"
+            >
+              <legend class="nameplate-field__label">
+                Choose Color <span class="nameplate-field__required" aria-hidden="true">*</span>
+              </legend>
+              <div class="nameplate-swatch-group" role="radiogroup" aria-describedby="np-color-error-{{ section_id }}">
+                <label class="nameplate-swatch" for="np-color-sparkle-gold-{{ section_id }}">
+                  <input
+                    id="np-color-sparkle-gold-{{ section_id }}"
+                    class="nameplate-swatch__radio"
+                    type="radio"
+                    name="properties[Choose Color]"
+                    value="Sparkle Gold"
+                    required
+                  >
+                  <span class="nameplate-swatch__chip nameplate-swatch__chip--sparkle-gold" aria-hidden="true"></span>
+                  <span class="nameplate-swatch__text">Sparkle Gold</span>
+                </label>
+
+                <label class="nameplate-swatch" for="np-color-antique-gold-{{ section_id }}">
+                  <input
+                    id="np-color-antique-gold-{{ section_id }}"
+                    class="nameplate-swatch__radio"
+                    type="radio"
+                    name="properties[Choose Color]"
+                    value="Antique Gold"
+                  >
+                  <span class="nameplate-swatch__chip nameplate-swatch__chip--antique-gold" aria-hidden="true"></span>
+                  <span class="nameplate-swatch__text">Antique Gold</span>
+                </label>
+
+                <label class="nameplate-swatch" for="np-color-antique-silver-{{ section_id }}">
+                  <input
+                    id="np-color-antique-silver-{{ section_id }}"
+                    class="nameplate-swatch__radio"
+                    type="radio"
+                    name="properties[Choose Color]"
+                    value="Antique Silver"
+                  >
+                  <span class="nameplate-swatch__chip nameplate-swatch__chip--antique-silver" aria-hidden="true"></span>
+                  <span class="nameplate-swatch__text">Antique Silver</span>
+                </label>
+
+                <label class="nameplate-swatch" for="np-color-black-matte-{{ section_id }}">
+                  <input
+                    id="np-color-black-matte-{{ section_id }}"
+                    class="nameplate-swatch__radio"
+                    type="radio"
+                    name="properties[Choose Color]"
+                    value="Black Matte"
+                  >
+                  <span class="nameplate-swatch__chip nameplate-swatch__chip--black-matte" aria-hidden="true"></span>
+                  <span class="nameplate-swatch__text">Black Matte</span>
+                </label>
+
+                <label class="nameplate-swatch" for="np-color-crocodile-blue-{{ section_id }}">
+                  <input
+                    id="np-color-crocodile-blue-{{ section_id }}"
+                    class="nameplate-swatch__radio"
+                    type="radio"
+                    name="properties[Choose Color]"
+                    value="Crocodile Blue"
+                  >
+                  <span class="nameplate-swatch__chip nameplate-swatch__chip--crocodile-blue" aria-hidden="true"></span>
+                  <span class="nameplate-swatch__text">Crocodile Blue</span>
+                </label>
+
+                <label class="nameplate-swatch" for="np-color-gunmetal-grey-{{ section_id }}">
+                  <input
+                    id="np-color-gunmetal-grey-{{ section_id }}"
+                    class="nameplate-swatch__radio"
+                    type="radio"
+                    name="properties[Choose Color]"
+                    value="Gunmetal Grey"
+                  >
+                  <span class="nameplate-swatch__chip nameplate-swatch__chip--gunmetal-grey" aria-hidden="true"></span>
+                  <span class="nameplate-swatch__text">Gunmetal Grey</span>
+                </label>
+
+                <label class="nameplate-swatch" for="np-color-metallic-brown-{{ section_id }}">
+                  <input
+                    id="np-color-metallic-brown-{{ section_id }}"
+                    class="nameplate-swatch__radio"
+                    type="radio"
+                    name="properties[Choose Color]"
+                    value="Metallic Brown"
+                  >
+                  <span class="nameplate-swatch__chip nameplate-swatch__chip--metallic-brown" aria-hidden="true"></span>
+                  <span class="nameplate-swatch__text">Metallic Brown</span>
+                </label>
+
+                <label class="nameplate-swatch" for="np-color-metallic-green-{{ section_id }}">
+                  <input
+                    id="np-color-metallic-green-{{ section_id }}"
+                    class="nameplate-swatch__radio"
+                    type="radio"
+                    name="properties[Choose Color]"
+                    value="Metallic Green"
+                  >
+                  <span class="nameplate-swatch__chip nameplate-swatch__chip--metallic-green" aria-hidden="true"></span>
+                  <span class="nameplate-swatch__text">Metallic Green</span>
+                </label>
+
+                <label class="nameplate-swatch" for="np-color-silver-{{ section_id }}">
+                  <input
+                    id="np-color-silver-{{ section_id }}"
+                    class="nameplate-swatch__radio"
+                    type="radio"
+                    name="properties[Choose Color]"
+                    value="Silver"
+                  >
+                  <span class="nameplate-swatch__chip nameplate-swatch__chip--silver" aria-hidden="true"></span>
+                  <span class="nameplate-swatch__text">Silver</span>
+                </label>
+
+                <label class="nameplate-swatch" for="np-color-special-copper-{{ section_id }}">
+                  <input
+                    id="np-color-special-copper-{{ section_id }}"
+                    class="nameplate-swatch__radio"
+                    type="radio"
+                    name="properties[Choose Color]"
+                    value="Special Copper"
+                  >
+                  <span class="nameplate-swatch__chip nameplate-swatch__chip--special-copper" aria-hidden="true"></span>
+                  <span class="nameplate-swatch__text">Special Copper</span>
+                </label>
+
+                <label class="nameplate-swatch" for="np-color-special-gold-{{ section_id }}">
+                  <input
+                    id="np-color-special-gold-{{ section_id }}"
+                    class="nameplate-swatch__radio"
+                    type="radio"
+                    name="properties[Choose Color]"
+                    value="Special Gold"
+                  >
+                  <span class="nameplate-swatch__chip nameplate-swatch__chip--special-gold" aria-hidden="true"></span>
+                  <span class="nameplate-swatch__text">Special Gold</span>
+                </label>
+
+                <label class="nameplate-swatch" for="np-color-textured-ivory-{{ section_id }}">
+                  <input
+                    id="np-color-textured-ivory-{{ section_id }}"
+                    class="nameplate-swatch__radio"
+                    type="radio"
+                    name="properties[Choose Color]"
+                    value="Textured Ivory"
+                  >
+                  <span class="nameplate-swatch__chip nameplate-swatch__chip--textured-ivory" aria-hidden="true"></span>
+                  <span class="nameplate-swatch__text">Textured Ivory</span>
+                </label>
+              </div>
+              <p class="nameplate-field__error" id="np-color-error-{{ section_id }}" hidden role="alert">
+                Please choose a color.
+              </p>
+            </fieldset>
+            {%- endif -%}
+          </div>
+        {%- endif -%}
+
+        <div class="product-form__buttons">
+          {%- liquid
+            assign check_against_inventory = true
+            if product.selected_or_first_available_variant.inventory_management != 'shopify' or product.selected_or_first_available_variant.inventory_policy == 'continue'
+              assign check_against_inventory = false
+            endif
+            if product.selected_or_first_available_variant.quantity_rule.min > product.selected_or_first_available_variant.inventory_quantity and check_against_inventory
+              assign quantity_rule_soldout = true
+            endif
+          -%}
+          <button
+            id="ProductSubmitButton-{{ section_id }}"
+            type="submit"
+            name="add"
+            class="product-form__submit button button--full-width {% if show_dynamic_checkout %}button--secondary{% else %}button--primary{% endif %}"
+            {% if product.selected_or_first_available_variant.available == false
+              or quantity_rule_soldout
+              or product.selected_or_first_available_variant == null
+            %}
+              disabled
+            {% endif %}
+          >
+            <span>
+              {%- if product.selected_or_first_available_variant == null -%}
+                {{ 'products.product.unavailable' | t }}
+              {%- elsif product.selected_or_first_available_variant.available == false or quantity_rule_soldout -%}
+                {{ 'products.product.sold_out' | t }}
+              {%- else -%}
+                {{ 'products.product.add_to_cart' | t }}
+              {%- endif -%}
+            </span>
+            {%- render 'loading-spinner' -%}
+          </button>
+          {%- if show_dynamic_checkout -%}
+            {{ form | payment_button }}
+          {%- endif -%}
+        </div>
+      {%- endform -%}
+    </product-form>
+  {%- else -%}
+    <div class="product-form">
+      <div class="product-form__buttons form">
+        <button
+          type="submit"
+          name="add"
+          class="product-form__submit button button--full-width button--primary"
+          disabled
+        >
+          {{ 'products.product.sold_out' | t }}
+        </button>
+      </div>
+    </div>
+  {%- endif -%}
+
+  {%- if show_pickup_availability -%}
+    {{ 'component-pickup-availability.css' | asset_url | stylesheet_tag }}
+
+    {%- assign pick_up_availabilities = product.selected_or_first_available_variant.store_availabilities
+      | where: 'pick_up_enabled', true
+    -%}
+
+    <pickup-availability
+      class="product__pickup-availabilities quick-add-hidden"
+      {% if product.selected_or_first_available_variant.available and pick_up_availabilities.size > 0 %}
+        available
+      {% endif %}
+      data-root-url="{{ routes.root_url }}"
+      data-variant-id="{{ product.selected_or_first_available_variant.id }}"
+      data-has-only-default-variant="{{ product.has_only_default_variant }}"
+      data-product-page-color-scheme="gradient color-{{ section.settings.color_scheme }}"
+    >
+      <template>
+        <pickup-availability-preview class="pickup-availability-preview">
+          <span class="svg-wrapper">
+            {{- 'icon-unavailable.svg' | inline_asset_content -}}
+          </span>
+          <div class="pickup-availability-info">
+            <p class="caption-large">{{ 'products.product.pickup_availability.unavailable' | t }}</p>
+            <button class="pickup-availability-button link link--text underlined-link">
+              {{ 'products.product.pickup_availability.refresh' | t }}
+            </button>
+          </div>
+        </pickup-availability-preview>
+      </template>
+    </pickup-availability>
+
+    <script src="{{ 'pickup-availability.js' | asset_url }}" defer="defer"></script>
+  {%- endif -%}
+</div>

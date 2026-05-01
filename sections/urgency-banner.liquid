@@ -1,0 +1,31 @@
+{{ 'luxury-theme.css' | asset_url | stylesheet_tag }}
+
+<section class="lux-urgency-banner" data-section-id="{{ section.id }}" aria-label="Promotional notice">
+  <div class="lux-urgency-banner__shimmer" aria-hidden="true"></div>
+  <p class="lux-urgency-banner__text">
+    {%- if section.settings.text != blank -%}
+      {{ section.settings.text }}
+    {%- else -%}
+      🔥 Limited slots this week &mdash; Order before Sunday for early dispatch
+    {%- endif -%}
+  </p>
+</section>
+
+{% schema %}
+{
+  "name": "Urgency Banner",
+  "tag": "section",
+  "class": "urgency-banner-section",
+  "settings": [
+    {
+      "type": "text",
+      "id": "text",
+      "label": "Banner text",
+      "default": "🔥 Limited slots this week — Order before Sunday for early dispatch"
+    }
+  ],
+  "presets": [
+    { "name": "Urgency Banner" }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,70 @@
+{%- liquid
+  assign has_banner_image = false
+  if section.settings.show_collection_image and collection.image
+    assign has_banner_image = true
+  endif
+-%}
+
+<div
+  class="lux-collection-banner color-{{ section.settings.color_scheme }} gradient{% if has_banner_image %} lux-collection-banner--with-image{% endif %}"
+  {% if has_banner_image %}
+    style="--lux-collection-banner-image: url('{{ collection.image | image_url: width: 2400 }}');"
+  {% endif %}
+>
+  {%- if has_banner_image -%}
+    <div class="lux-collection-banner__media" aria-hidden="true"></div>
+  {%- endif -%}
+  <div class="lux-collection-banner__overlay" aria-hidden="true"></div>
+  <div class="lux-collection-banner__inner page-width {% if settings.animations_reveal_on_scroll %} scroll-trigger animate--fade-in{% endif %}">
+    <nav class="lux-collection-banner__breadcrumb" aria-label="Breadcrumb">
+      <a href="{{ routes.root_url }}" class="lux-collection-banner__breadcrumb-link">Home</a>
+      <span class="lux-collection-banner__breadcrumb-sep">/</span>
+      <a href="{{ routes.all_products_collection_url }}" class="lux-collection-banner__breadcrumb-link">Collections</a>
+      <span class="lux-collection-banner__breadcrumb-sep">/</span>
+      <span class="lux-collection-banner__breadcrumb-current" aria-current="page">{{ collection.title }}</span>
+    </nav>
+
+    <div class="lux-collection-banner__content">
+      <div class="lux-collection-banner__text">
+        <h1 class="lux-collection-banner__title">
+          <span class="visually-hidden">{{ 'sections.collection_template.title' | t }}: </span>
+          {{- collection.title | escape -}}
+        </h1>
+        {%- if section.settings.show_collection_description -%}
+          <div class="lux-collection-banner__description rte">{{ collection.description }}</div>
+        {%- endif -%}
+      </div>
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "t:sections.main-collection-banner.name",
+  "class": "section",
+  "settings": [
+    {
+      "type": "paragraph",
+      "content": "t:sections.main-collection-banner.settings.paragraph.content"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_collection_description",
+      "default": true,
+      "label": "t:sections.main-collection-banner.settings.show_collection_description.label"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_collection_image",
+      "default": true,
+      "label": "t:sections.main-collection-banner.settings.show_collection_image.label"
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "t:sections.all.colors.label",
+      "default": "scheme-1"
+    }
+  ]
+}
+{% endschema %}

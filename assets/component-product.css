@@ -1,0 +1,386 @@
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Manrope:wght@400;500;600;700&display=swap');
+
+:root {
+  --lux-bg: #0b0f0d;
+  --lux-card: #0c241b;
+  --lux-gold: #d4af37;
+  --lux-muted: #9c9c9c;
+  --lux-white: #f5f5f5;
+  --lux-border: rgba(212, 175, 55, 0.35);
+  --lux-shadow: 0 18px 34px rgba(0, 0, 0, 0.52);
+  --lux-transition: 0.3s ease;
+}
+
+.lux-product-page {
+  background: var(--lux-bg);
+  padding: 3rem 4vw 3.5rem;
+  width: 100%;
+  color: var(--lux-white);
+  box-sizing: border-box;
+}
+
+@media screen and (max-width: 749px) {
+  .lux-product-page {
+    padding: 1.5rem 1rem 2.25rem;
+  }
+}
+
+.lux-product.grid {
+  gap: 2rem;
+}
+
+@media screen and (min-width: 990px) {
+  .lux-product.grid--2-col-tablet {
+    grid-template-columns: 1.05fr 0.95fr;
+  }
+}
+
+.lux-media-card {
+  background: linear-gradient(145deg, rgba(21, 46, 37, 0.35), rgba(8, 12, 10, 0.6));
+  border-radius: 16px;
+  padding: 1rem;
+  box-shadow: var(--lux-shadow);
+}
+
+.lux-media-card .media,
+.lux-media-card .product__media-list {
+  border-radius: 16px;
+  overflow: hidden;
+}
+
+.lux-media-card .media:hover img {
+  transform: scale(1.05);
+}
+
+.lux-media-card img {
+  transition: transform var(--lux-transition);
+}
+
+.thumbnail-slider,
+.thumbnail-list {
+  gap: 0.5rem;
+}
+
+.thumbnail {
+  border-radius: 10px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.thumbnail__inner {
+  transition: transform var(--lux-transition), box-shadow var(--lux-transition), border-color var(--lux-transition);
+  border-radius: 10px;
+}
+
+.thumbnail__inner:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 18px rgba(0, 0, 0, 0.35), 0 0 0 1px var(--lux-border);
+}
+
+.lux-info {
+  padding-inline: 1rem;
+}
+
+@media screen and (min-width: 990px) {
+  .lux-info {
+    padding-inline: 1.75rem;
+  }
+}
+
+.lux-brand {
+  color: var(--lux-muted);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  font-size: 0.78rem;
+  margin: 0 0 0.25rem;
+}
+
+.lux-title {
+  font-family: 'Playfair Display', 'Georgia', serif;
+  color: var(--lux-gold);
+  font-size: clamp(1.6rem, 2vw, 2.2rem);
+  margin: 0 0 0.35rem;
+  letter-spacing: 0.01em;
+}
+
+.lux-rating-line {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  color: var(--lux-gold);
+  font-weight: 600;
+}
+
+.lux-rating-line .rating-star {
+  --color-rating-star: var(--lux-gold);
+}
+
+.lux-rating-count {
+  font-size: 0.95rem;
+}
+
+.lux-price-stack {
+  margin-bottom: 0.6rem;
+}
+
+.lux-price-value .price-item--regular,
+.lux-price-value .price-item--sale {
+  color: var(--lux-white);
+  font-weight: 800;
+  font-size: 1.55rem;
+}
+
+.lux-price-sub {
+  color: var(--lux-muted);
+  font-size: 0.9rem;
+}
+
+.lux-quote {
+  font-style: italic;
+  color: rgba(233, 229, 221, 0.85);
+  margin: 0.4rem 0 1rem;
+}
+
+.lux-engrave {
+  margin: 1rem 0 0.75rem;
+}
+
+.lux-label {
+  display: block;
+  color: var(--lux-gold);
+  letter-spacing: 0.125em;
+  font-size: 0.85rem;
+  margin-bottom: 0.4rem;
+  text-transform: uppercase;
+}
+
+.lux-input {
+  width: 100%;
+  padding: 0.8rem 1rem;
+  border-radius: 12px;
+  border: 1px solid var(--lux-gold);
+  background: rgba(255, 255, 255, 0.04);
+  color: #f1ede4;
+  transition: border-color var(--lux-transition), box-shadow var(--lux-transition);
+}
+
+.lux-input:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(212, 175, 55, 0.35);
+}
+
+.lux-input-hint {
+  color: rgba(233, 229, 221, 0.6);
+  margin: 0.25rem 0 0;
+  font-size: 0.82rem;
+}
+
+.lux-variant-wrap .select__select,
+.lux-variant-wrap select {
+  background: #0f1b16;
+  border: 1px solid var(--lux-gold);
+  color: #f1ede4;
+  border-radius: 12px;
+  padding: 0.85rem 1rem;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg width='12' height='8' viewBox='0 0 12 8' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath fill='%23D4AF37' d='M1.41.59L6 5.17 10.59.59 12 2l-6 6-6-6z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 14px center;
+  transition: border-color var(--lux-transition), box-shadow var(--lux-transition);
+}
+
+.lux-variant-wrap .product-form__input {
+  margin-bottom: 0.75rem;
+}
+
+.quantity {
+  border-radius: 12px;
+  border: 1px solid var(--lux-gold);
+  padding: 0.35rem;
+  background: #0f1b16;
+}
+
+.product-form__buttons .product-form__submit {
+  border-radius: 999px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  box-shadow: 0 14px 24px rgba(212, 175, 55, 0.25);
+  transition: transform var(--lux-transition), box-shadow var(--lux-transition), background var(--lux-transition);
+}
+
+.product-form__buttons .product-form__submit:hover {
+  transform: translateY(-2px);
+}
+
+.shopify-payment-button button,
+.shopify-payment-button__button {
+  border-radius: 999px !important;
+}
+
+.lux-feature-strip {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  text-align: center;
+  gap: 0.5rem;
+  padding: 0.85rem 0;
+  margin-top: 1rem;
+  border-top: 1px solid rgba(212, 175, 55, 0.25);
+  border-bottom: 1px solid rgba(212, 175, 55, 0.25);
+  font-size: 0.78rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--lux-gold);
+}
+
+@media screen and (max-width: 749px) {
+  .lux-feature-strip {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    row-gap: 0.75rem;
+  }
+
+  .product-form__buttons .button {
+    width: 100%;
+  }
+}
+
+.lux-tabs-wrap {
+  margin-top: 2.25rem;
+  background: #0f1b16;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 16px;
+  padding: 1.2rem;
+  box-shadow: var(--lux-shadow);
+}
+
+.lux-tabs {
+  display: flex;
+  gap: 1.4rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.lux-tab {
+  background: none;
+  border: none;
+  padding: 0.65rem 0;
+  color: rgba(233, 229, 221, 0.7);
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  cursor: pointer;
+  position: relative;
+  transition: color var(--lux-transition);
+}
+
+.lux-tab.is-active {
+  color: var(--lux-gold);
+}
+
+.lux-tab.is-active::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -1px;
+  height: 2px;
+  background: var(--lux-gold);
+}
+
+.lux-tab-content {
+  padding: 1rem 0 0.2rem;
+  line-height: 1.8;
+  color: rgba(233, 229, 221, 0.88);
+}
+
+.lux-tab-panel {
+  display: block;
+  opacity: 0;
+  visibility: hidden;
+  max-height: 0;
+  overflow: hidden;
+  transition: opacity 0.25s ease, max-height 0.25s ease;
+  background: #0f1b16;
+  border-radius: 14px;
+}
+
+.lux-tab-panel.is-active {
+  opacity: 1;
+  visibility: visible;
+  max-height: 1200px;
+  padding: 1.25rem;
+}
+
+.lux-related {
+  margin-top: 2.5rem;
+  display: block;
+}
+
+.lux-related__header {
+  margin-bottom: 1rem;
+}
+
+.lux-related__header h2 {
+  font-family: 'Playfair Display', 'Georgia', serif;
+  color: #f2eedf;
+  font-size: 1.4rem;
+  margin: 0;
+}
+
+.lux-related__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 18px;
+}
+
+.lux-related__card {
+  background: var(--lux-card);
+  border-radius: 18px;
+  overflow: hidden;
+  border: 1px solid rgba(212, 175, 55, 0.15);
+  box-shadow: 0 12px 22px rgba(0, 0, 0, 0.35), inset 0 0 0 1px rgba(255, 255, 255, 0.02);
+  transition: transform var(--lux-transition), box-shadow var(--lux-transition), border-color var(--lux-transition);
+}
+
+.lux-related__card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 18px 30px rgba(0, 0, 0, 0.45), 0 0 0 1px var(--lux-border);
+  border-color: var(--lux-border);
+}
+
+.lux-related__image-link img {
+  display: block;
+  width: 100%;
+  height: 240px;
+  object-fit: cover;
+  transition: transform var(--lux-transition);
+}
+
+.lux-related__card:hover img {
+  transform: scale(1.05);
+}
+
+.lux-related__body {
+  padding: 0.9rem 1rem 1rem;
+}
+
+.lux-related__title {
+  color: #f1efe6;
+  font-weight: 700;
+  margin-bottom: 0.35rem;
+  font-size: 1rem;
+}
+
+.lux-related__meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: var(--lux-gold);
+  font-weight: 700;
+}
+
+.lux-related__stars {
+  letter-spacing: 0.1em;
+}
+
+.lux-related__empty {
+  color: rgba(233, 229, 221, 0.6);
+}

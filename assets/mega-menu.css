@@ -1,0 +1,527 @@
+:root {
+  --mega-bg: #0b0b0b;
+  --mega-text: #f5f4ef;
+  --mega-accent: #c6a84f;
+  --mega-border: rgba(198, 168, 79, 0.24);
+  --mega-shadow: 0 24px 60px rgba(0, 0, 0, 0.45);
+  --mega-ease: cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+.rg-header__nav {
+  position: relative;
+  z-index: 30;
+  overflow: visible;
+}
+
+.rg-mega-nav {
+  position: relative;
+  z-index: 31;
+  display: flex;
+  align-items: center;
+  gap: clamp(0.8rem, 1.6vw, 2rem);
+  margin: 0 auto;
+  padding: 0;
+  list-style: none;
+  overflow: visible;
+  justify-content: center;
+}
+
+.rg-mega-nav .nav-item {
+  position: relative;
+  list-style: none;
+}
+
+.rg-mega-nav .nav-item > .rg-header__nav-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 4.4rem;
+  padding: 0.8rem 1.2rem;
+  border-radius: 1.2rem;
+  text-decoration: none;
+  transition: all 0.35s var(--mega-ease);
+}
+
+.rg-mega-nav .nav-item--has-mega > .rg-header__nav-link:hover,
+.rg-mega-nav .nav-item--has-mega > .rg-header__nav-link:focus-visible,
+.rg-mega-nav .nav-item--has-mega.is-open > .rg-header__nav-link {
+  color: var(--mega-accent);
+  background: rgba(198, 168, 79, 0.12);
+  box-shadow: inset 0 0 0 1px rgba(198, 168, 79, 0.18);
+}
+
+.rg-mega-nav .nav-item--has-mega > .rg-header__nav-link:focus-visible {
+  outline: 2px solid var(--mega-accent);
+  outline-offset: 2px;
+}
+
+.rg-mega-nav .mega-menu {
+  position: absolute;
+  left: 50%;
+  top: calc(100% + 0.8rem);
+  width: min(118rem, calc(100vw - 3.2rem));
+  transform: translate(-50%, 1.2rem);
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  background: linear-gradient(150deg, rgba(198, 168, 79, 0.08), rgba(11, 11, 11, 0.98) 32%);
+  border: 1px solid var(--mega-border);
+  border-radius: 1.2rem;
+  box-shadow: var(--mega-shadow);
+  transition: all 0.35s var(--mega-ease);
+}
+
+.rg-mega-nav .nav-item--has-mega.is-open > .mega-menu {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+  transform: translate(-50%, 0);
+}
+
+.mega-menu__grid {
+  display: grid;
+  gap: 1.6rem;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  padding: 2rem;
+}
+
+.mega-menu__item {
+  display: grid;
+  justify-items: center;
+  gap: 1rem;
+  padding: 1.2rem 1rem;
+  color: var(--mega-text);
+  text-decoration: none;
+  border-radius: 1rem;
+  border: 1px solid rgba(198, 168, 79, 0.15);
+  background: rgba(255, 255, 255, 0.02);
+  transition: all 0.35s var(--mega-ease);
+}
+
+.mega-menu__item:hover,
+.mega-menu__item:focus-visible {
+  color: var(--mega-accent);
+  transform: translateY(-2px);
+  border-color: rgba(198, 168, 79, 0.35);
+  box-shadow: 0 0 0 1px rgba(198, 168, 79, 0.2), 0 10px 28px rgba(0, 0, 0, 0.3);
+}
+
+.mega-menu__item:focus-visible {
+  outline: 2px solid var(--mega-accent);
+  outline-offset: 3px;
+}
+
+/* Parent card that has sub-collections — looks identical to a normal card */
+.mega-menu__item--has-sub {
+  position: relative;
+}
+
+.mega-menu__item-link {
+  display: grid;
+  justify-items: center;
+  gap: 1rem;
+  padding: 1.2rem 1rem;
+  color: var(--mega-text);
+  text-decoration: none;
+  border-radius: 1rem;
+  border: 1px solid rgba(198, 168, 79, 0.15);
+  background: rgba(255, 255, 255, 0.02);
+  transition: all 0.35s var(--mega-ease);
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.mega-menu__item-link:hover,
+.mega-menu__item-link:focus-visible {
+  color: var(--mega-accent);
+  transform: translateY(-2px);
+  border-color: rgba(198, 168, 79, 0.35);
+  box-shadow: 0 0 0 1px rgba(198, 168, 79, 0.2), 0 10px 28px rgba(0, 0, 0, 0.3);
+}
+
+.mega-menu__item-link:focus-visible {
+  outline: 2px solid var(--mega-accent);
+  outline-offset: 3px;
+}
+
+/* Sub-collection panel — hidden by default, shown on hover */
+.mega-menu__subgrid {
+  position: absolute;
+  top: calc(100% + 0.8rem);
+  left: 50%;
+  transform: translateX(-50%) translateY(0.6rem);
+  width: max(28rem, 100%);
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(auto-fill, minmax(11rem, 1fr));
+  padding: 1.2rem;
+  background: linear-gradient(150deg, rgba(198, 168, 79, 0.1), rgba(11, 11, 11, 0.98) 40%);
+  border: 1px solid var(--mega-border);
+  border-radius: 1rem;
+  box-shadow: var(--mega-shadow);
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: opacity 0.25s var(--mega-ease), transform 0.25s var(--mega-ease), visibility 0.25s;
+  z-index: 10;
+}
+
+.mega-menu__item--has-sub:hover .mega-menu__subgrid,
+.mega-menu__item--has-sub:focus-within .mega-menu__subgrid {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+  transform: translateX(-50%) translateY(0);
+}
+
+.mega-menu__item--sub {
+  font-size: 1.5rem;
+}
+
+.mega-menu__media {
+  width: 10rem;
+  height: 10rem;
+  border-radius: 50%;
+  overflow: hidden;
+  display: grid;
+  place-items: center;
+  background: #111;
+  border: 1px solid rgba(198, 168, 79, 0.25);
+}
+
+.mega-menu__image {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.mega-menu__image--placeholder {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%, rgba(198, 168, 79, 0.35), rgba(17, 17, 17, 0.9));
+}
+
+.mega-menu__title {
+  text-align: center;
+  font-size: 1.6rem;
+  line-height: 1.4;
+}
+
+@media screen and (min-width: 1300px) {
+  .mega-menu__grid {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+  }
+}
+
+@media screen and (min-width: 990px) and (max-width: 1299px) {
+  .mega-menu__grid {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+  }
+}
+
+@media screen and (max-width: 989px) {
+  .rg-mega-nav {
+    width: 100%;
+    flex-wrap: wrap;
+    row-gap: 0.6rem;
+  }
+
+  .rg-mega-nav .nav-item {
+    width: 100%;
+  }
+
+  .rg-mega-nav .nav-item > .rg-header__nav-link {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .rg-mega-nav .mega-menu {
+    position: static;
+    width: 100%;
+    max-height: 0;
+    margin-top: 0;
+    opacity: 1;
+    visibility: visible;
+    transform: none;
+    pointer-events: auto;
+    overflow: hidden;
+    transition: max-height 0.35s var(--mega-ease);
+    background: linear-gradient(150deg, rgba(198, 168, 79, 0.07), rgba(11, 11, 11, 0.97) 40%);
+    border-radius: 0 0 1rem 1rem;
+    border: 1px solid var(--mega-border);
+    border-top: none;
+    margin-inline: 0.4rem;
+  }
+
+  .rg-mega-nav .nav-item--has-mega.is-open > .mega-menu {
+    max-height: 120rem;
+  }
+
+  /* Visual indicator on the trigger that it's open */
+  .rg-mega-nav .nav-item--has-mega.is-open > .rg-header__nav-link {
+    border-radius: 1.2rem 1.2rem 0 0;
+    background: rgba(198, 168, 79, 0.1);
+    border-bottom-color: transparent;
+  }
+
+  .mega-menu__grid {
+    padding: 1.2rem;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .mega-menu__item {
+    grid-template-columns: auto 1fr;
+    align-items: center;
+    justify-items: start;
+  }
+
+  .mega-menu__item--has-sub {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .mega-menu__item-link {
+    position: relative;
+  }
+
+  .mega-menu__item-link::after {
+    content: '';
+    position: absolute;
+    right: 1rem;
+    top: 50%;
+    translate: 0 -50%;
+    width: 0.8rem;
+    height: 0.8rem;
+    border-right: 2px solid var(--mega-accent);
+    border-bottom: 2px solid var(--mega-accent);
+    transform: rotate(45deg);
+    transition: transform 0.25s var(--mega-ease);
+  }
+
+  .mega-menu__item--has-sub.is-sub-open > .mega-menu__item-link::after {
+    transform: rotate(-135deg);
+  }
+
+  .mega-menu__subgrid {
+    position: static;
+    transform: none;
+    width: 100%;
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    border: none;
+    box-shadow: none;
+    background: transparent;
+    padding: 0;
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s var(--mega-ease), padding 0.3s var(--mega-ease);
+  }
+
+  .mega-menu__item--has-sub.is-sub-open > .mega-menu__subgrid {
+    max-height: 80rem;
+    padding: 1rem 0 0;
+  }
+
+  .mega-menu__media {
+    width: 6.8rem;
+    height: 6.8rem;
+  }
+
+  .mega-menu__title {
+    text-align: left;
+  }
+}
+
+/* ── Mobile nav trigger chevron ── */
+@media screen and (max-width: 989px) {
+  /* Chevron on the main nav trigger (Products, etc.) */
+  .rg-mega-nav .nav-item--has-mega > [data-mega-trigger] {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.8rem;
+  }
+
+  .rg-mega-nav .nav-item--has-mega > [data-mega-trigger]::after {
+    content: '';
+    display: inline-block;
+    width: 0.8rem;
+    height: 0.8rem;
+    border-right: 2px solid currentColor;
+    border-bottom: 2px solid currentColor;
+    transform: rotate(45deg);
+    transition: transform 0.25s var(--mega-ease);
+    flex-shrink: 0;
+  }
+
+  .rg-mega-nav .nav-item--has-mega.is-open > [data-mega-trigger]::after {
+    transform: rotate(-135deg);
+  }
+}
+
+/* ── Mobile drawer: inline accordion (override slide-in panel) ── */
+@media screen and (max-width: 989px) {
+  /* Make the drawer container relative so submenus sit inside it */
+  .menu-drawer__navigation-container {
+    position: relative;
+    overflow-y: auto;
+    overflow-x: hidden;
+  }
+
+  /* Override the slide-in positioning to inline block */
+  .js .menu-drawer__submenu {
+    position: static;
+    transform: none;
+    visibility: visible;
+    max-height: 0;
+    overflow: hidden;
+    background-color: transparent;
+    transition: max-height 0.3s ease;
+    z-index: auto;
+    bottom: auto;
+    left: auto;
+    width: 100%;
+  }
+
+  .js details[open] > .menu-drawer__submenu,
+  details[open].menu-opening > .menu-drawer__submenu {
+    max-height: 100rem;
+    transform: none;
+    visibility: visible;
+  }
+
+  /* Hide the back button since we're not sliding anymore */
+  .menu-drawer__close-button {
+    display: none;
+  }
+
+  /* Indent nested submenu items */
+  .menu-drawer__submenu .menu-drawer__menu {
+    padding-left: 1.6rem;
+  }
+
+  .menu-drawer__submenu .menu-drawer__submenu .menu-drawer__menu {
+    padding-left: 1.6rem;
+  }
+
+  /* Don't hide parent menu when submenu opens */
+  .js .menu-drawer__navigation .submenu-open {
+    visibility: visible;
+  }
+
+  /* Override the transition added on open — use max-height instead */
+  .js details[open] > .menu-drawer__submenu {
+    transition: max-height 0.3s ease;
+  }
+
+  /* Make summary a flex row */
+  summary.menu-drawer__menu-item {
+    display: flex;
+    align-items: center;
+    padding-right: 1.6rem;
+  }
+
+  /* Hide the slide-in arrow SVG wrapper, keep caret */
+  .menu-drawer__menu-item > .svg-wrapper:first-of-type,
+  .menu-drawer__menu-item .icon-arrow {
+    display: none !important;
+  }
+
+  /* Override absolute position on caret wrapper — sit inline at the right */
+  .menu-drawer__menu-item > .svg-wrapper:last-of-type {
+    position: static;
+    width: 2rem;
+    height: 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-left: auto;
+    flex-shrink: 0;
+  }
+
+  /* The theme JS hides icon-caret — override that */
+  .js .menu-drawer__menu-item .icon-caret {
+    display: block !important;
+    width: 1.4rem;
+    height: 1.4rem;
+    transition: transform 0.25s ease;
+  }
+
+  /* Rotate caret when open */
+  details[open] > summary.menu-drawer__menu-item .icon-caret {
+    transform: rotate(180deg);
+  }
+
+  /* Improve drawer link image layout */
+  .mega-drawer__link {
+    display: flex;
+    align-items: center;
+    gap: 1.4rem;
+    padding: 0.8rem 1.6rem;
+  }
+
+  .mega-drawer__thumb {
+    width: 5rem;
+    height: 5rem;
+    border-radius: 0.8rem;
+    flex-shrink: 0;
+    border: 1px solid rgba(198, 168, 79, 0.25);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+  }
+
+  .mega-drawer__thumb img,
+  .mega-drawer__img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 0.8rem;
+    display: block;
+  }
+}
+
+/* Submenu within mega-card */
+.mega-card__submenu {
+  list-style: none;
+  margin: 0.6rem 0 0;
+  padding: 0.4rem 0 0;
+  border-top: 1px solid var(--mega-border);
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.mega-card__sub-link {
+  display: block;
+  padding: 0.4rem 0.6rem;
+  font-size: 1.2rem;
+  color: rgba(245, 244, 239, 0.7);
+  text-decoration: none;
+  border-radius: 0.6rem;
+  transition: color 0.2s var(--mega-ease), background 0.2s var(--mega-ease);
+}
+
+.mega-card__sub-link:hover,
+.mega-card__sub-link:focus-visible {
+  color: var(--mega-accent);
+  background: rgba(198, 168, 79, 0.08);
+}
+
+.mega-card__sub-link:focus-visible {
+  outline: 2px solid var(--mega-accent);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .rg-mega-nav .nav-item > .rg-header__nav-link,
+  .rg-mega-nav .mega-menu,
+  .mega-menu__item,
+  .mega-menu__item-link,
+  .mega-menu__sub-link {
+    transition: none;
+  }
+}

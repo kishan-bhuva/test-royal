@@ -1,0 +1,103 @@
+{{ 'luxury-theme.css' | asset_url | stylesheet_tag }}
+
+<section class="lux-hiw" data-section-id="{{ section.id }}">
+  <div class="lux-hiw__inner">
+
+    <div class="lux-section-header">
+      {%- if section.settings.label != blank -%}
+        <span class="lux-section-header__label">{{ section.settings.label }}</span>
+      {%- endif -%}
+      {%- if section.settings.title != blank -%}
+        <h2 class="lux-section-header__title">
+          {{ section.settings.title }}
+          {%- if section.settings.title_gold != blank -%}
+            <span class="lux-section-header__title--gold"> {{ section.settings.title_gold }}</span>
+          {%- endif -%}
+        </h2>
+      {%- endif -%}
+      <div class="lux-section-header__divider"></div>
+    </div>
+
+    <div class="lux-hiw__steps">
+
+      {%- comment -%} Step 1 {%- endcomment -%}
+      <div class="lux-hiw-step">
+        <div class="lux-hiw-step__number" aria-hidden="true">01</div>
+        <div class="lux-hiw-step__icon" aria-hidden="true">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/>
+          </svg>
+        </div>
+        <h3 class="lux-hiw-step__title">{{ section.settings.step1_title }}</h3>
+        <p class="lux-hiw-step__desc">{{ section.settings.step1_desc }}</p>
+      </div>
+
+      {%- comment -%} Dashed arrow connector {%- endcomment -%}
+      <div class="lux-hiw-connector" aria-hidden="true">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 24" fill="none">
+          <line x1="0" y1="12" x2="62" y2="12" stroke="#C6A13A" stroke-width="2" stroke-dasharray="6 4"/>
+          <polyline points="56,5 70,12 56,19" stroke="#C6A13A" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+
+      {%- comment -%} Step 2 {%- endcomment -%}
+      <div class="lux-hiw-step">
+        <div class="lux-hiw-step__number" aria-hidden="true">02</div>
+        <div class="lux-hiw-step__icon" aria-hidden="true">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+            <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+          </svg>
+        </div>
+        <h3 class="lux-hiw-step__title">{{ section.settings.step2_title }}</h3>
+        <p class="lux-hiw-step__desc">{{ section.settings.step2_desc }}</p>
+      </div>
+
+      {%- comment -%} Dashed arrow connector {%- endcomment -%}
+      <div class="lux-hiw-connector" aria-hidden="true">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 24" fill="none">
+          <line x1="0" y1="12" x2="62" y2="12" stroke="#C6A13A" stroke-width="2" stroke-dasharray="6 4"/>
+          <polyline points="56,5 70,12 56,19" stroke="#C6A13A" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+
+      {%- comment -%} Step 3 {%- endcomment -%}
+      <div class="lux-hiw-step">
+        <div class="lux-hiw-step__number" aria-hidden="true">03</div>
+        <div class="lux-hiw-step__icon" aria-hidden="true">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="1" y="3" width="15" height="13"/>
+            <polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/>
+            <circle cx="5.5" cy="18.5" r="2.5"/>
+            <circle cx="18.5" cy="18.5" r="2.5"/>
+          </svg>
+        </div>
+        <h3 class="lux-hiw-step__title">{{ section.settings.step3_title }}</h3>
+        <p class="lux-hiw-step__desc">{{ section.settings.step3_desc }}</p>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "How It Works",
+  "tag": "section",
+  "class": "how-it-works-section",
+  "settings": [
+    { "type": "text",     "id": "label",      "label": "Section label",      "default": "Simple Process" },
+    { "type": "text",     "id": "title",      "label": "Section title",      "default": "How It" },
+    { "type": "text",     "id": "title_gold", "label": "Title (gold part)",  "default": "Works" },
+    { "type": "text",     "id": "step1_title","label": "Step 1 title",       "default": "Choose Your Design" },
+    { "type": "textarea", "id": "step1_desc", "label": "Step 1 description", "default": "Browse our collection and pick a style that suits your space and personality." },
+    { "type": "text",     "id": "step2_title","label": "Step 2 title",       "default": "Add Customization" },
+    { "type": "textarea", "id": "step2_desc", "label": "Step 2 description", "default": "Enter your name, choose material, color finish, and any special instructions." },
+    { "type": "text",     "id": "step3_title","label": "Step 3 title",       "default": "Delivered to You" },
+    { "type": "textarea", "id": "step3_desc", "label": "Step 3 description", "default": "We craft your nameplate with care and ship it safely to your doorstep in 3–5 days." }
+  ],
+  "presets": [
+    { "name": "How It Works" }
+  ]
+}
+{% endschema %}

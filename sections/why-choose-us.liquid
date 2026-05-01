@@ -1,0 +1,86 @@
+{{ 'luxury-theme.css' | asset_url | stylesheet_tag }}
+
+<section class="lux-trust-strip" data-section-id="{{ section.id }}">
+  <div class="lux-trust-strip__inner">
+    <div class="lux-trust-strip__grid">
+
+      <div class="lux-trust-item">
+        <div class="lux-trust-item__icon" aria-hidden="true">
+          {%- comment -%} Hammer / Craft icon {%- endcomment -%}
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="m15 12-8.5 8.5c-.83.83-2.17.83-3 0a2.12 2.12 0 0 1 0-3L12 9"/>
+            <path d="M17.64 15 22 10.64"/>
+            <path d="m20.91 11.7-1.25-1.25c-.6-.6-.93-1.4-.93-2.25v-.86L16.01 4.6a5.56 5.56 0 0 0-3.94-1.64H9l.92.82A6.18 6.18 0 0 1 12 8.4v1.56l2 2h2.47l2.26 1.91"/>
+          </svg>
+        </div>
+        <p class="lux-trust-item__title">{{ section.settings.trust_1_title }}</p>
+        <p class="lux-trust-item__sub">{{ section.settings.trust_1_sub }}</p>
+      </div>
+
+      <div class="lux-trust-item">
+        <div class="lux-trust-item__icon" aria-hidden="true">
+          {%- comment -%} Users / Customers icon {%- endcomment -%}
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+            <circle cx="9" cy="7" r="4"/>
+            <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+            <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+          </svg>
+        </div>
+        <p class="lux-trust-item__title">{{ section.settings.trust_2_title }}</p>
+        <p class="lux-trust-item__sub">{{ section.settings.trust_2_sub }}</p>
+      </div>
+
+      <div class="lux-trust-item">
+        <div class="lux-trust-item__icon" aria-hidden="true">
+          {%- comment -%} Sliders / Customizable icon {%- endcomment -%}
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="4" y1="21" x2="4" y2="14"/><line x1="4" y1="10" x2="4" y2="3"/>
+            <line x1="12" y1="21" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="3"/>
+            <line x1="20" y1="21" x2="20" y2="16"/><line x1="20" y1="12" x2="20" y2="3"/>
+            <line x1="1" y1="14" x2="7" y2="14"/><line x1="9" y1="8" x2="15" y2="8"/>
+            <line x1="17" y1="16" x2="23" y2="16"/>
+          </svg>
+        </div>
+        <p class="lux-trust-item__title">{{ section.settings.trust_3_title }}</p>
+        <p class="lux-trust-item__sub">{{ section.settings.trust_3_sub }}</p>
+      </div>
+
+      <div class="lux-trust-item">
+        <div class="lux-trust-item__icon" aria-hidden="true">
+          {%- comment -%} Truck / Delivery icon {%- endcomment -%}
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="1" y="3" width="15" height="13"/>
+            <polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/>
+            <circle cx="5.5" cy="18.5" r="2.5"/>
+            <circle cx="18.5" cy="18.5" r="2.5"/>
+          </svg>
+        </div>
+        <p class="lux-trust-item__title">{{ section.settings.trust_4_title }}</p>
+        <p class="lux-trust-item__sub">{{ section.settings.trust_4_sub }}</p>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Why Choose Us Strip",
+  "tag": "section",
+  "class": "why-choose-us-section",
+  "settings": [
+    { "type": "text", "id": "trust_1_title", "label": "Item 1 title", "default": "Handcrafted in India" },
+    { "type": "text", "id": "trust_1_sub",   "label": "Item 1 subtitle", "default": "Every piece made with pride" },
+    { "type": "text", "id": "trust_2_title", "label": "Item 2 title", "default": "5000+ Happy Customers" },
+    { "type": "text", "id": "trust_2_sub",   "label": "Item 2 subtitle", "default": "Trusted across India" },
+    { "type": "text", "id": "trust_3_title", "label": "Item 3 title", "default": "100% Customizable" },
+    { "type": "text", "id": "trust_3_sub",   "label": "Item 3 subtitle", "default": "Made exactly to your specs" },
+    { "type": "text", "id": "trust_4_title", "label": "Item 4 title", "default": "Ships in 3–5 Days" },
+    { "type": "text", "id": "trust_4_sub",   "label": "Item 4 subtitle", "default": "Fast & safe delivery" }
+  ],
+  "presets": [
+    { "name": "Why Choose Us Strip" }
+  ]
+}
+{% endschema %}

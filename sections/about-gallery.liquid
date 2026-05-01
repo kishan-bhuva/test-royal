@@ -1,0 +1,74 @@
+<section class="about-gallery section">
+  <div class="page-width about-gallery__inner">
+    <div class="about-gallery__header">
+      <h2 class="about-gallery__title">{{ section.settings.heading | default: 'THE MAKING OF A MASTERPIECE' }}</h2>
+      <p class="about-gallery__subtitle">{{ section.settings.subheading | default: 'OUR CRAFT IN MOTION' }}</p>
+    </div>
+
+    <div class="about-gallery__grid">
+      {% for block in section.blocks %}
+        <div class="about-gallery__card" {{ block.shopify_attributes }}>
+          {%- if block.settings.image != blank -%}
+            <div class="about-gallery__image-frame">
+              {{ block.settings.image | image_url: width: 900 | image_tag: loading: 'lazy', class: 'about-gallery__image', alt: block.settings.caption | escape }}
+            </div>
+          {%- endif -%}
+          {%- if block.settings.caption != blank -%}
+            <div class="about-gallery__caption">{{ block.settings.caption }}</div>
+          {%- endif -%}
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "About - Gallery",
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "THE MAKING OF A MASTERPIECE"
+    },
+    {
+      "type": "text",
+      "id": "subheading",
+      "label": "Subheading",
+      "default": "OUR CRAFT IN MOTION"
+    }
+  ],
+  "max_blocks": 4,
+  "blocks": [
+    {
+      "type": "image_card",
+      "name": "Image card",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Image"
+        },
+        {
+          "type": "text",
+          "id": "caption",
+          "label": "Caption",
+          "default": "Craft in Motion"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "About - Gallery",
+      "blocks": [
+        { "type": "image_card" },
+        { "type": "image_card" },
+        { "type": "image_card" },
+        { "type": "image_card" }
+      ]
+    }
+  ]
+}
+{% endschema %}

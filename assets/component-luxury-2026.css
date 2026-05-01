@@ -1,0 +1,333 @@
+/* 2026 Luxury Interaction Layer */
+:root {
+  --lux-duration: 0.4s;
+  --lux-ease: cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+.royalgifts-theme {
+  position: relative;
+  overflow-x: hidden;
+}
+
+.royalgifts-theme * {
+  transition: all var(--lux-duration) var(--lux-ease);
+}
+
+/* 1️⃣ Product image effects */
+.royalgifts-theme .royalgifts-media-card {
+  position: relative;
+}
+
+.royalgifts-theme .royalgifts-media-card::before {
+  content: '';
+  position: absolute;
+  inset: 6%;
+  background: radial-gradient(120% 120% at 30% 20%, rgba(21, 86, 59, 0.45), transparent 60%);
+  filter: blur(22px);
+  z-index: 0;
+  pointer-events: none;
+}
+
+.royalgifts-theme .product__media-item {
+  position: relative;
+  will-change: transform;
+}
+
+.royalgifts-theme .product__media-item .product__media,
+.royalgifts-theme .product__media-item .deferred-media__poster,
+.royalgifts-theme .product__media-item .media {
+  animation: luxFloat 10s ease-in-out infinite alternate;
+  will-change: transform;
+}
+
+.royalgifts-theme .product__media-item::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(130deg, rgba(255, 255, 255, 0.12), transparent 35%, rgba(255, 255, 255, 0.05));
+  mix-blend-mode: screen;
+  opacity: 0.4;
+  pointer-events: none;
+}
+
+.royalgifts-theme .product__media-item:hover {
+  transform: translateY(-6px) rotateX(2deg) scale(1.02);
+  box-shadow: 0 20px 60px rgba(212, 175, 55, 0.25);
+}
+
+.royalgifts-theme .product__media-item:hover .product__media,
+.royalgifts-theme .product__media-item:hover .media {
+  transform: scale(1.04);
+}
+
+.royalgifts-theme .thumbnail-list__item button.thumbnail {
+  will-change: transform;
+  position: relative;
+  overflow: hidden;
+}
+
+.royalgifts-theme .thumbnail-list__item button.thumbnail::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(80% 80% at 50% 50%, rgba(212, 175, 55, 0.25), transparent 65%);
+  opacity: 0;
+}
+
+.royalgifts-theme .thumbnail-list__item button.thumbnail:hover {
+  transform: scale(1.1);
+  box-shadow: 0 0 0 2px rgba(212, 175, 55, 0.55), 0 10px 26px rgba(0, 0, 0, 0.35);
+}
+
+.royalgifts-theme .thumbnail-list__item button.thumbnail:hover::after {
+  opacity: 1;
+}
+
+/* 2️⃣ Title & text animations */
+.royalgifts-title {
+  position: relative;
+  display: inline-block;
+  opacity: 0;
+  transform: translateY(12px);
+  animation: luxFadeUp 0.8s var(--lux-ease) forwards;
+  animation-play-state: paused;
+}
+
+.royalgifts-title.shimmer {
+  background: linear-gradient(120deg, #d4af37 0%, #f8e7b5 30%, #d4af37 60%);
+  background-size: 200% 100%;
+  -webkit-background-clip: text;
+  color: transparent;
+  animation: luxShimmer 5s linear infinite, luxFadeUp 0.8s var(--lux-ease) forwards;
+  animation-play-state: paused;
+}
+
+.royalgifts-title.is-live,
+.royalgifts-title.shimmer.is-live {
+  animation-play-state: running;
+}
+
+.royalgifts-price {
+  animation: luxPulse 5s ease-in-out infinite;
+  display: inline-block;
+}
+
+.royalgifts-price-block:hover .royalgifts-price {
+  filter: brightness(1.08);
+}
+
+.royalgifts-quote {
+  opacity: 0;
+  animation: luxFadeDelay 0.9s var(--lux-ease) forwards;
+}
+
+/* 3️⃣ Inputs & dropdowns */
+.royalgifts-engraving input {
+  position: relative;
+}
+
+.royalgifts-engraving input:focus {
+  box-shadow: 0 0 0 2px rgba(212, 175, 55, 0.45), 0 10px 30px rgba(0, 0, 0, 0.35);
+  transform: translateY(-1px);
+}
+
+.royalgifts-theme .select {
+  transition: all var(--lux-duration) var(--lux-ease), max-height 0.25s ease;
+}
+
+.royalgifts-theme .select__select:focus {
+  box-shadow: 0 0 0 1px rgba(212, 175, 55, 0.6);
+}
+
+.royalgifts-theme .select .svg-wrapper {
+  transition: transform var(--lux-duration) var(--lux-ease);
+}
+
+.royalgifts-theme .select:focus-within .svg-wrapper,
+.royalgifts-theme .select:hover .svg-wrapper {
+  transform: rotate(180deg);
+}
+
+.royalgifts-theme .select__select option:hover {
+  background: rgba(212, 175, 55, 0.18);
+}
+
+/* 4️⃣ Buttons */
+.royalgifts-theme .product-form__submit {
+  position: relative;
+  overflow: hidden;
+  will-change: transform;
+}
+
+.royalgifts-theme .product-form__submit::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -120%;
+  width: 200%;
+  height: 100%;
+  background: linear-gradient(120deg, transparent, rgba(255, 255, 255, 0.28), transparent);
+  opacity: 0;
+  transition: opacity var(--lux-duration) var(--lux-ease);
+}
+
+.royalgifts-theme .product-form__submit:hover::after {
+  opacity: 1;
+  animation: luxSweep 1.3s var(--lux-ease);
+}
+
+.royalgifts-theme .product-form__submit:active {
+  transform: scale(0.96);
+}
+
+.royalgifts-theme .shopify-payment-button__button {
+  position: relative;
+  overflow: hidden;
+}
+
+.royalgifts-theme .shopify-payment-button__button:hover {
+  color: #0b0f0d;
+}
+
+.royalgifts-theme .shopify-payment-button__button::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, rgba(212, 175, 55, 0.25), rgba(212, 175, 55, 0.6));
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform var(--lux-duration) var(--lux-ease);
+  z-index: -1;
+}
+
+.royalgifts-theme .shopify-payment-button__button:hover::before {
+  transform: scaleX(1);
+}
+
+/* 5️⃣ Feature icons */
+.royalgifts-feature-strip {
+  position: relative;
+  overflow: hidden;
+}
+
+.royalgifts-feature {
+  opacity: 0;
+  transform: translateY(10px);
+  animation: luxFeatureIn 0.6s var(--lux-ease) forwards;
+}
+
+.royalgifts-feature:nth-child(1) { animation-delay: 0.05s; }
+.royalgifts-feature:nth-child(2) { animation-delay: 0.12s; }
+.royalgifts-feature:nth-child(3) { animation-delay: 0.2s; }
+.royalgifts-feature:nth-child(4) { animation-delay: 0.28s; }
+
+.royalgifts-feature:hover {
+  transform: translateY(-5px) scale(1.08);
+  box-shadow: 0 12px 28px rgba(212, 175, 55, 0.18);
+}
+
+/* 6️⃣ Tabs */
+.royalgifts-tablist {
+  position: relative;
+}
+
+.royalgifts-tab-underline {
+  position: absolute;
+  bottom: -1px;
+  height: 2px;
+  width: 25%;
+  background: linear-gradient(90deg, #b98f1b, #d4af37);
+  transition: transform var(--lux-duration) var(--lux-ease), width var(--lux-duration) var(--lux-ease);
+  will-change: transform, width;
+}
+
+.royalgifts-tabcontent {
+  opacity: 0;
+  transform: translateY(8px);
+}
+
+.royalgifts-tabcontent.is-active {
+  animation: luxTabIn 0.35s var(--lux-ease) forwards;
+}
+
+/* 7️⃣ Related products */
+.royalgifts-related-card {
+  will-change: transform;
+}
+
+.royalgifts-related-card:hover {
+  transform: translateY(-6px) scale(1.03) rotateY(3deg);
+  box-shadow: 0 18px 45px rgba(212, 175, 55, 0.2);
+}
+
+.royalgifts-related-card:hover .royalgifts-related-image img {
+  transform: scale(1.05);
+}
+
+@media screen and (min-width: 990px) {
+  /* Keep product media pinned while product details scroll. */
+  .royalgifts-theme {
+    overflow: visible;
+    overflow-x: clip;
+  }
+
+  .royalgifts-theme .royalgifts-shell,
+  .royalgifts-theme .royalgifts-product-grid,
+  .royalgifts-theme .product__media-wrapper,
+  .royalgifts-theme .product__info-wrapper {
+    overflow: visible;
+  }
+
+  .royalgifts-theme .product__media-wrapper {
+    position: -webkit-sticky;
+    position: sticky;
+    top: max(120px, calc(var(--header-height, 0px) + 24px));
+    align-self: start;
+    z-index: 2;
+  }
+
+  .royalgifts-theme .product__media-wrapper .product__column-sticky,
+  .royalgifts-theme .product__info-wrapper > .product__column-sticky {
+    position: static;
+    top: auto;
+  }
+}
+
+/* Keyframes */
+@keyframes luxFloat {
+  from { transform: translateY(0); }
+  to { transform: translateY(-6px); }
+}
+
+@keyframes luxShimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+@keyframes luxFadeUp {
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes luxFadeDelay {
+  20% { opacity: 0; }
+  100% { opacity: 1; }
+}
+
+@keyframes luxPulse {
+  0%, 100% { filter: drop-shadow(0 0 0 rgba(212, 175, 55, 0.15)); }
+  50% { filter: drop-shadow(0 0 18px rgba(212, 175, 55, 0.35)); }
+}
+
+@keyframes luxSweep {
+  0% { transform: translateX(-120%); }
+  100% { transform: translateX(120%); }
+}
+
+@keyframes luxFeatureIn {
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes luxTabIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}

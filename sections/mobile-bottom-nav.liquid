@@ -1,0 +1,147 @@
+<style>
+  .mob-nav {
+    display: none;
+  }
+
+  @media screen and (max-width: 989px) {
+    .mob-nav {
+      display: flex;
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      z-index: 300;
+      background: #0d0d0d;
+      border-top: 1px solid rgba(198, 161, 58, 0.15);
+      padding: 0 0 env(safe-area-inset-bottom, 0px);
+    }
+
+    .mob-nav__item {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      padding: 10px 4px 8px;
+      text-decoration: none;
+      color: rgba(245, 244, 239, 0.5);
+      font-family: 'Inter', sans-serif;
+      font-size: 10px;
+      font-weight: 500;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      transition: color 0.2s ease;
+      position: relative;
+    }
+
+    .mob-nav__item svg {
+      width: 22px;
+      height: 22px;
+      flex-shrink: 0;
+      transition: stroke 0.2s ease;
+    }
+
+    .mob-nav__item:hover,
+    .mob-nav__item.active {
+      color: #C6A13A;
+    }
+
+    .mob-nav__item:hover svg,
+    .mob-nav__item.active svg {
+      stroke: #C6A13A;
+    }
+
+    .mob-nav__badge {
+      position: absolute;
+      top: 6px;
+      left: 50%;
+      margin-left: 4px;
+      min-width: 16px;
+      height: 16px;
+      padding: 0 4px;
+      background: #C6A13A;
+      color: #0b0b0b;
+      font-size: 9px;
+      font-weight: 700;
+      line-height: 16px;
+      text-align: center;
+      border-radius: 999px;
+    }
+
+    /* push page content above the nav bar */
+    body {
+      padding-bottom: calc(60px + env(safe-area-inset-bottom, 0px));
+    }
+  }
+</style>
+
+<nav class="mob-nav" aria-label="Mobile navigation">
+  <a href="{{ routes.root_url }}"
+     class="mob-nav__item{% if request.page_type == 'index' %} active{% endif %}"
+     aria-label="Home">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M3 9.5L12 3l9 6.5V20a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9.5Z"/>
+      <path d="M9 21V12h6v9"/>
+    </svg>
+    <span>Home</span>
+  </a>
+
+  <a href="{{ routes.search_url }}"
+     class="mob-nav__item{% if request.page_type == 'search' %} active{% endif %}"
+     aria-label="Search">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="11" cy="11" r="7"/>
+      <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+    </svg>
+    <span>Search</span>
+  </a>
+
+  <a href="{{ routes.all_products_collection_url }}"
+     class="mob-nav__item{% if request.page_type == 'list-collections' %} active{% endif %}"
+     aria-label="Collections">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+      <rect x="3" y="3" width="7" height="7" rx="1"/>
+      <rect x="14" y="3" width="7" height="7" rx="1"/>
+      <rect x="3" y="14" width="7" height="7" rx="1"/>
+      <rect x="14" y="14" width="7" height="7" rx="1"/>
+    </svg>
+    <span>Shop</span>
+  </a>
+
+  <a href="{%- if customer -%}{{ routes.account_url }}{%- else -%}{{ routes.account_login_url }}{%- endif -%}"
+     class="mob-nav__item{% if request.page_type == 'customers/account' or request.page_type == 'customers/login' %} active{% endif %}"
+     aria-label="Account"
+     rel="nofollow">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+      <circle cx="12" cy="7" r="4"/>
+    </svg>
+    <span>Account</span>
+  </a>
+
+  <a href="{{ routes.cart_url }}"
+     class="mob-nav__item{% if request.page_type == 'cart' %} active{% endif %}"
+     aria-label="Cart">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/>
+      <line x1="3" y1="6" x2="21" y2="6"/>
+      <path d="M16 10a4 4 0 0 1-8 0"/>
+    </svg>
+    {%- if cart.item_count > 0 -%}
+      <span class="mob-nav__badge" aria-hidden="true">
+        {%- if cart.item_count < 10 -%}{{ cart.item_count }}{%- else -%}9+{%- endif -%}
+      </span>
+    {%- endif -%}
+    <span>Cart</span>
+  </a>
+</nav>
+
+{% schema %}
+{
+  "name": "Mobile Bottom Nav",
+  "tag": "div",
+  "class": "mobile-bottom-nav",
+  "settings": []
+}
+{% endschema %}

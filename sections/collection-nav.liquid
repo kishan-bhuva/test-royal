@@ -1,0 +1,713 @@
+<style>
+  .shopify-section--collection-nav {
+    width: 100%;
+    position: relative;
+    z-index: 200;
+  }
+
+  @media screen and (max-width: 749px) {
+    .shopify-section--collection-nav {
+      z-index: 10;
+    }
+  }
+
+  @media screen and (max-width: 989px) {
+    body.overflow-hidden-tablet .shopify-section--collection-nav,
+    body.overflow-hidden .shopify-section--collection-nav,
+    .section-header.menu-open ~ .shopify-section--collection-nav,
+    .section-header.menu-open ~ .shopify-section-group-header-group .shopify-section--collection-nav {
+      z-index: -1 !important;
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+    }
+  }
+
+  .collection-nav {
+    position: relative;
+    overflow: visible;
+    background: #0d0d0d;
+    border-top: 1px solid rgba(198, 161, 58, 0.1);
+    border-bottom: 1px solid rgba(198, 161, 58, 0.1);
+    width: 100%;
+    background: rgba(10, 20, 14, 0.55) !important;
+    backdrop-filter: blur(18px) !important;
+    -webkit-backdrop-filter: blur(18px) !important;
+  }
+
+  /* ════════════════════════════════
+     DESKTOP layout (≥ 750px)
+  ════════════════════════════════ */
+  .collection-nav__inner {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 0 3rem;
+    margin: 0 auto;
+    max-width: var(--page-width, 140rem);
+  }
+
+  .collection-nav__item {
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    color: rgba(250, 250, 250, 0.75);
+    text-decoration: none;
+    padding: 13px 20px;
+    white-space: nowrap;
+    position: relative;
+    transition: color 0.3s;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    flex-shrink: 0;
+  }
+
+  .collection-nav__item::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 0;
+    height: 2px;
+    background: #C6A13A;
+    transition: width 0.3s;
+  }
+
+  .collection-nav__item:hover {
+    color: #C6A13A;
+  }
+
+  .collection-nav__item:hover::after,
+  .collection-nav__item.active::after {
+    width: 60%;
+  }
+
+  .collection-nav__item.active {
+    color: #C6A13A;
+    font-weight: 600;
+  }
+
+  /* Dropdown */
+  .collection-nav__dropdown-wrap {
+    position: relative;
+    flex-shrink: 0;
+  }
+
+  .collection-nav__toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    line-height: 1;
+  }
+
+  .collection-nav__chevron {
+    transition: transform 0.25s;
+  }
+
+  .collection-nav__dropdown-wrap.is-open .collection-nav__chevron {
+    transform: rotate(180deg);
+  }
+
+  .collection-nav__submenu {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    min-width: 220px;
+    background: #111;
+    border: 1px solid rgba(198, 161, 58, 0.2);
+    border-radius: 8px;
+    padding: 8px 0;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(6px);
+    transition: opacity 0.25s, transform 0.25s, visibility 0.25s;
+    z-index: 9999;
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.4);
+  }
+
+  .collection-nav__dropdown-wrap:hover > .collection-nav__submenu,
+  .collection-nav__dropdown-wrap.is-open > .collection-nav__submenu {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+  }
+
+  .collection-nav__subitem {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    padding: 9px 18px;
+    font-family: 'Inter', sans-serif;
+    font-size: 13px;
+    color: rgba(250, 250, 250, 0.8);
+    text-decoration: none;
+    transition: color 0.2s, background 0.2s;
+    white-space: nowrap;
+    text-transform: none;
+    letter-spacing: 0;
+  }
+
+  .collection-nav__subitem:hover {
+    color: #C6A13A;
+    background: rgba(198, 161, 58, 0.07);
+  }
+
+  /* Nested sub-sub-menu */
+  .collection-nav__nested {
+    position: relative;
+  }
+
+  .collection-nav__nested > .collection-nav__submenu {
+    top: 0;
+    left: 100%;
+    margin-top: -8px;
+  }
+
+  .collection-nav__nested:hover > .collection-nav__submenu {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+  }
+
+  /* ════════════════════════════════
+     MOBILE layout (< 750px)
+  ════════════════════════════════ */
+  @media screen and (max-width: 749px) {
+    .collection-nav__inner {
+      display: none;
+    }
+
+    .collection-nav__mobile-list {
+      display: flex;
+      position: relative;
+      overflow: visible;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 0.8rem;
+      padding: 1rem 1.2rem;
+      background: rgba(10, 20, 14, 0.97);
+    }
+
+    .collection-nav__mobile-list > * {
+      flex: 0 0 auto;
+    }
+
+    .collection-nav__mob-group {
+      position: static;
+    }
+
+    .collection-nav__row {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.6rem;
+      width: auto;
+      min-height: 4.4rem;
+      padding: 1rem 1.6rem;
+      font-family: 'Inter', sans-serif;
+      font-size: 1.3rem;
+      font-weight: 500;
+      color: rgba(250, 250, 250, 0.85);
+      text-decoration: none;
+      letter-spacing: 0.02em;
+      white-space: nowrap;
+      background: rgba(198, 161, 58, 0.04);
+      border: 1px solid rgba(198, 161, 58, 0.16);
+      border-radius: 999px;
+      cursor: pointer;
+      text-align: center;
+      transition: color 0.2s, background 0.2s, border-color 0.2s;
+      line-height: 1.2;
+      box-sizing: border-box;
+    }
+
+    .collection-nav__row:hover,
+    .collection-nav__row.active,
+    .collection-nav__mob-group.is-open > .collection-nav__row {
+      color: #C6A13A;
+      background: rgba(198, 161, 58, 0.06);
+      border-color: rgba(198, 161, 58, 0.42);
+    }
+
+    .collection-nav__mob-chevron {
+      flex-shrink: 0;
+      margin-left: 0.1rem;
+      width: 1.2rem;
+      height: 1.2rem;
+      transition: transform 0.25s ease;
+      opacity: 0.6;
+    }
+
+    .collection-nav__mob-group.is-open > .collection-nav__row .collection-nav__mob-chevron {
+      transform: rotate(180deg);
+      opacity: 1;
+      color: #C6A13A;
+    }
+
+    .collection-nav__mob-panel {
+      position: absolute;
+      top: calc(100% - 0.2rem);
+      left: 50%;
+      width: min(28rem, calc(100vw - 2.4rem));
+      min-width: 0;
+      max-width: calc(100vw - 2.4rem);
+      max-height: 0;
+      padding: 0;
+      overflow: hidden auto;
+      border: 1px solid rgba(198, 161, 58, 0.2);
+      border-radius: 1.2rem;
+      background: rgba(10, 20, 14, 0.98);
+      box-shadow: 0 14px 32px rgba(0, 0, 0, 0.38);
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+      transform: translate(-50%, 0.6rem);
+      z-index: 30;
+      transition: max-height 0.35s ease, opacity 0.25s ease, transform 0.25s ease, visibility 0.25s ease;
+    }
+
+    .collection-nav__mob-group.is-open > .collection-nav__mob-panel {
+      max-height: min(70vh, 48rem);
+      padding: 0.6rem 0;
+      opacity: 1;
+      visibility: visible;
+      pointer-events: auto;
+      transform: translate(-50%, 0);
+    }
+
+    .collection-nav__mob-child {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 100%;
+      min-width: 22rem;
+      padding: 1rem 1.6rem;
+      font-family: 'Inter', sans-serif;
+      font-size: 1.35rem;
+      font-weight: 400;
+      color: rgba(250, 250, 250, 0.65);
+      text-decoration: none;
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      text-align: left;
+      box-sizing: border-box;
+      transition: color 0.2s, background 0.2s;
+      line-height: 1.4;
+    }
+
+    .collection-nav__mob-child:hover {
+      color: #C6A13A;
+      background: rgba(198, 161, 58, 0.06);
+    }
+
+    /* Nested sub-accordion */
+    .collection-nav__mob-subgroup.is-open > .collection-nav__mob-subtrigger {
+      color: #C6A13A;
+    }
+
+    .collection-nav__mob-subgroup.is-open > .collection-nav__mob-subtrigger .collection-nav__mob-chevron {
+      transform: rotate(180deg);
+      opacity: 1;
+      color: #C6A13A;
+    }
+
+    .collection-nav__mob-subpanel {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.3s ease;
+    }
+
+    .collection-nav__mob-subgroup.is-open > .collection-nav__mob-subpanel {
+      max-height: 40rem;
+    }
+
+    .collection-nav__mob-grandchild {
+      display: block;
+      padding: 0.85rem 1.6rem 0.85rem 3rem;
+      font-family: 'Inter', sans-serif;
+      font-size: 1.35rem;
+      font-weight: 400;
+      color: rgba(250, 250, 250, 0.5);
+      text-decoration: none;
+      transition: color 0.2s, background 0.2s;
+      line-height: 1.4;
+    }
+
+    .collection-nav__mob-grandchild:hover {
+      color: #C6A13A;
+      background: rgba(198, 161, 58, 0.06);
+    }
+
+    .collection-nav__mobile-list > * + * {
+      border-top: none;
+    }
+  }
+
+  @media screen and (min-width: 750px) {
+    .collection-nav__mobile-list {
+      display: none;
+    }
+  }
+</style>
+
+<nav class="collection-nav" id="collection-nav" aria-label="Collection navigation">
+
+  {%- comment -%}── DESKTOP ──{%- endcomment -%}
+  <div class="collection-nav__inner">
+    {%- for block in section.blocks -%}
+      {%- case block.type -%}
+        {%- when 'nav_item' -%}
+          {%- assign item_url = block.settings.url -%}
+          {%- assign is_active = false -%}
+          {%- if request.path == item_url or request.path contains item_url -%}
+            {%- assign is_active = true -%}
+          {%- endif -%}
+          <a
+            href="{{ block.settings.url }}"
+            class="collection-nav__item{% if is_active %} active{% endif %}"
+            {{ block.shopify_attributes }}
+          >
+            {{- block.settings.label -}}
+          </a>
+        {%- when 'nav_dropdown' -%}
+          {%- assign dd_links = nil -%}
+          {%- if block.settings.menu != blank -%}
+            {%- assign dd_menu = linklists[block.settings.menu] -%}
+            {%- if dd_menu != blank and dd_menu.links.size > 0 -%}
+              {%- assign dd_links = dd_menu.links -%}
+            {%- endif -%}
+          {%- endif -%}
+          {%- if dd_links == nil -%}
+            {%- assign label_handle = block.settings.label | handleize -%}
+            {%- for top_link in linklists['main-menu'].links -%}
+              {%- assign top_link_handle = top_link.title | handleize -%}
+              {%- if top_link_handle == label_handle -%}
+                {%- assign dd_links = top_link.links -%}
+                {%- break -%}
+              {%- endif -%}
+            {%- endfor -%}
+          {%- endif -%}
+          {%- if dd_links != nil and dd_links.size > 0 -%}
+            <div class="collection-nav__dropdown-wrap" {{ block.shopify_attributes }}>
+              <button
+                class="collection-nav__item collection-nav__toggle"
+                aria-expanded="false"
+                aria-haspopup="true"
+              >
+                {{- block.settings.label | escape -}}
+                <svg class="collection-nav__chevron" xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
+              </button>
+              <div class="collection-nav__submenu" role="menu">
+                {%- for link in dd_links -%}
+                  {%- if link.links != blank -%}
+                    <div class="collection-nav__nested">
+                      <a href="{{ link.url }}" class="collection-nav__subitem" role="menuitem">
+                        {{- link.title | escape -}}
+                        <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg>
+                      </a>
+                      <div class="collection-nav__submenu" role="menu">
+                        {%- for sublink in link.links -%}
+                          <a href="{{ sublink.url }}" class="collection-nav__subitem" role="menuitem">
+                            {{- sublink.title | escape -}}
+                          </a>
+                        {%- endfor -%}
+                      </div>
+                    </div>
+                  {%- else -%}
+                    <a href="{{ link.url }}" class="collection-nav__subitem" role="menuitem">
+                      {{- link.title | escape -}}
+                    </a>
+                  {%- endif -%}
+                {%- endfor -%}
+              </div>
+            </div>
+          {%- endif -%}
+      {%- endcase -%}
+    {%- endfor -%}
+  </div>
+
+  {%- comment -%}── MOBILE accordion ──{%- endcomment -%}
+  <div class="collection-nav__mobile-list">
+    {%- for block in section.blocks -%}
+      {%- case block.type -%}
+        {%- when 'nav_item' -%}
+          {%- assign item_url = block.settings.url -%}
+          {%- assign is_active = false -%}
+          {%- if request.path == item_url or request.path contains item_url -%}
+            {%- assign is_active = true -%}
+          {%- endif -%}
+          <a
+            href="{{ block.settings.url }}"
+            class="collection-nav__row{% if is_active %} active{% endif %}"
+          >
+            {{- block.settings.label | escape -}}
+          </a>
+        {%- when 'nav_dropdown' -%}
+          {%- assign mob_links = nil -%}
+          {%- if block.settings.menu != blank -%}
+            {%- assign mob_menu = linklists[block.settings.menu] -%}
+            {%- if mob_menu != blank and mob_menu.links.size > 0 -%}
+              {%- assign mob_links = mob_menu.links -%}
+            {%- endif -%}
+          {%- endif -%}
+          {%- if mob_links == nil -%}
+            {%- assign mob_label_handle = block.settings.label | handleize -%}
+            {%- for top_link in linklists['main-menu'].links -%}
+              {%- assign top_link_handle = top_link.title | handleize -%}
+              {%- if top_link_handle == mob_label_handle -%}
+                {%- assign mob_links = top_link.links -%}
+                {%- break -%}
+              {%- endif -%}
+            {%- endfor -%}
+          {%- endif -%}
+          {%- if mob_links != nil and mob_links.size > 0 -%}
+            <div class="collection-nav__mob-group">
+              <button
+                class="collection-nav__row"
+                aria-expanded="false"
+              >
+                {{- block.settings.label | escape -}}
+                <svg
+                  class="collection-nav__mob-chevron"
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="14"
+                  height="14"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2.5"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  aria-hidden="true"
+                ><polyline points="6 9 12 15 18 9"/></svg>
+              </button>
+              <div class="collection-nav__mob-panel">
+                {%- for link in mob_links -%}
+                  {%- if link.links != blank -%}
+                    <div class="collection-nav__mob-subgroup">
+                      <button class="collection-nav__mob-child collection-nav__mob-subtrigger" aria-expanded="false">
+                        {{- link.title | escape -}}
+                        <svg class="collection-nav__mob-chevron" xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
+                      </button>
+                      <div class="collection-nav__mob-subpanel">
+                        {%- for sublink in link.links -%}
+                          <a href="{{ sublink.url }}" class="collection-nav__mob-grandchild">
+                            {{- sublink.title | escape -}}
+                          </a>
+                        {%- endfor -%}
+                      </div>
+                    </div>
+                  {%- else -%}
+                    <a href="{{ link.url }}" class="collection-nav__mob-child">
+                      {{- link.title | escape -}}
+                    </a>
+                  {%- endif -%}
+                {%- endfor -%}
+              </div>
+            </div>
+          {%- endif -%}
+      {%- endcase -%}
+    {%- endfor -%}
+  </div>
+
+</nav>
+
+<script>
+  (function () {
+    function initCollectionNav() {
+      /* Desktop dropdowns */
+      function closeAll() {
+        document.querySelectorAll('.collection-nav__dropdown-wrap.is-open').forEach(function (el) {
+          el.classList.remove('is-open');
+          var toggle = el.querySelector('.collection-nav__toggle');
+          if (toggle) toggle.setAttribute('aria-expanded', 'false');
+        });
+      }
+
+      function closeAllMobile(exceptGroup) {
+        document.querySelectorAll('.collection-nav__mob-group.is-open').forEach(function (group) {
+          if (exceptGroup && group === exceptGroup) return;
+          group.classList.remove('is-open');
+          var toggle = group.querySelector('.collection-nav__row');
+          if (toggle) toggle.setAttribute('aria-expanded', 'false');
+          group.querySelectorAll('.collection-nav__mob-subgroup.is-open').forEach(function (subgroup) {
+            subgroup.classList.remove('is-open');
+            var subToggle = subgroup.querySelector('.collection-nav__mob-subtrigger');
+            if (subToggle) subToggle.setAttribute('aria-expanded', 'false');
+          });
+        });
+      }
+
+      document.querySelectorAll('.collection-nav__toggle').forEach(function (btn) {
+        if (btn.dataset.cnInit) return;
+        btn.dataset.cnInit = '1';
+        btn.addEventListener('click', function (e) {
+          e.stopPropagation();
+          var wrap = btn.closest('.collection-nav__dropdown-wrap');
+          var isOpen = wrap.classList.contains('is-open');
+          closeAll();
+          if (!isOpen) {
+            wrap.classList.add('is-open');
+            btn.setAttribute('aria-expanded', 'true');
+          }
+        });
+      });
+
+      document.addEventListener('click', function (e) {
+        if (!e.target.closest('.collection-nav__dropdown-wrap')) closeAll();
+        if (!e.target.closest('.collection-nav__mob-group')) closeAllMobile();
+      });
+
+      document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape') {
+          closeAll();
+          closeAllMobile();
+        }
+      });
+
+      /* Mobile accordion — top level */
+      document.querySelectorAll('.collection-nav__mob-group > button').forEach(function (btn) {
+        if (btn.dataset.cnMobInit) return;
+        btn.dataset.cnMobInit = '1';
+        btn.addEventListener('click', function (e) {
+          e.stopPropagation();
+          var group = btn.closest('.collection-nav__mob-group');
+          var isOpen = group.classList.contains('is-open');
+          closeAllMobile(group);
+          if (isOpen) {
+            group.classList.remove('is-open');
+            btn.setAttribute('aria-expanded', 'false');
+          } else {
+            group.classList.add('is-open');
+            btn.setAttribute('aria-expanded', 'true');
+          }
+        });
+      });
+
+      /* Mobile accordion — sub level */
+      document.querySelectorAll('.collection-nav__mob-subtrigger').forEach(function (btn) {
+        if (btn.dataset.cnSubInit) return;
+        btn.dataset.cnSubInit = '1';
+        btn.addEventListener('click', function (e) {
+          e.stopPropagation();
+          var subgroup = btn.closest('.collection-nav__mob-subgroup');
+          var isOpen = subgroup.classList.toggle('is-open');
+          btn.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+        });
+      });
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initCollectionNav);
+    } else {
+      initCollectionNav();
+    }
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Collection Nav",
+  "class": "shopify-section--collection-nav",
+  "tag": "div",
+  "settings": [],
+  "blocks": [
+    {
+      "type": "nav_item",
+      "name": "Nav Item",
+      "settings": [
+        {
+          "type": "text",
+          "id": "label",
+          "label": "Label",
+          "default": "Collection"
+        },
+        {
+          "type": "url",
+          "id": "url",
+          "label": "Link"
+        }
+      ]
+    },
+    {
+      "type": "nav_dropdown",
+      "name": "Dropdown",
+      "settings": [
+        {
+          "type": "text",
+          "id": "label",
+          "label": "Label"
+        },
+        {
+          "type": "link_list",
+          "id": "menu",
+          "label": "Menu"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Collection Nav",
+      "blocks": [
+        {
+          "type": "nav_item",
+          "settings": {
+            "label": "Name Plates",
+            "url": "/collections/name-plates"
+          }
+        },
+        {
+          "type": "nav_item",
+          "settings": {
+            "label": "Desk Name Plates",
+            "url": "/collections/desk-name-plates"
+          }
+        },
+        {
+          "type": "nav_item",
+          "settings": {
+            "label": "Home Decor",
+            "url": "/collections/home-decor"
+          }
+        },
+        {
+          "type": "nav_item",
+          "settings": {
+            "label": "Couple Gifts",
+            "url": "/collections/couple-gifts"
+          }
+        },
+        {
+          "type": "nav_item",
+          "settings": {
+            "label": "Photo Lamps",
+            "url": "/collections/photo-lamps"
+          }
+        },
+        {
+          "type": "nav_item",
+          "settings": {
+            "label": "Corporate Gifts",
+            "url": "/collections/corporate-gifts"
+          }
+        },
+        {
+          "type": "nav_item",
+          "settings": {
+            "label": "Wall Decor",
+            "url": "/collections/wall-decor"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

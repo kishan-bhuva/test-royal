@@ -1,0 +1,164 @@
+{{ 'luxury-theme.css' | asset_url | stylesheet_tag }}
+
+<section class="lux-testimonials lux-home-section lux-home-section--testimonials" data-section-id="{{ section.id }}">
+  <div class="lux-testimonials__inner">
+    {%- comment -%} Section Header {%- endcomment -%}
+    <header class="lux-section-header" data-lux-reveal>
+      {%- if section.settings.label != blank -%}
+        <span class="lux-section-header__label">{{ section.settings.label }}</span>
+      {%- endif -%}
+      {%- if section.settings.title != blank -%}
+        <h2 class="lux-section-header__title">
+          {{ section.settings.title }}
+          {%- if section.settings.title_gold != blank -%}
+            <span class="lux-section-header__title--gold"> {{ section.settings.title_gold }}</span>
+          {%- endif -%}
+        </h2>
+      {%- endif -%}
+      <div class="lux-section-header__divider"></div>
+    </header>
+
+    {%- comment -%} Testimonial Grid {%- endcomment -%}
+    <div class="lux-testimonials__grid" role="list">
+      {%- for block in section.blocks -%}
+        {%- if block.type == 'testimonial' -%}
+          <article class="lux-testimonial-card" role="listitem" data-lux-reveal {{ block.shopify_attributes }}>
+            {%- comment -%} Large decorative background quotation mark {%- endcomment -%}
+            <div class="lux-testimonial-card__bg-quote" aria-hidden="true">&ldquo;</div>
+
+            {%- comment -%} Functional small quote icon {%- endcomment -%}
+            <svg class="lux-testimonial-card__quote-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 21c3 0 7-1 7-8V5c0-1.25-.756-2.017-2-2H4c-1.25 0-2 .75-2 1.972V11c0 1.25.75 2 2 2 1 0 1 0 1 1v1c0 1-1 2-2 2s-1 .008-1 1.031V20c0 1 0 1 1 1z"/><path d="M15 21c3 0 7-1 7-8V5c0-1.25-.757-2.017-2-2h-4c-1.25 0-2 .75-2 1.972V11c0 1.25.75 2 2 2h.75c0 2.25.25 4-2.75 4v3c0 1 0 1 1 1z"/></svg>
+
+            {%- comment -%} Stars {%- endcomment -%}
+            <div class="lux-testimonial-card__stars" aria-label="{{ block.settings.stars }} out of 5 stars">
+              {%- for i in (1..5) -%}
+                {%- if i <= block.settings.stars -%}
+                  <svg class="lux-testimonial-card__star" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                {%- else -%}
+                  <svg class="lux-testimonial-card__star" style="opacity:0.25" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                {%- endif -%}
+              {%- endfor -%}
+            </div>
+
+            {%- comment -%} Quote {%- endcomment -%}
+            {%- if block.settings.quote != blank -%}
+              <p class="lux-testimonial-card__text">"{{ block.settings.quote }}"</p>
+            {%- endif -%}
+
+            {%- comment -%} Author {%- endcomment -%}
+            <div class="lux-testimonial-card__author">
+              <div class="lux-testimonial-card__avatar">
+                {{ block.settings.name | slice: 0 | upcase }}
+              </div>
+              <div>
+                {%- if block.settings.name != blank -%}
+                  <p class="lux-testimonial-card__name">{{ block.settings.name }}</p>
+                {%- endif -%}
+                {%- if block.settings.role != blank -%}
+                  <p class="lux-testimonial-card__role">{{ block.settings.role }}</p>
+                {%- endif -%}
+              </div>
+            </div>
+          </article>
+        {%- endif -%}
+      {%- endfor -%}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Testimonials",
+  "tag": "section",
+  "class": "testimonials-section",
+  "settings": [
+    {
+      "type": "text",
+      "id": "label",
+      "label": "Section label",
+      "default": "Testimonials"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Section title",
+      "default": "Words from Our"
+    },
+    {
+      "type": "text",
+      "id": "title_gold",
+      "label": "Title (gold italic part)",
+      "default": "Patrons"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "testimonial",
+      "name": "Testimonial",
+      "settings": [
+        {
+          "type": "range",
+          "id": "stars",
+          "label": "Star rating",
+          "min": 1,
+          "max": 5,
+          "step": 1,
+          "default": 5
+        },
+        {
+          "type": "textarea",
+          "id": "quote",
+          "label": "Quote",
+          "default": "The nameplate exceeded our expectations. Exquisite craftsmanship and attention to detail. Truly a premium product."
+        },
+        {
+          "type": "text",
+          "id": "name",
+          "label": "Customer name",
+          "default": "Customer Name"
+        },
+        {
+          "type": "text",
+          "id": "role",
+          "label": "Role / Location",
+          "default": "Verified Buyer"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Testimonials",
+      "blocks": [
+        {
+          "type": "testimonial",
+          "settings": {
+            "stars": 5,
+            "quote": "The nameplate exceeded our expectations. Exquisite craftsmanship and attention to detail. Truly a premium product that makes our home entrance look royal.",
+            "name": "Rajesh Sharma",
+            "role": "Homeowner, Mumbai"
+          }
+        },
+        {
+          "type": "testimonial",
+          "settings": {
+            "stars": 5,
+            "quote": "We ordered corporate nameplates for our entire office. The quality is outstanding and delivery was prompt. Will definitely order again for our new branch.",
+            "name": "Priya Menon",
+            "role": "HR Director, Bangalore"
+          }
+        },
+        {
+          "type": "testimonial",
+          "settings": {
+            "stars": 5,
+            "quote": "Gifted a personalized nameplate to my parents on their anniversary. They absolutely loved it! The packaging was also premium. Highly recommend RoyalGifts.",
+            "name": "Aditya Kapoor",
+            "role": "Loyal Customer, Delhi"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

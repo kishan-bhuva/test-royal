@@ -1,0 +1,298 @@
+<style>
+  .rg-reviews {
+    padding: 80px 0;
+    background: #fff;
+  }
+  .rg-reviews__header {
+    text-align: center;
+    margin-bottom: 48px;
+  }
+  .rg-reviews__eyebrow {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--rg-gold);
+    margin: 0 0 14px;
+  }
+  .rg-reviews__title {
+    font-size: clamp(26px, 3vw, 42px);
+    font-weight: 700;
+    color: var(--rg-text);
+    margin: 0;
+  }
+
+  /* Slider */
+  .rg-reviews__wrap {
+    position: relative;
+  }
+  .rg-reviews__track {
+    display: flex;
+    gap: 24px;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+    padding-bottom: 4px;
+  }
+  .rg-reviews__track::-webkit-scrollbar { display: none; }
+
+  .rg-review-card {
+    flex: 0 0 calc(33.333% - 16px);
+    scroll-snap-align: start;
+    background: #fff;
+    border-radius: 16px;
+    padding: 34px 30px 30px;
+    box-shadow: 0 4px 28px rgba(0,0,0,0.08);
+    border: 1px solid var(--rg-border);
+    display: flex;
+    flex-direction: column;
+  }
+  .rg-review-card__stars {
+    display: flex;
+    gap: 3px;
+    margin: 0 0 18px;
+    color: var(--rg-gold);
+  }
+  .rg-review-card__stars svg {
+    width: 16px;
+    height: 16px;
+  }
+  .rg-review-card__quote {
+    font-size: 15px;
+    line-height: 1.8;
+    color: var(--rg-text-body);
+    margin: 0 0 26px;
+    font-style: italic;
+    flex: 1;
+  }
+  .rg-review-card__author {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+  .rg-review-card__avatar {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid var(--rg-border);
+    flex-shrink: 0;
+  }
+  .rg-review-card__avatar-init {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--rg-gold) 0%, var(--rg-gold-light) 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    font-size: 20px;
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+  .rg-review-card__name {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--rg-text);
+    margin: 0 0 3px;
+  }
+  .rg-review-card__loc {
+    font-size: 12px;
+    color: var(--rg-text-faint);
+    margin: 0;
+  }
+
+  /* Nav buttons */
+  .rg-reviews__nav {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    margin-top: 36px;
+  }
+  .rg-reviews__btn {
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    border: 1.5px solid var(--rg-gold);
+    background: transparent;
+    color: var(--rg-gold);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.25s, color 0.25s;
+    padding: 0;
+  }
+  .rg-reviews__btn:hover {
+    background: var(--rg-gold);
+    color: #fff;
+  }
+
+  @media (max-width: 900px) {
+    .rg-review-card { flex: 0 0 calc(50% - 12px); }
+  }
+  @media (max-width: 600px) {
+    .rg-review-card { flex: 0 0 85%; }
+    .rg-reviews { padding: 56px 0; }
+  }
+</style>
+
+<section class="rg-reviews">
+  <div class="page-width">
+    <div class="rg-reviews__header rg-fade">
+      <p class="rg-reviews__eyebrow">{{ section.settings.eyebrow | default: 'Customer Love' }}</p>
+      <h2 class="rg-reviews__title">{{ section.settings.title | default: 'What Our Customers Say' }}</h2>
+    </div>
+
+    <div class="rg-reviews__wrap rg-fade rg-fade--delay-1">
+      <div class="rg-reviews__track" id="rg-rev-{{ section.id }}">
+        {%- for block in section.blocks -%}
+          <div class="rg-review-card" {{ block.shopify_attributes }}>
+            <div class="rg-review-card__stars" aria-label="5 out of 5 stars">
+              {%- for i in (1..5) -%}
+                <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                  <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                </svg>
+              {%- endfor -%}
+            </div>
+            <p class="rg-review-card__quote">"{{ block.settings.review }}"</p>
+            <div class="rg-review-card__author">
+              {%- if block.settings.photo != blank -%}
+                {{ block.settings.photo | image_url: width: 100 | image_tag:
+                  loading: 'lazy',
+                  class: 'rg-review-card__avatar',
+                  alt: block.settings.name | escape }}
+              {%- else -%}
+                <div class="rg-review-card__avatar-init" aria-hidden="true">{{ block.settings.name | slice: 0 | upcase }}</div>
+              {%- endif -%}
+              <div>
+                <p class="rg-review-card__name">{{ block.settings.name }}</p>
+                <p class="rg-review-card__loc">{{ block.settings.location }}</p>
+              </div>
+            </div>
+          </div>
+        {%- endfor -%}
+      </div>
+
+      <div class="rg-reviews__nav">
+        <button class="rg-reviews__btn" aria-label="Previous" data-rg-rev-prev="{{ section.id }}">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M15 18l-6-6 6-6"/></svg>
+        </button>
+        <button class="rg-reviews__btn" aria-label="Next" data-rg-rev-next="{{ section.id }}">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 18l6-6-6-6"/></svg>
+        </button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+(function () {
+  var id = '{{ section.id }}';
+  function init() {
+    var track = document.getElementById('rg-rev-' + id);
+    if (!track) return;
+    function cardWidth() {
+      var c = track.querySelector('.rg-review-card');
+      return c ? c.offsetWidth + 24 : 340;
+    }
+    document.querySelector('[data-rg-rev-prev="' + id + '"]').addEventListener('click', function () {
+      track.scrollBy({ left: -cardWidth(), behavior: 'smooth' });
+    });
+    document.querySelector('[data-rg-rev-next="' + id + '"]').addEventListener('click', function () {
+      track.scrollBy({ left: cardWidth(), behavior: 'smooth' });
+    });
+  }
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    init();
+  }
+  if (window._rgObserveAll) window._rgObserveAll();
+})();
+</script>
+
+{% schema %}
+{
+  "name": "About - Reviews",
+  "settings": [
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow",
+      "default": "Customer Love"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Section title",
+      "default": "What Our Customers Say"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "review",
+      "name": "Review",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "photo",
+          "label": "Customer photo"
+        },
+        {
+          "type": "text",
+          "id": "name",
+          "label": "Customer name",
+          "default": "Priya Sharma"
+        },
+        {
+          "type": "text",
+          "id": "location",
+          "label": "Location",
+          "default": "Mumbai"
+        },
+        {
+          "type": "textarea",
+          "id": "review",
+          "label": "Review text",
+          "default": "Absolutely love the quality! The nameplate looks stunning at our home entrance. The finish is premium and packaging was excellent."
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "About - Reviews",
+      "blocks": [
+        {
+          "type": "review",
+          "settings": {
+            "name": "Priya Sharma",
+            "location": "Mumbai",
+            "review": "Absolutely love the quality! The nameplate looks stunning at our home entrance. The finish is premium and packaging was excellent."
+          }
+        },
+        {
+          "type": "review",
+          "settings": {
+            "name": "Ravi Kumar",
+            "location": "Delhi",
+            "review": "Ordered a custom couple gift for our anniversary. It exceeded all my expectations — beautifully crafted and delivered on time!"
+          }
+        },
+        {
+          "type": "review",
+          "settings": {
+            "name": "Anita Verma",
+            "location": "Jaipur",
+            "review": "The desk nameplate I ordered for my office is perfect. Clean design, premium feel, and the engraving is flawless. Highly recommend!"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

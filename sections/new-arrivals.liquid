@@ -1,0 +1,154 @@
+{{ 'luxury-theme.css' | asset_url | stylesheet_tag }}
+
+<section class="lux-arrivals lux-home-section lux-home-section--arrivals" data-section-id="{{ section.id }}">
+  <div class="lux-arrivals__inner">
+    {%- comment -%} Section Header {%- endcomment -%}
+    <header class="lux-section-header" data-lux-reveal>
+      {%- if section.settings.label != blank -%}
+        <span class="lux-section-header__label">{{ section.settings.label }}</span>
+      {%- endif -%}
+      {%- if section.settings.title != blank -%}
+        <h2 class="lux-section-header__title">
+          {{ section.settings.title }}
+          {%- if section.settings.title_gold != blank -%}
+            <span class="lux-section-header__title--gold"> {{ section.settings.title_gold }}</span>
+          {%- endif -%}
+        </h2>
+      {%- endif -%}
+      <div class="lux-section-header__divider"></div>
+    </header>
+
+    {%- comment -%} Product Grid {%- endcomment -%}
+    {%- assign collection = section.settings.collection -%}
+    {%- assign product_limit = section.settings.products_to_show -%}
+
+    <div class="lux-arrivals__grid" role="list">
+      {%- if collection != blank -%}
+        {%- for product in collection.products limit: product_limit -%}
+          <a href="{{ product.url }}" class="lux-product-card lux-product-card--accent-{{ forloop.index }}" role="listitem" data-lux-reveal>
+            <div class="lux-product-card__image-wrapper">
+              {%- if product.compare_at_price > product.price -%}
+                <span class="lux-product-card__badge">Sale</span>
+              {%- endif -%}
+
+              {%- if product.featured_image != blank -%}
+                <img
+                  src="{{ product.featured_image | image_url: width: 800 }}"
+                  srcset="{{ product.featured_image | image_url: width: 400 }} 400w,
+                          {{ product.featured_image | image_url: width: 600 }} 600w,
+                          {{ product.featured_image | image_url: width: 800 }} 800w"
+                  sizes="(max-width: 768px) 50vw, 25vw"
+                  alt="{{ product.featured_image.alt | default: product.title | escape }}"
+                  class="lux-product-card__image"
+                  loading="lazy"
+                  width="{{ product.featured_image.width }}"
+                  height="{{ product.featured_image.height }}"
+                >
+              {%- else -%}
+                {{ 'product-1' | placeholder_svg_tag: 'lux-product-card__image' }}
+              {%- endif -%}
+            </div>
+
+            <div class="lux-product-card__body">
+              <h3 class="lux-product-card__title">{{ product.title }}</h3>
+
+              <p class="lux-product-card__price">
+                {{ product.price | money }}
+                {%- if product.compare_at_price > product.price -%}
+                  <span class="lux-product-card__price-compare">{{ product.compare_at_price | money }}</span>
+                {%- endif -%}
+              </p>
+
+              <div class="lux-product-card__rating" aria-label="5 out of 5 stars">
+                {%- for i in (1..5) -%}
+                  <svg class="lux-product-card__star" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                {%- endfor -%}
+              </div>
+
+              {%- comment -%} Add to Cart — slides in on hover {%- endcomment -%}
+              <div class="lux-product-card__atc-wrapper" aria-hidden="true">
+                <span class="lux-product-card__atc">Add to Cart</span>
+              </div>
+            </div>
+          </a>
+        {%- endfor -%}
+      {%- else -%}
+        {%- comment -%} Visually distinct placeholder cards when no collection is selected {%- endcomment -%}
+        {%- assign placeholder_svgs = 'product-1,product-2,product-3,product-4' | split: ',' -%}
+        {%- assign placeholder_titles = 'Royal Brass Nameplate,Executive Desk Plate,Custom LED Plate,Home Entrance Plate' | split: ',' -%}
+        {%- assign placeholder_prices = '2999,3499,4299,2499' | split: ',' -%}
+
+        {%- for i in (1..4) -%}
+          {%- assign svg_name = placeholder_svgs[forloop.index0] -%}
+          {%- assign card_title = placeholder_titles[forloop.index0] -%}
+          {%- assign card_price = placeholder_prices[forloop.index0] | times: 1 -%}
+
+          <div class="lux-product-card lux-product-card--accent-{{ forloop.index }}" role="listitem" data-lux-reveal>
+            <div class="lux-product-card__image-wrapper">
+              {{ svg_name | placeholder_svg_tag: 'lux-product-card__image' }}
+            </div>
+            <div class="lux-product-card__body">
+              <h3 class="lux-product-card__title">{{ card_title }}</h3>
+              <p class="lux-product-card__price">{{ card_price | money }}</p>
+              <div class="lux-product-card__rating" aria-label="5 out of 5 stars">
+                {%- for j in (1..5) -%}
+                  <svg class="lux-product-card__star" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                {%- endfor -%}
+              </div>
+              <div class="lux-product-card__atc-wrapper" aria-hidden="true">
+                <span class="lux-product-card__atc">Add to Cart</span>
+              </div>
+            </div>
+          </div>
+        {%- endfor -%}
+      {%- endif -%}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "New Arrivals",
+  "tag": "section",
+  "class": "new-arrivals-section",
+  "settings": [
+    {
+      "type": "text",
+      "id": "label",
+      "label": "Section label",
+      "default": "Just Landed"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Section title",
+      "default": "New"
+    },
+    {
+      "type": "text",
+      "id": "title_gold",
+      "label": "Title (gold part)",
+      "default": "Arrivals"
+    },
+    {
+      "type": "collection",
+      "id": "collection",
+      "label": "Collection"
+    },
+    {
+      "type": "range",
+      "id": "products_to_show",
+      "label": "Products to show",
+      "min": 2,
+      "max": 12,
+      "step": 1,
+      "default": 4
+    }
+  ],
+  "presets": [
+    {
+      "name": "New Arrivals"
+    }
+  ]
+}
+{% endschema %}

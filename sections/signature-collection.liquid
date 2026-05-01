@@ -1,0 +1,441 @@
+{{ 'luxury-theme.css' | asset_url | stylesheet_tag }}
+
+<section class="lux-signature lux-home-section lux-home-section--signature" data-section-id="{{ section.id }}">
+  <div class="lux-signature__inner">
+    {%- comment -%} Section Header {%- endcomment -%}
+    <header class="lux-section-header" data-lux-reveal>
+      {%- if section.settings.label != blank -%}
+        <span class="lux-section-header__label">{{ section.settings.label }}</span>
+      {%- endif -%}
+      {%- if section.settings.title != blank -%}
+        <h2 class="lux-section-header__title">
+          {{ section.settings.title }}
+          {%- if section.settings.title_gold != blank -%}
+            <span class="lux-section-header__title--gold"> {{ section.settings.title_gold }}</span>
+          {%- endif -%}
+        </h2>
+      {%- endif -%}
+      <div class="lux-section-header__divider"></div>
+    </header>
+
+    {%- comment -%} Signature Carousel {%- endcomment -%}
+    <div class="lux-signature__carousel" data-sig-carousel>
+      <div class="lux-signature__track" data-sig-track>
+        {%- for block in section.blocks -%}
+          {%- if block.type == 'featured_product' -%}
+            {%- assign product = block.settings.product -%}
+
+            <article class="lux-signature-card" role="listitem" data-lux-reveal {{ block.shopify_attributes }}>
+              {%- if block.settings.badge_text != blank -%}
+                <span class="lux-signature-card__badge">{{ block.settings.badge_text }}</span>
+              {%- endif -%}
+
+              <div class="lux-signature-card__image-wrapper">
+                {%- if block.settings.custom_image != blank -%}
+                  <img
+                    src="{{ block.settings.custom_image | image_url: width: 900 }}"
+                    srcset="{{ block.settings.custom_image | image_url: width: 450 }} 450w,
+                            {{ block.settings.custom_image | image_url: width: 700 }} 700w,
+                            {{ block.settings.custom_image | image_url: width: 900 }} 900w"
+                    sizes="(max-width: 768px) 100vw, 33vw"
+                    alt="{{ block.settings.custom_image.alt | default: block.settings.title | escape }}"
+                    class="lux-signature-card__image"
+                    loading="lazy"
+                    width="{{ block.settings.custom_image.width }}"
+                    height="{{ block.settings.custom_image.height }}"
+                  >
+                {%- elsif product != blank and product.featured_image != blank -%}
+                  <img
+                    src="{{ product.featured_image | image_url: width: 900 }}"
+                    srcset="{{ product.featured_image | image_url: width: 450 }} 450w,
+                            {{ product.featured_image | image_url: width: 700 }} 700w,
+                            {{ product.featured_image | image_url: width: 900 }} 900w"
+                    sizes="(max-width: 768px) 100vw, 33vw"
+                    alt="{{ product.featured_image.alt | default: product.title | escape }}"
+                    class="lux-signature-card__image"
+                    loading="lazy"
+                    width="{{ product.featured_image.width }}"
+                    height="{{ product.featured_image.height }}"
+                  >
+                {%- else -%}
+                  {{ 'product-1' | placeholder_svg_tag: 'lux-signature-card__image' }}
+                {%- endif -%}
+              </div>
+
+              <div class="lux-signature-card__body">
+                <h3 class="lux-signature-card__title">
+                  {{ block.settings.title | default: product.title | default: 'Featured Product' }}
+                </h3>
+
+                {%- if block.settings.description != blank -%}
+                  <p class="lux-signature-card__desc">{{ block.settings.description }}</p>
+                {%- elsif product != blank and product.description != blank -%}
+                  <p class="lux-signature-card__desc">{{ product.description | strip_html | truncate: 120 }}</p>
+                {%- endif -%}
+
+                {%- if product != blank -%}
+                  <p class="lux-signature-card__price">{{ product.price | money }}</p>
+                {%- endif -%}
+
+                <a
+                  href="{% if product != blank %}{{ product.url }}{% else %}#{% endif %}"
+                  class="lux-signature-card__cta"
+                >
+                  {{ block.settings.cta_text | default: 'Order Now' }}
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+                </a>
+              </div>
+            </article>
+          {%- endif -%}
+        {%- endfor -%}
+
+        {%- comment -%} Placeholder cards if no blocks {%- endcomment -%}
+        {%- if section.blocks.size == 0 -%}
+          {%- for i in (1..3) -%}
+            <article class="lux-signature-card" role="listitem" data-lux-reveal>
+              <span class="lux-signature-card__badge">Best Seller</span>
+              <div class="lux-signature-card__image-wrapper">
+                {{ 'product-1' | placeholder_svg_tag: 'lux-signature-card__image' }}
+              </div>
+              <div class="lux-signature-card__body">
+                <h3 class="lux-signature-card__title">Signature Product {{ i }}</h3>
+                <p class="lux-signature-card__desc">Premium handcrafted piece from our exclusive signature collection.</p>
+                <a href="#" class="lux-signature-card__cta">
+                  Order Now
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+                </a>
+              </div>
+            </article>
+          {%- endfor -%}
+        {%- endif -%}
+      </div>
+
+      <button class="lux-sig-arrow lux-sig-arrow--prev" data-sig-prev aria-label="Previous">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+      </button>
+      <button class="lux-sig-arrow lux-sig-arrow--next" data-sig-next aria-label="Next">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+      </button>
+
+      <div class="lux-sig-dots" data-sig-dots></div>
+    </div>
+  </div>
+</section>
+
+<style>
+  /* Desktop: static grid, no carousel chrome */
+  .lux-signature__carousel {
+    position: relative;
+  }
+
+  .lux-signature__track {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 32px;
+  }
+
+  .lux-signature-card__image-wrapper {
+    aspect-ratio: 1/1 !important;
+  }
+
+  .lux-sig-arrow,
+  .lux-sig-dots {
+    display: none;
+  }
+
+  /* Mobile: carousel */
+  @media (max-width: 768px) {
+    .lux-signature__carousel {
+      overflow: hidden;
+    }
+
+    .lux-signature__track {
+      display: flex;
+      gap: 20px;
+      transition: transform 0.45s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+      will-change: transform;
+    }
+
+    .lux-signature__track .lux-signature-card {
+      flex: 0 0 75%;
+      min-width: 0;
+    }
+
+    .lux-signature__track .lux-signature-card__image-wrapper {
+      aspect-ratio: 1/1;
+    }
+
+    .lux-signature__track .lux-signature-card__body {
+      padding: 16px;
+    }
+
+    .lux-signature__track .lux-signature-card__title {
+      font-size: 16px;
+      margin-bottom: 6px;
+    }
+
+    .lux-signature__track .lux-signature-card__desc {
+      font-size: 12px;
+      -webkit-line-clamp: 2;
+      display: -webkit-box;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+      margin-bottom: 8px;
+    }
+
+    .lux-signature__track .lux-signature-card__price {
+      font-size: 16px;
+      margin-bottom: 10px;
+    }
+
+    .lux-sig-arrow {
+      display: flex;
+      position: absolute;
+      top: 40%;
+      transform: translateY(-50%);
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      border: 1.5px solid var(--lux-border-gold);
+      background: rgba(10, 30, 20, 0.85);
+      color: var(--lux-gold);
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      z-index: 10;
+      transition: background 0.2s, border-color 0.2s;
+    }
+
+    .lux-sig-arrow:hover {
+      background: var(--lux-gold);
+      color: var(--lux-black);
+      border-color: var(--lux-gold);
+    }
+
+    .lux-sig-arrow svg {
+      width: 18px;
+      height: 18px;
+    }
+
+    .lux-sig-arrow--prev { left: 0; }
+    .lux-sig-arrow--next { right: 0; }
+
+    .lux-sig-arrow[disabled] {
+      opacity: 0.35;
+      cursor: default;
+      pointer-events: none;
+    }
+
+    .lux-sig-dots {
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+      margin-top: 20px;
+    }
+
+    .lux-sig-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--lux-border-gold);
+      border: none;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.2s;
+      padding: 0;
+    }
+
+    .lux-sig-dot.is-active {
+      background: var(--lux-gold);
+      transform: scale(1.35);
+    }
+  }
+</style>
+
+<script>
+  (function () {
+    function initSignatureCarousel(section) {
+      var track = section.querySelector('[data-sig-track]');
+      var prevBtn = section.querySelector('[data-sig-prev]');
+      var nextBtn = section.querySelector('[data-sig-next]');
+      var dotsContainer = section.querySelector('[data-sig-dots]');
+
+      if (!track) return;
+
+      var cards = Array.from(track.children);
+      var current = 0;
+      var isMobile = false;
+
+      function checkMobile() {
+        return window.innerWidth <= 768;
+      }
+
+      function buildDots() {
+        dotsContainer.innerHTML = '';
+        for (var i = 0; i < cards.length; i++) {
+          var dot = document.createElement('button');
+          dot.className = 'lux-sig-dot' + (i === current ? ' is-active' : '');
+          dot.setAttribute('aria-label', 'Go to slide ' + (i + 1));
+          dot.dataset.index = i;
+          dot.addEventListener('click', function () {
+            goTo(parseInt(this.dataset.index));
+          });
+          dotsContainer.appendChild(dot);
+        }
+      }
+
+      function goTo(index) {
+        current = Math.min(Math.max(index, 0), cards.length - 1);
+        var cardWidth = cards[0].getBoundingClientRect().width;
+        var gap = 20;
+        track.style.transform = 'translateX(-' + (current * (cardWidth + gap)) + 'px)';
+        prevBtn.disabled = current === 0;
+        nextBtn.disabled = current >= cards.length - 1;
+        dotsContainer.querySelectorAll('.lux-sig-dot').forEach(function (d, i) {
+          d.classList.toggle('is-active', i === current);
+        });
+      }
+
+      function enableCarousel() {
+        buildDots();
+        goTo(current);
+        prevBtn.addEventListener('click', onPrev);
+        nextBtn.addEventListener('click', onNext);
+      }
+
+      function disableCarousel() {
+        track.style.transform = '';
+        dotsContainer.innerHTML = '';
+        prevBtn.removeEventListener('click', onPrev);
+        nextBtn.removeEventListener('click', onNext);
+        current = 0;
+      }
+
+      function onPrev() { goTo(current - 1); }
+      function onNext() { goTo(current + 1); }
+
+      function onResize() {
+        var nowMobile = checkMobile();
+        if (nowMobile && !isMobile) {
+          isMobile = true;
+          enableCarousel();
+        } else if (!nowMobile && isMobile) {
+          isMobile = false;
+          disableCarousel();
+        } else if (nowMobile) {
+          goTo(Math.min(current, cards.length - 1));
+        }
+      }
+
+      isMobile = checkMobile();
+      if (isMobile) enableCarousel();
+
+      var resizeTimer;
+      window.addEventListener('resize', function () {
+        clearTimeout(resizeTimer);
+        resizeTimer = setTimeout(onResize, 150);
+      });
+    }
+
+    document.querySelectorAll('[data-sig-carousel]').forEach(initSignatureCarousel);
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Signature Collection",
+  "tag": "section",
+  "class": "signature-collection-section",
+  "settings": [
+    {
+      "type": "text",
+      "id": "label",
+      "label": "Section label",
+      "default": "Handpicked for You"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Section title",
+      "default": "Signature"
+    },
+    {
+      "type": "text",
+      "id": "title_gold",
+      "label": "Title (gold part)",
+      "default": "Collection"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "featured_product",
+      "name": "Featured Product",
+      "limit": 4,
+      "settings": [
+        {
+          "type": "product",
+          "id": "product",
+          "label": "Product"
+        },
+        {
+          "type": "image_picker",
+          "id": "custom_image",
+          "label": "Custom image (optional)"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Custom title (optional)"
+        },
+        {
+          "type": "textarea",
+          "id": "description",
+          "label": "Custom description (optional)"
+        },
+        {
+          "type": "text",
+          "id": "badge_text",
+          "label": "Badge text",
+          "default": "Best Seller"
+        },
+        {
+          "type": "text",
+          "id": "cta_text",
+          "label": "Button text",
+          "default": "Order Now"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Signature Collection",
+      "blocks": [
+        {
+          "type": "featured_product",
+          "settings": {
+            "title": "Royal Brass Nameplate",
+            "description": "Handcrafted brass nameplate with premium finish. Perfect for your home entrance.",
+            "badge_text": "Best Seller"
+          }
+        },
+        {
+          "type": "featured_product",
+          "settings": {
+            "title": "Executive Desk Plate",
+            "description": "Elegant desk nameplate designed for modern professionals and corner offices.",
+            "badge_text": "Best Seller"
+          }
+        },
+        {
+          "type": "featured_product",
+          "settings": {
+            "title": "Custom LED Nameplate",
+            "description": "Illuminate your identity with our premium LED-backlit nameplate collection.",
+            "badge_text": "Best Seller"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,95 @@
+{%- comment -%}
+  header-mega-menu.liquid — Royal Gifts luxe mega menu
+  Inputs:
+    menu (Link object)          -> top-level nav item with children
+    menu_item_slug (string)     -> handle-safe slug for IDs/data attributes
+  Supports images from:
+    - Navigation item metafield: metafields.custom.mega_image (file/image)
+    - Link.object featured_image / image / featured_media.preview_image
+    - Collection fallback by handle
+{%- endcomment -%}
+
+{%- if menu.links != blank -%}
+  {%- assign mega_id = 'mega-' | append: menu_item_slug -%}
+
+  <div
+    class="mega-menu"
+    id="{{ mega_id }}"
+    data-mega-menu="{{ menu_item_slug }}"
+    role="region"
+    aria-label="{{ menu.title | escape }}"
+  >
+    <div class="mega-menu__panel" data-surface>
+      <div class="mega-menu__grid" role="menu">
+        {%- for child_link in menu.links -%}
+          {%- assign nav_image = blank -%}
+
+          {%- if child_link.metafields.custom.mega_image != blank -%}
+            {%- assign nav_image = child_link.metafields.custom.mega_image -%}
+          {%- elsif child_link.object and child_link.object.featured_image -%}
+            {%- assign nav_image = child_link.object.featured_image -%}
+          {%- elsif child_link.object and child_link.object.image -%}
+            {%- assign nav_image = child_link.object.image -%}
+          {%- elsif child_link.object and child_link.object.featured_media and child_link.object.featured_media.preview_image -%}
+            {%- assign nav_image = child_link.object.featured_media.preview_image -%}
+          {%- endif -%}
+
+          {%- if nav_image == blank -%}
+            {%- assign fallback_handle = child_link.title | handleize -%}
+            {%- assign fallback_collection = collections[fallback_handle] -%}
+            {%- if fallback_collection and fallback_collection.featured_image -%}
+              {%- assign nav_image = fallback_collection.featured_image -%}
+            {%- endif -%}
+          {%- endif -%}
+
+          <div class="mega-card{% if child_link.links != blank %} mega-card--has-sub{% endif %}">
+            <a
+              href="{{ child_link.url }}"
+              class="mega-card__link"
+              role="menuitem"
+              aria-label="{{ child_link.title | escape }}"
+            >
+              <span class="mega-card__media">
+                {%- if nav_image != blank -%}
+                  {{
+                    nav_image
+                    | image_url: width: 320
+                    | image_tag:
+                      class: 'mega-card__img',
+                      widths: '160, 220, 320',
+                      sizes: '(min-width: 1200px) 180px, (min-width: 990px) 22vw, (min-width: 750px) 28vw, 42vw',
+                      alt: child_link.title | escape,
+                      loading: 'lazy'
+                  }}
+                {%- else -%}
+                  <span class="mega-card__placeholder" aria-hidden="true">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="48" height="48" fill="none">
+                      <rect x="5" y="5" width="38" height="38" rx="12" stroke="#C6A84F" stroke-width="2" opacity="0.6" />
+                      <circle cx="17" cy="19" r="4" stroke="#C6A84F" stroke-width="2" opacity="0.8" />
+                      <path d="M9 35l9-9 7 7 5-5 9 9" stroke="#C6A84F" stroke-width="2" stroke-linecap="round" />
+                    </svg>
+                  </span>
+                {%- endif -%}
+              </span>
+              <span class="mega-card__title">{{ child_link.title | escape }}</span>
+            </a>
+            {%- if child_link.links != blank -%}
+              <ul class="mega-card__submenu" role="menu" aria-label="{{ child_link.title | escape }} submenu">
+                {%- for sub_link in child_link.links -%}
+                  <li role="none">
+                    <a
+                      href="{{ sub_link.url }}"
+                      class="mega-card__sub-link"
+                      role="menuitem"
+                      tabindex="-1"
+                    >{{ sub_link.title | escape }}</a>
+                  </li>
+                {%- endfor -%}
+              </ul>
+            {%- endif -%}
+          </div>
+        {%- endfor -%}
+      </div>
+    </div>
+  </div>
+{%- endif -%}

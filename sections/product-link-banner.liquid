@@ -1,0 +1,248 @@
+{{ 'luxury-theme.css' | asset_url | stylesheet_tag }}
+
+{%- style -%}
+  /* --------------------------------------------
+     Product Link Banner
+     Premium highlight section with strong CTA
+     -------------------------------------------- */
+  .lux-product-link-banner--{{ section.id }} {
+    position: relative;
+    overflow: hidden;
+    background:
+      radial-gradient(circle at 78% 18%, rgba(198, 167, 94, 0.2) 0%, rgba(198, 167, 94, 0) 45%),
+      linear-gradient(145deg, #08190f 0%, #0d2a1a 54%, #091710 100%);
+    padding: 100px 0;
+  }
+
+  .lux-product-link-banner--{{ section.id }}::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background:
+      linear-gradient(110deg, rgba(198, 167, 94, 0.1) 0%, rgba(198, 167, 94, 0) 42%),
+      repeating-linear-gradient(
+        -45deg,
+        rgba(255, 255, 255, 0.02) 0px,
+        rgba(255, 255, 255, 0.02) 1px,
+        rgba(255, 255, 255, 0) 1px,
+        rgba(255, 255, 255, 0) 28px
+      );
+  }
+
+  .lux-product-link-banner--{{ section.id }}::after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    top: 0;
+    width: min(1280px, calc(100% - 2rem));
+    height: 1px;
+    transform: translateX(-50%);
+    background: linear-gradient(90deg, rgba(198, 167, 94, 0), rgba(198, 167, 94, 0.65), rgba(198, 167, 94, 0));
+  }
+
+  .lux-product-link-banner--{{ section.id }} .lux-product-link-banner__inner {
+    position: relative;
+    z-index: 1;
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 0 24px;
+    display: grid;
+    grid-template-columns: minmax(0, 1.08fr) minmax(0, 0.92fr);
+    gap: 42px;
+    align-items: center;
+  }
+
+  .lux-product-link-banner--{{ section.id }} .lux-product-link-banner__content {
+    max-width: 620px;
+  }
+
+  .lux-product-link-banner--{{ section.id }} .lux-product-link-banner__heading {
+    margin: 0;
+    color: #f7f4ea;
+    font-family: var(--lux-font-heading);
+    font-size: clamp(38px, 4.3vw, 60px);
+    line-height: 1.1;
+    letter-spacing: 0.02em;
+  }
+
+  .lux-product-link-banner--{{ section.id }} .lux-product-link-banner__text {
+    margin: 18px 0 0;
+    color: #d8d2c2;
+    font-family: var(--lux-font-body);
+    font-size: clamp(16px, 1.45vw, 20px);
+    line-height: 1.7;
+    max-width: 56ch;
+  }
+
+  .lux-product-link-banner--{{ section.id }} .lux-product-link-banner__cta {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 28px;
+    padding: 14px 30px;
+    border-radius: 999px;
+    border: 1px solid #d3b671;
+    text-decoration: none;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-family: var(--lux-font-body);
+    font-size: 13px;
+    font-weight: 700;
+    color: #11110d;
+    background: linear-gradient(125deg, #b48f45 0%, #d8c080 44%, #f0dc9f 100%);
+    background-size: 220% 100%;
+    transition: transform 0.35s ease, box-shadow 0.35s ease, background-position 0.35s ease, border-color 0.35s ease;
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.34);
+  }
+
+  .lux-product-link-banner--{{ section.id }} .lux-product-link-banner__cta:hover {
+    transform: translateY(-2px);
+    background-position: 100% 0;
+    border-color: #efdaa1;
+    box-shadow: 0 16px 34px rgba(0, 0, 0, 0.45), 0 0 24px rgba(198, 167, 94, 0.28);
+  }
+
+  .lux-product-link-banner--{{ section.id }} .lux-product-link-banner__media {
+    border-radius: 18px;
+    border: 1px solid rgba(198, 167, 94, 0.42);
+    overflow: hidden;
+    min-height: 300px;
+    background: linear-gradient(140deg, rgba(198, 167, 94, 0.18), rgba(15, 30, 21, 0.9));
+    box-shadow: 0 18px 38px rgba(0, 0, 0, 0.4);
+  }
+
+  .lux-product-link-banner--{{ section.id }} .lux-product-link-banner__image {
+    width: 100%;
+    height: 100%;
+    min-height: 300px;
+    object-fit: cover;
+    display: block;
+  }
+
+  .lux-product-link-banner--{{ section.id }} .lux-product-link-banner__placeholder {
+    width: 100%;
+    height: 100%;
+    min-height: 300px;
+    display: block;
+    background: radial-gradient(circle at 20% 20%, rgba(198, 167, 94, 0.22), rgba(15, 30, 21, 0.95));
+    fill: rgba(198, 167, 94, 0.24);
+    stroke: rgba(198, 167, 94, 0.5);
+  }
+
+  @media screen and (min-width: 768px) and (max-width: 1199px) {
+    .lux-product-link-banner--{{ section.id }} {
+      padding: 60px 0;
+    }
+
+    .lux-product-link-banner--{{ section.id }} .lux-product-link-banner__inner {
+      gap: 30px;
+    }
+  }
+
+  @media screen and (max-width: 767px) {
+    .lux-product-link-banner--{{ section.id }} {
+      padding: 40px 0;
+    }
+
+    .lux-product-link-banner--{{ section.id }} .lux-product-link-banner__inner {
+      grid-template-columns: 1fr;
+      gap: 22px;
+      padding: 0 16px;
+    }
+
+    .lux-product-link-banner--{{ section.id }} .lux-product-link-banner__cta {
+      width: 100%;
+      max-width: 320px;
+    }
+
+    .lux-product-link-banner--{{ section.id }} .lux-product-link-banner__media,
+    .lux-product-link-banner--{{ section.id }} .lux-product-link-banner__image,
+    .lux-product-link-banner--{{ section.id }} .lux-product-link-banner__placeholder {
+      min-height: 240px;
+    }
+  }
+{%- endstyle -%}
+
+<section class="lux-product-link-banner lux-product-link-banner--{{ section.id }} lux-home-section" data-section-id="{{ section.id }}">
+  <div class="lux-product-link-banner__inner">
+    <div class="lux-product-link-banner__content" data-lux-reveal>
+      <h2 class="lux-product-link-banner__heading">
+        {{ section.settings.heading }}
+      </h2>
+      {%- if section.settings.text != blank -%}
+        <p class="lux-product-link-banner__text">{{ section.settings.text }}</p>
+      {%- endif -%}
+
+      {%- if section.settings.button_label != blank -%}
+        <a href="{{ section.settings.button_link | default: '/collections/all' }}" class="lux-product-link-banner__cta">
+          {{ section.settings.button_label }}
+        </a>
+      {%- endif -%}
+    </div>
+
+    <div class="lux-product-link-banner__media" data-lux-reveal>
+      {%- if section.settings.image != blank -%}
+        {{
+          section.settings.image
+          | image_url: width: 1200
+          | image_tag:
+            class: 'lux-product-link-banner__image',
+            loading: 'lazy',
+            widths: '480, 720, 960, 1200',
+            sizes: '(min-width: 1200px) 480px, (min-width: 768px) 40vw, 100vw',
+            alt: section.settings.image.alt | default: section.settings.heading | escape
+        }}
+      {%- else -%}
+        {{ 'lifestyle-1' | placeholder_svg_tag: 'lux-product-link-banner__placeholder' }}
+      {%- endif -%}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Product Link Banner",
+  "tag": "section",
+  "class": "section",
+  "disabled_on": {
+    "groups": ["header", "footer"]
+  },
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Crafted for Grand Entrances"
+    },
+    {
+      "type": "textarea",
+      "id": "text",
+      "label": "Description",
+      "default": "Explore our premium brass and LED nameplates designed to elevate your space."
+    },
+    {
+      "type": "text",
+      "id": "button_label",
+      "label": "Button label",
+      "default": "Explore Collection"
+    },
+    {
+      "type": "url",
+      "id": "button_link",
+      "label": "Button link"
+    },
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Right image"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Product Link Banner"
+    }
+  ]
+}
+{% endschema %}

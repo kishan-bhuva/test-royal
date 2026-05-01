@@ -1,0 +1,193 @@
+<style>
+  .rg-why {
+    padding: 80px 0;
+    background: var(--rg-bg-warm);
+  }
+  .rg-why__header {
+    text-align: center;
+    margin-bottom: 48px;
+  }
+  .rg-why__eyebrow {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--rg-gold);
+    margin: 0 0 14px;
+  }
+  .rg-why__title {
+    font-size: clamp(26px, 3vw, 42px);
+    font-weight: 700;
+    color: var(--rg-text);
+    margin: 0 0 12px;
+  }
+  .rg-why__subtitle {
+    font-size: 15px;
+    color: var(--rg-text-muted);
+    margin: 0;
+  }
+  .rg-why__grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 24px;
+  }
+  .rg-why-card {
+    background: rgba(255, 255, 255, 0.04);
+    border-radius: 14px;
+    padding: 40px 24px 36px;
+    text-align: center;
+    border: 1px solid var(--rg-border);
+    box-shadow: 0 2px 12px rgba(0,0,0,0.3);
+    transition: box-shadow 0.3s, transform 0.3s, border-color 0.3s;
+  }
+  .rg-why-card:hover {
+    box-shadow: 0 14px 44px rgba(201,162,39,0.15);
+    transform: translateY(-5px);
+    border-color: var(--rg-gold-border);
+  }
+  .rg-why-card__icon {
+    width: 68px;
+    height: 68px;
+    background: var(--rg-gold-tint);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 22px;
+    color: var(--rg-gold);
+    transition: background 0.3s, color 0.3s;
+  }
+  .rg-why-card:hover .rg-why-card__icon {
+    background: var(--rg-gold);
+    color: #fff;
+  }
+  .rg-why-card__icon svg {
+    width: 30px;
+    height: 30px;
+    color: white;
+  }
+  .rg-why-card__title {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--rg-text);
+    margin: 0 0 12px;
+  }
+  .rg-why-card__text {
+    font-size: 14px;
+    line-height: 1.7;
+    color: var(--rg-text-muted);
+    margin: 0;
+  }
+  @media (max-width: 900px) {
+    .rg-why__grid { grid-template-columns: repeat(2, 1fr); }
+  }
+  @media (max-width: 480px) {
+    .rg-why { padding: 56px 0; }
+  }
+</style>
+
+<section class="rg-why">
+  <div class="page-width">
+    <div class="rg-why__header rg-fade">
+      <p class="rg-why__eyebrow">{{ section.settings.eyebrow | default: 'Our Promise' }}</p>
+      <h2 class="rg-why__title">{{ section.settings.title | default: 'Why Choose Royal Gifts?' }}</h2>
+      <p class="rg-why__subtitle">{{ section.settings.subtitle | default: 'Built on trust, quality, and a passion for personalization' }}</p>
+    </div>
+
+    <div class="rg-why__grid">
+      {%- for block in section.blocks -%}
+        <div class="rg-why-card rg-fade" style="transition-delay: {{ forloop.index0 | times: 0.1 }}s" {{ block.shopify_attributes }}>
+          <div class="rg-why-card__icon">
+            {%- case block.settings.icon -%}
+              {%- when 'material' -%}
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+              {%- when 'craft' -%}
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
+              {%- when 'happy' -%}
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg>
+              {%- when 'delivery' -%}
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="1" y="3" width="15" height="13" rx="1"/><path d="M16 8h4l3 3v5h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
+              {%- else -%}
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            {%- endcase -%}
+          </div>
+          <h3 class="rg-why-card__title">{{ block.settings.heading }}</h3>
+          <p class="rg-why-card__text">{{ block.settings.text }}</p>
+        </div>
+      {%- endfor -%}
+    </div>
+  </div>
+</section>
+
+<script>if (window._rgObserveAll) window._rgObserveAll();</script>
+
+{% schema %}
+{
+  "name": "About - Why Choose Us",
+  "settings": [
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow",
+      "default": "Our Promise"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Section title",
+      "default": "Why Choose Royal Gifts?"
+    },
+    {
+      "type": "text",
+      "id": "subtitle",
+      "label": "Subtitle",
+      "default": "Built on trust, quality, and a passion for personalization"
+    }
+  ],
+  "max_blocks": 4,
+  "blocks": [
+    {
+      "type": "value",
+      "name": "Feature Card",
+      "settings": [
+        {
+          "type": "select",
+          "id": "icon",
+          "label": "Icon",
+          "options": [
+            { "value": "material", "label": "Premium Materials" },
+            { "value": "craft",    "label": "Craftsmanship" },
+            { "value": "happy",    "label": "Happy Customers" },
+            { "value": "delivery", "label": "Fast Delivery" }
+          ],
+          "default": "material"
+        },
+        {
+          "type": "text",
+          "id": "heading",
+          "label": "Heading",
+          "default": "Premium Materials"
+        },
+        {
+          "type": "textarea",
+          "id": "text",
+          "label": "Description",
+          "default": "We use only the finest stainless steel, acrylic, and brass to ensure every piece lasts a lifetime."
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "About - Why Choose Us",
+      "blocks": [
+        { "type": "value", "settings": { "icon": "material", "heading": "Premium Materials",      "text": "We use only the finest stainless steel, acrylic, and brass to ensure every piece lasts a lifetime." } },
+        { "type": "value", "settings": { "icon": "craft",    "heading": "Expert Craftsmanship",   "text": "Each product is meticulously crafted by skilled artisans who pour passion into every detail." } },
+        { "type": "value", "settings": { "icon": "happy",    "heading": "1000+ Happy Customers",  "text": "Thousands of families and businesses trust Royal Gifts for their personalization needs." } },
+        { "type": "value", "settings": { "icon": "delivery", "heading": "Fast Delivery",           "text": "We ship pan-India with careful packaging to ensure your order arrives perfectly on time." } }
+      ]
+    }
+  ]
+}
+{% endschema %}

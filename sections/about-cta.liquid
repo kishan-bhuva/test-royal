@@ -1,0 +1,118 @@
+{{ 'about-luxury.css' | asset_url | stylesheet_tag }}
+
+{%- style -%}
+  .section-{{ section.id }}-padding {
+    padding-top: {{ section.settings.padding_top | times: 0.75 | round: 0 }}px;
+    padding-bottom: {{ section.settings.padding_bottom | times: 0.75 | round: 0 }}px;
+  }
+
+  @media screen and (min-width: 750px) {
+    .section-{{ section.id }}-padding {
+      padding-top: {{ section.settings.padding_top }}px;
+      padding-bottom: {{ section.settings.padding_bottom }}px;
+    }
+  }
+{%- endstyle -%}
+
+<section class="rg-about-section rg-about-cta section-{{ section.id }}-padding">
+  <div class="page-width">
+    <div class="rg-about-cta__inner">
+      {%- if section.settings.eyebrow != blank -%}
+        <p class="rg-about-kicker">{{ section.settings.eyebrow | escape }}</p>
+      {%- endif -%}
+
+      <h2 class="rg-about-heading">{{ section.settings.heading | escape }}</h2>
+
+      {%- if section.settings.subheading != blank -%}
+        <div class="rg-about-copy">
+          <p>{{ section.settings.subheading | escape }}</p>
+        </div>
+      {%- endif -%}
+
+      {%- if section.settings.button_label != blank -%}
+        <div class="rg-about-cta__actions">
+          <a
+            {% if section.settings.button_link == blank %}
+              role="link" aria-disabled="true"
+            {% else %}
+              href="{{ section.settings.button_link }}"
+            {% endif %}
+            class="rg-about-button"
+          >
+            {{ section.settings.button_label | escape }}
+          </a>
+        </div>
+      {%- endif -%}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "About - CTA",
+  "class": "section",
+  "disabled_on": {
+    "groups": ["header", "footer"]
+  },
+  "settings": [
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow",
+      "default": "Final CTA"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Create Something Personal Today"
+    },
+    {
+      "type": "text",
+      "id": "subheading",
+      "label": "Text",
+      "default": "Discover beautifully crafted personalized gifts designed just for you."
+    },
+    {
+      "type": "text",
+      "id": "button_label",
+      "label": "Button label",
+      "default": "Shop Now"
+    },
+    {
+      "type": "url",
+      "id": "button_link",
+      "label": "Button link"
+    },
+    {
+      "type": "header",
+      "content": "Section padding"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 160,
+      "step": 4,
+      "unit": "px",
+      "label": "Padding top",
+      "default": 96
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 160,
+      "step": 4,
+      "unit": "px",
+      "label": "Padding bottom",
+      "default": 96
+    }
+  ],
+  "presets": [
+    {
+      "name": "About - CTA"
+    }
+  ]
+}
+{% endschema %}

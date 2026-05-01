@@ -1,0 +1,274 @@
+<style>
+  .rg-timeline {
+    padding: 80px 0;
+    background: var(--rg-bg-warm);
+  }
+  .rg-timeline__header {
+    text-align: center;
+    margin-bottom: 60px;
+  }
+  .rg-timeline__eyebrow {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--rg-gold);
+    margin: 0 0 14px;
+  }
+  .rg-timeline__title {
+    font-size: clamp(28px, 3.5vw, 44px);
+    font-weight: 700;
+    color: var(--rg-text);
+    margin: 0 0 16px;
+  }
+  .rg-timeline__lead {
+    font-size: 16px;
+    line-height: 1.8;
+    color: var(--rg-text-body);
+    max-width: 620px;
+    margin: 0 auto;
+  }
+
+  /* Timeline track */
+  .rg-tl-track {
+    position: relative;
+    max-width: 880px;
+    margin: 0 auto;
+    padding: 0 24px;
+  }
+  .rg-tl-track::before {
+    content: '';
+    position: absolute;
+    left: 50%;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: linear-gradient(180deg, var(--rg-gold) 0%, var(--rg-gold-light) 100%);
+    transform: translateX(-50%);
+  }
+
+  .rg-tl-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 0;
+    margin-bottom: 52px;
+    position: relative;
+  }
+  /* odd items: content left, spacer right */
+  .rg-tl-item--left  { flex-direction: row; }
+  /* even items: spacer left, content right */
+  .rg-tl-item--right { flex-direction: row-reverse; text-align: right; }
+
+  .rg-tl-item__half {
+    flex: 1;
+    padding: 0 40px;
+  }
+  .rg-tl-item--right .rg-tl-item__half { padding: 0 40px; }
+
+  .rg-tl-item__card {
+    background: #fff;
+    border-radius: 12px;
+    padding: 28px 32px;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.07);
+    border: 1px solid var(--rg-border);
+    transition: box-shadow 0.3s, border-color 0.3s;
+  }
+  .rg-tl-item__card:hover {
+    box-shadow: 0 10px 40px rgba(201,162,39,0.14);
+    border-color: var(--rg-gold-border);
+  }
+  .rg-tl-item__year {
+    display: inline-block;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 2.5px;
+    color: #fff;
+    background: var(--rg-gold);
+    border-radius: 20px;
+    padding: 4px 14px;
+    margin: 0 0 12px;
+  }
+  .rg-tl-item__title {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--rg-text);
+    margin: 0 0 10px;
+  }
+  .rg-tl-item__desc {
+    font-size: 14px;
+    line-height: 1.75;
+    color: var(--rg-text-body);
+    margin: 0;
+  }
+
+  /* Centre dot */
+  .rg-tl-item__dot {
+    position: absolute;
+    left: 50%;
+    top: 28px;
+    transform: translateX(-50%);
+    width: 18px;
+    height: 18px;
+    background: var(--rg-gold);
+    border-radius: 50%;
+    border: 3px solid var(--rg-bg-warm);
+    box-shadow: 0 0 0 2px var(--rg-gold);
+    z-index: 1;
+    flex-shrink: 0;
+  }
+
+  /* Mobile: single column */
+  @media (max-width: 700px) {
+    .rg-tl-track::before {
+      left: 18px;
+      transform: none;
+    }
+    .rg-tl-item--left,
+    .rg-tl-item--right {
+      flex-direction: row;
+      text-align: left;
+      padding-left: 48px;
+    }
+    .rg-tl-item__half:first-child { display: none; }
+    .rg-tl-item--right .rg-tl-item__half:last-child { display: block; }
+    .rg-tl-item__half { padding: 0 0 0 20px; }
+    .rg-tl-item__dot {
+      left: 18px;
+      transform: translateX(-50%);
+    }
+    .rg-timeline { padding: 56px 0; }
+  }
+</style>
+
+<section class="rg-timeline">
+  <div class="page-width">
+    <div class="rg-timeline__header rg-fade">
+      <p class="rg-timeline__eyebrow">{{ section.settings.eyebrow | default: 'Brand Story' }}</p>
+      <h2 class="rg-timeline__title">{{ section.settings.title | default: 'Our Journey' }}</h2>
+      <p class="rg-timeline__lead">{{ section.settings.lead | default: 'From a small customization idea in Rajasthan to delivering personalized gifts across India — our story is built on passion, craftsmanship, and the love of our customers.' }}</p>
+    </div>
+
+    <div class="rg-tl-track">
+      {%- for block in section.blocks -%}
+        {%- assign is_right = forloop.index | modulo: 2 -%}
+        <div class="rg-tl-item {% if is_right == 0 %}rg-tl-item--right{% else %}rg-tl-item--left{% endif %} rg-fade" {{ block.shopify_attributes }}>
+          <div class="rg-tl-item__half">
+            {%- if is_right == 0 -%}
+              {%- comment -%}Spacer side for right-aligned items{%- endcomment -%}
+            {%- else -%}
+              <div class="rg-tl-item__card">
+                <span class="rg-tl-item__year">{{ block.settings.year }}</span>
+                <h3 class="rg-tl-item__title">{{ block.settings.title }}</h3>
+                <p class="rg-tl-item__desc">{{ block.settings.description }}</p>
+              </div>
+            {%- endif -%}
+          </div>
+          <div class="rg-tl-item__dot"></div>
+          <div class="rg-tl-item__half">
+            {%- if is_right == 0 -%}
+              <div class="rg-tl-item__card">
+                <span class="rg-tl-item__year">{{ block.settings.year }}</span>
+                <h3 class="rg-tl-item__title">{{ block.settings.title }}</h3>
+                <p class="rg-tl-item__desc">{{ block.settings.description }}</p>
+              </div>
+            {%- endif -%}
+          </div>
+        </div>
+      {%- endfor -%}
+    </div>
+  </div>
+</section>
+
+<script>if (window._rgObserveAll) window._rgObserveAll();</script>
+
+{% schema %}
+{
+  "name": "About - Timeline",
+  "settings": [
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow text",
+      "default": "Brand Story"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Section title",
+      "default": "Our Journey"
+    },
+    {
+      "type": "textarea",
+      "id": "lead",
+      "label": "Intro paragraph",
+      "default": "From a small customization idea in Rajasthan to delivering personalized gifts across India — our story is built on passion, craftsmanship, and the love of our customers."
+    }
+  ],
+  "blocks": [
+    {
+      "type": "milestone",
+      "name": "Milestone",
+      "settings": [
+        {
+          "type": "text",
+          "id": "year",
+          "label": "Year",
+          "default": "2016"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Milestone title",
+          "default": "Brand Started"
+        },
+        {
+          "type": "textarea",
+          "id": "description",
+          "label": "Description",
+          "default": "Royal Gifts & Nameplates was founded in Rajasthan with a passion for beautiful, personalized creations."
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "About - Timeline",
+      "blocks": [
+        {
+          "type": "milestone",
+          "settings": {
+            "year": "2016",
+            "title": "Brand Started",
+            "description": "Royal Gifts & Nameplates was born in Rajasthan with a single mission — making personalized gifts accessible to every home."
+          }
+        },
+        {
+          "type": "milestone",
+          "settings": {
+            "year": "2018",
+            "title": "First Online Orders",
+            "description": "We launched our online store and began shipping customized nameplates across India, reaching customers beyond our city."
+          }
+        },
+        {
+          "type": "milestone",
+          "settings": {
+            "year": "2021",
+            "title": "Expanded Product Range",
+            "description": "We added Photo Lamps, Couple Gifts, Home Decor, and Desk Nameplates to serve more occasions and spaces."
+          }
+        },
+        {
+          "type": "milestone",
+          "settings": {
+            "year": "2024",
+            "title": "Thousands of Happy Customers",
+            "description": "Today we have delivered over 5,000 personalized pieces across India, with a growing family of loyal customers."
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

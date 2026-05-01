@@ -1,0 +1,181 @@
+{{ 'component-card.css' | asset_url | stylesheet_tag }}
+{{ 'component-price.css' | asset_url | stylesheet_tag }}
+{{ 'component-rating.css' | asset_url | stylesheet_tag }}
+{{ 'quick-add.css' | asset_url | stylesheet_tag }}
+{{ 'luxury-theme.css' | asset_url | stylesheet_tag }}
+
+<script src="{{ 'product-form.js' | asset_url }}" defer="defer"></script>
+<script src="{{ 'quick-add.js' | asset_url }}" defer="defer"></script>
+
+{%- style -%}
+  /* Section spacing only. Visual system is controlled by luxury-theme.css */
+  .section-{{ section.id }}-padding {
+    padding-top: {{ section.settings.padding_top | times: 0.75 | round: 0 }}px;
+    padding-bottom: {{ section.settings.padding_bottom | times: 0.75 | round: 0 }}px;
+  }
+
+  @media screen and (min-width: 750px) {
+    .section-{{ section.id }}-padding {
+      padding-top: {{ section.settings.padding_top }}px;
+      padding-bottom: {{ section.settings.padding_bottom }}px;
+    }
+  }
+{%- endstyle -%}
+
+<section class="dn-featured-products dn-featured-products--{{ section.id }} lux-home-section lux-home-section--featured section-{{ section.id }}-padding">
+  <div class="page-width">
+    <div class="dn-featured-products__shell">
+      {%- if section.settings.heading != blank or section.settings.subheading != blank -%}
+        <header class="dn-featured-products__header" data-lux-reveal>
+          {%- if section.settings.heading != blank -%}
+            <h2 class="dn-featured-products__title">{{ section.settings.heading }}</h2>
+          {%- endif -%}
+          {%- if section.settings.subheading != blank -%}
+            <p class="dn-featured-products__subtitle">{{ section.settings.subheading }}</p>
+          {%- endif -%}
+        </header>
+      {%- endif -%}
+
+      <ul class="dn-featured-products__grid grid product-grid contains-card contains-card--product grid--4-col-desktop grid--2-col-tablet-down" role="list">
+        {%- assign skip_card_product_styles = false -%}
+        {%- if section.settings.collection != blank and section.settings.collection.products.size > 0 -%}
+          {%- for product in section.settings.collection.products limit: section.settings.products_to_show -%}
+            <li class="grid__item" data-lux-reveal>
+              {% render 'card-product',
+                card_product: product,
+                media_aspect_ratio: section.settings.image_ratio,
+                image_shape: 'default',
+                lazy_load: true,
+                show_secondary_image: section.settings.show_secondary_image,
+                show_vendor: section.settings.show_vendor,
+                show_rating: section.settings.show_rating,
+                skip_styles: skip_card_product_styles,
+                section_id: section.id,
+                quick_add: 'standard'
+              %}
+            </li>
+            {%- assign skip_card_product_styles = true -%}
+          {%- endfor -%}
+        {%- else -%}
+          {%- for i in (1..section.settings.products_to_show) -%}
+            <li class="grid__item" data-lux-reveal>
+              {%- assign placeholder_index = forloop.index | modulo: 6 | plus: 1 -%}
+              {% render 'card-product',
+                media_aspect_ratio: section.settings.image_ratio,
+                image_shape: 'default',
+                show_vendor: section.settings.show_vendor,
+                lazy_load: false,
+                skip_styles: skip_card_product_styles,
+                section_id: section.id,
+                placeholder_image: 'product-apparel-' | append: placeholder_index
+              %}
+            </li>
+            {%- assign skip_card_product_styles = true -%}
+          {%- endfor -%}
+        {%- endif -%}
+      </ul>
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Custom Featured Products",
+  "tag": "section",
+  "class": "section",
+  "disabled_on": {
+    "groups": ["header", "footer"]
+  },
+  "settings": [
+    {
+      "type": "inline_richtext",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Featured Craftsmanship"
+    },
+    {
+      "type": "textarea",
+      "id": "subheading",
+      "label": "Subheading",
+      "default": "Showcase your best-selling products with premium styling."
+    },
+    {
+      "type": "collection",
+      "id": "collection",
+      "label": "Collection"
+    },
+    {
+      "type": "range",
+      "id": "products_to_show",
+      "min": 6,
+      "max": 8,
+      "step": 1,
+      "label": "Products to show",
+      "default": 8
+    },
+    {
+      "type": "select",
+      "id": "image_ratio",
+      "label": "Image ratio",
+      "default": "square",
+      "options": [
+        {
+          "value": "adapt",
+          "label": "Adapt to image"
+        },
+        {
+          "value": "square",
+          "label": "Square"
+        },
+        {
+          "value": "portrait",
+          "label": "Portrait"
+        }
+      ]
+    },
+    {
+      "type": "checkbox",
+      "id": "show_secondary_image",
+      "label": "Show second image on hover",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_vendor",
+      "label": "Show vendor",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "show_rating",
+      "label": "Show rating",
+      "default": false
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "label": "Top padding",
+      "default": 72
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "label": "Bottom padding",
+      "default": 72
+    }
+  ],
+  "presets": [
+    {
+      "name": "Custom Featured Products"
+    }
+  ]
+}
+{% endschema %}

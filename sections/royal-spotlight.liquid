@@ -1,0 +1,116 @@
+{{ 'luxury-theme.css' | asset_url | stylesheet_tag }}
+
+<section class="lux-royal-spotlight" data-section-id="{{ section.id }}">
+  <div class="lux-royal-spotlight__container">
+    <figure class="lux-royal-spotlight__media" data-royal-reveal>
+      <div class="lux-royal-spotlight__glow" aria-hidden="true"></div>
+      <div class="lux-royal-spotlight__product-wrap">
+        {%- if section.settings.product_image != blank -%}
+          {{
+            section.settings.product_image
+            | image_url: width: 1200
+            | image_tag:
+              class: 'lux-royal-spotlight__image',
+              loading: 'lazy',
+              widths: '420, 640, 840, 1200',
+              sizes: '(min-width: 1200px) 46vw, (min-width: 768px) 50vw, 100vw',
+              alt: section.settings.product_image.alt | default: section.settings.heading | escape
+          }}
+        {%- else -%}
+          {{ 'product-1' | placeholder_svg_tag: 'lux-royal-spotlight__placeholder' }}
+        {%- endif -%}
+      </div>
+    </figure>
+
+    <article class="lux-royal-spotlight__content" data-royal-reveal>
+      <h2 class="lux-royal-spotlight__heading">
+        {{ section.settings.heading }}
+      </h2>
+
+      {%- if section.settings.description != blank -%}
+        <p class="lux-royal-spotlight__description">{{ section.settings.description }}</p>
+      {%- endif -%}
+
+      {%- if section.settings.price_text != blank -%}
+        <p class="lux-royal-spotlight__price">{{ section.settings.price_text }}</p>
+      {%- endif -%}
+
+      <div class="lux-royal-spotlight__actions">
+        {%- if section.settings.primary_label != blank -%}
+          <a href="{{ section.settings.primary_link | default: '/collections/all' }}" class="lux-royal-spotlight__btn lux-royal-spotlight__btn--primary">
+            {{ section.settings.primary_label }}
+          </a>
+        {%- endif -%}
+
+        {%- if section.settings.secondary_label != blank -%}
+          <a href="{{ section.settings.secondary_link | default: '/pages/contact' }}" class="lux-royal-spotlight__btn lux-royal-spotlight__btn--secondary">
+            {{ section.settings.secondary_label }}
+          </a>
+        {%- endif -%}
+      </div>
+    </article>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Royal Spotlight",
+  "tag": "section",
+  "class": "section",
+  "disabled_on": {
+    "groups": ["header", "footer"]
+  },
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "The Royal Signature Brass Nameplate"
+    },
+    {
+      "type": "textarea",
+      "id": "description",
+      "label": "Description",
+      "default": "Precision engraved. Hand-polished. Crafted to command attention."
+    },
+    {
+      "type": "text",
+      "id": "price_text",
+      "label": "Price text",
+      "default": "Starting from ₹2,999"
+    },
+    {
+      "type": "text",
+      "id": "primary_label",
+      "label": "Primary button label",
+      "default": "Explore Collection"
+    },
+    {
+      "type": "url",
+      "id": "primary_link",
+      "label": "Primary button link"
+    },
+    {
+      "type": "text",
+      "id": "secondary_label",
+      "label": "Secondary button label",
+      "default": "Get Custom Quote"
+    },
+    {
+      "type": "url",
+      "id": "secondary_link",
+      "label": "Secondary button link"
+    },
+    {
+      "type": "image_picker",
+      "id": "product_image",
+      "label": "Product image"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Royal Spotlight"
+    }
+  ]
+}
+{% endschema %}

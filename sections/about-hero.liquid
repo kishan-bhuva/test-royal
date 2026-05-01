@@ -1,0 +1,147 @@
+{{ 'about-luxury.css' | asset_url | stylesheet_tag }}
+
+{%- style -%}
+  .section-{{ section.id }}-padding {
+    padding-top: {{ section.settings.padding_top | times: 0.75 | round: 0 }}px;
+    padding-bottom: {{ section.settings.padding_bottom | times: 0.75 | round: 0 }}px;
+  }
+
+  .rg-about-hero--{{ section.id }} {
+    --rg-about-hero-image:
+      radial-gradient(circle at 50% 0%, rgba(198, 161, 58, 0.14), transparent 40%),
+      linear-gradient(135deg, #18130d 0%, #090909 70%);
+  }
+
+  {%- if section.settings.background_image != blank -%}
+    .rg-about-hero--{{ section.id }} {
+      --rg-about-hero-image: url('{{ section.settings.background_image | image_url: width: 2400 }}');
+    }
+  {%- endif -%}
+
+  @media screen and (min-width: 750px) {
+    .section-{{ section.id }}-padding {
+      padding-top: {{ section.settings.padding_top }}px;
+      padding-bottom: {{ section.settings.padding_bottom }}px;
+    }
+  }
+{%- endstyle -%}
+
+<section class="rg-about-section rg-about-hero rg-about-hero--{{ section.id }} section-{{ section.id }}-padding">
+  <div class="page-width">
+    <div class="rg-about-hero__content">
+      {%- if section.settings.eyebrow != blank -%}
+        <p class="rg-about-kicker">{{ section.settings.eyebrow | escape }}</p>
+      {%- endif -%}
+
+      <h1 class="rg-about-heading rg-about-hero__heading">
+        {{ section.settings.heading | escape }}
+      </h1>
+
+      {%- if section.settings.subheading != blank -%}
+        <p class="rg-about-hero__subheading">{{ section.settings.subheading | escape }}</p>
+      {%- endif -%}
+
+      {%- if section.settings.description != blank -%}
+        <div class="rg-about-copy rg-about-hero__description rte">
+          {{ section.settings.description }}
+        </div>
+      {%- endif -%}
+
+      {%- if section.settings.button_label != blank -%}
+        <div class="rg-about-hero__actions">
+          <a
+            {% if section.settings.button_link == blank %}
+              role="link" aria-disabled="true"
+            {% else %}
+              href="{{ section.settings.button_link }}"
+            {% endif %}
+            class="rg-about-button"
+          >
+            {{ section.settings.button_label | escape }}
+          </a>
+        </div>
+      {%- endif -%}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "About - Hero",
+  "class": "section",
+  "disabled_on": {
+    "groups": ["header", "footer"]
+  },
+  "settings": [
+    {
+      "type": "image_picker",
+      "id": "background_image",
+      "label": "Background image"
+    },
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow",
+      "default": "Royal Gifts"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "About Royal Gifts"
+    },
+    {
+      "type": "text",
+      "id": "subheading",
+      "label": "Subheading",
+      "default": "Crafting Memories Through Personalized Gifts"
+    },
+    {
+      "type": "richtext",
+      "id": "description",
+      "label": "Description",
+      "default": "<p>Royal Gifts creates premium personalized nameplates, custom decor, and meaningful gifts designed to make every home special.</p>"
+    },
+    {
+      "type": "text",
+      "id": "button_label",
+      "label": "Button label",
+      "default": "Explore Our Collection"
+    },
+    {
+      "type": "url",
+      "id": "button_link",
+      "label": "Button link"
+    },
+    {
+      "type": "header",
+      "content": "Section padding"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 160,
+      "step": 4,
+      "unit": "px",
+      "label": "Padding top",
+      "default": 112
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 160,
+      "step": 4,
+      "unit": "px",
+      "label": "Padding bottom",
+      "default": 112
+    }
+  ],
+  "presets": [
+    {
+      "name": "About - Hero"
+    }
+  ]
+}
+{% endschema %}

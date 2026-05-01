@@ -1,0 +1,176 @@
+{{ 'luxury-theme.css' | asset_url | stylesheet_tag }}
+
+<section class="lux-categories lux-home-section lux-home-section--categories" data-section-id="{{ section.id }}">
+  <div class="lux-categories__inner">
+    {%- comment -%} Section Header {%- endcomment -%}
+    <header class="lux-section-header" data-lux-reveal>
+      {%- if section.settings.label != blank -%}
+        <span class="lux-section-header__label">{{ section.settings.label }}</span>
+      {%- endif -%}
+      {%- if section.settings.title != blank -%}
+        <h2 class="lux-section-header__title">
+          {{ section.settings.title }}
+          {%- if section.settings.title_gold != blank -%}
+            <span class="lux-section-header__title--gold"> {{ section.settings.title_gold }}</span>
+          {%- endif -%}
+        </h2>
+      {%- endif -%}
+      <div class="lux-section-header__divider"></div>
+    </header>
+
+    {%- comment -%} Category Grid {%- endcomment -%}
+    <div class="lux-categories__grid" role="list">
+      {%- for block in section.blocks -%}
+        {%- if block.type == 'category' -%}
+          {%- assign collection = block.settings.collection -%}
+          <a
+            href="{% if collection != blank %}{{ collection.url }}{% else %}#{% endif %}"
+            class="lux-category-card"
+            role="listitem"
+            data-lux-reveal
+            {{ block.shopify_attributes }}
+          >
+            <div class="lux-category-card__image-wrapper">
+              {%- if block.settings.image != blank -%}
+                <img
+                  src="{{ block.settings.image | image_url: width: 800 }}"
+                  srcset="{{ block.settings.image | image_url: width: 400 }} 400w,
+                          {{ block.settings.image | image_url: width: 600 }} 600w,
+                          {{ block.settings.image | image_url: width: 800 }} 800w"
+                  sizes="(max-width: 768px) 100vw, 25vw"
+                  alt="{{ block.settings.image.alt | default: block.settings.title | escape }}"
+                  class="lux-category-card__image"
+                  loading="lazy"
+                  width="{{ block.settings.image.width }}"
+                  height="{{ block.settings.image.height }}"
+                >
+              {%- elsif collection != blank and collection.featured_image != blank -%}
+                <img
+                  src="{{ collection.featured_image | image_url: width: 800 }}"
+                  srcset="{{ collection.featured_image | image_url: width: 400 }} 400w,
+                          {{ collection.featured_image | image_url: width: 600 }} 600w,
+                          {{ collection.featured_image | image_url: width: 800 }} 800w"
+                  sizes="(max-width: 768px) 100vw, 25vw"
+                  alt="{{ collection.featured_image.alt | default: collection.title | escape }}"
+                  class="lux-category-card__image"
+                  loading="lazy"
+                  width="{{ collection.featured_image.width }}"
+                  height="{{ collection.featured_image.height }}"
+                >
+              {%- else -%}
+                {{ 'collection-1' | placeholder_svg_tag: 'lux-category-card__image' }}
+              {%- endif -%}
+              <div class="lux-category-card__overlay"></div>
+            </div>
+
+            <div class="lux-category-card__body">
+              <h3 class="lux-category-card__title">
+                {{ block.settings.title | default: collection.title | default: 'Category' }}
+              </h3>
+              {%- if block.settings.description != blank -%}
+                <p class="lux-category-card__desc">{{ block.settings.description }}</p>
+              {%- elsif collection != blank and collection.description != blank -%}
+                <p class="lux-category-card__desc">{{ collection.description | strip_html | truncate: 80 }}</p>
+              {%- endif -%}
+              <div class="lux-category-card__arrow">
+                Explore
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+              </div>
+            </div>
+          </a>
+        {%- endif -%}
+      {%- endfor -%}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Category Grid",
+  "tag": "section",
+  "class": "category-grid-section",
+  "settings": [
+    {
+      "type": "text",
+      "id": "label",
+      "label": "Section label",
+      "default": "Our Categories"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Section title",
+      "default": "Browse Our"
+    },
+    {
+      "type": "text",
+      "id": "title_gold",
+      "label": "Title (gold part)",
+      "default": "Collections"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "category",
+      "name": "Category Card",
+      "settings": [
+        {
+          "type": "collection",
+          "id": "collection",
+          "label": "Collection"
+        },
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Custom image (optional)"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Custom title (optional)"
+        },
+        {
+          "type": "textarea",
+          "id": "description",
+          "label": "Custom description (optional)"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Category Grid",
+      "blocks": [
+        {
+          "type": "category",
+          "settings": {
+            "title": "Name Plates",
+            "description": "Premium handcrafted nameplates for your home entrance."
+          }
+        },
+        {
+          "type": "category",
+          "settings": {
+            "title": "Desk Name Plates",
+            "description": "Elegant desk plates for your professional workspace."
+          }
+        },
+        {
+          "type": "category",
+          "settings": {
+            "title": "Personalised Gifts",
+            "description": "Unique customized gifts for every special occasion."
+          }
+        },
+        {
+          "type": "category",
+          "settings": {
+            "title": "Home Decor",
+            "description": "Luxury decorative pieces to elevate your living space."
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

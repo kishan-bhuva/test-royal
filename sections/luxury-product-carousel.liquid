@@ -1,0 +1,482 @@
+{% comment %}
+Luxury Product Carousel – Glass Layout Version
+{% endcomment %}
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+
+<section class="luxury-carousel-section-{{ section.id }}">
+  <div class="luxury-fullwidth-wrapper">
+
+    {% if section.settings.heading != blank %}
+      <h2 class="luxury-carousel-heading">
+        {{ section.settings.heading }}
+      </h2>
+    {% endif %}
+
+    {% if section.blocks.size > 0 %}
+      <div class="swiper luxury-swiper-{{ section.id }}">
+        <div class="swiper-wrapper">
+
+          {% for block in section.blocks %}
+            {% assign product = all_products[block.settings.product] %}
+
+            {% if product %}
+              <div class="swiper-slide" {{ block.shopify_attributes }}>
+                <div class="luxury-card">
+
+                  <!-- IMAGE -->
+                  <div class="luxury-image-wrapper">
+
+                    <a href="{{ product.url }}">
+                      <img
+                        src="{{ product.featured_image | image_url: width: 800 }}"
+                        alt="{{ product.title }}"
+                        loading="lazy"
+                      >
+                    </a>
+                  </div>
+
+                  <!-- CONTENT -->
+                  <div class="luxury-content">
+
+                    <h3 class="luxury-title">
+                      <a href="{{ product.url }}">
+                      {{ product.title }}
+                      </a>
+                    </h3>
+
+                    <div class="luxury-rating">
+                      <span class="stars">★★★★★</span>
+                      <span class="review-count">
+                        {{ product.reviews_count}}  
+                      </span>
+                    </div>
+
+                    <div class="luxury-bottom-row">
+
+                      <div class="luxury-price-wrapper">
+                        <span class="sale-price">
+                          {{ product.price | money }}
+                        </span>
+
+                        {% if product.compare_at_price > product.price %}
+                          <span class="compare-price">
+                            {{ product.compare_at_price | money }}
+                          </span>
+                        {% endif %}
+                      </div>
+
+                      <a
+                        href="{{ product.url }}"
+                        class="luxury-btn"
+                      >
+                        View
+                      </a>
+
+                    </div>
+
+                  </div>
+
+                </div>
+              </div>
+            {% endif %}
+          {% endfor %}
+
+        </div>
+
+        <!-- Navigation -->
+        <div class="swiper-button-prev luxury-prev-{{ section.id }}"></div>
+        <div class="swiper-button-next luxury-next-{{ section.id }}"></div>
+        <div class="swiper-pagination"></div>
+      </div>
+    {% endif %}
+  </div>
+</section>
+
+<style>
+
+/* ===== LUXURY DARK / GOLD THEME ===== */
+
+.luxury-carousel-section-{{ section.id }} {
+  padding: 48px 0;
+  width: 100vw;
+  margin-left: calc(50% - 50vw);
+  margin-right: calc(50% - 50vw);
+  background: linear-gradient(180deg, #0b1a10 0%, #0a0a0a 100%);
+}
+
+.luxury-fullwidth-wrapper {
+  padding: 0 40px;
+}
+
+/* Heading */
+.luxury-carousel-heading {
+  text-align: center;
+  font-size: 34px;
+  font-weight: 500;
+  font-family: 'Playfair Display', serif;
+  color: #d4af37;
+  margin-bottom: 32px;
+}
+
+/* Dark Gold Card */
+.luxury-card {
+  background: linear-gradient(160deg, #0f1a14 0%, #0a0a0a 100%);
+  border-radius: 20px;
+  padding: 16px;
+  border: 1px solid rgba(212, 175, 55, 0.2);
+  box-shadow:
+    0 12px 40px rgba(0, 0, 0, 0.45),
+    inset 0 1px 0 rgba(212, 175, 55, 0.06);
+  transition: transform 0.4s cubic-bezier(.4,0,.2,1), box-shadow 0.4s ease, border-color 0.3s ease;
+  overflow: hidden;
+  position: relative;
+}
+
+.luxury-card:hover {
+  transform: translateY(-8px) scale(1.02);
+  border-color: rgba(212, 175, 55, 0.45);
+  box-shadow:
+    0 24px 60px rgba(0, 0, 0, 0.6),
+    0 0 0 1px rgba(212, 175, 55, 0.25);
+}
+
+/* Gold gradient border glow */
+.luxury-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 20px;
+  padding: 1px;
+  background: linear-gradient(135deg, rgba(212,175,55,0.35), transparent 60%, rgba(212,175,55,0.15));
+  -webkit-mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+}
+
+/* Image */
+.luxury-image-wrapper {
+  position: relative;
+  margin-bottom: 14px;
+}
+
+.luxury-card img {
+  width: 100%;
+  border-radius: 12px;
+  transition: transform 0.6s ease;
+}
+
+.luxury-card:hover img {
+  transform: scale(1.06);
+}
+
+/* Content */
+.luxury-content {
+  text-align: left;
+}
+
+.luxury-title {
+  font-size: 14px;
+  font-weight: 500;
+  margin-bottom: 6px;
+  line-height: 1.35;
+}
+
+.luxury-title a {
+  text-decoration: none !important;
+  color: #e8e0cc;
+}
+
+.luxury-title a:hover {
+  color: #d4af37;
+}
+
+/* Rating */
+.luxury-rating {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 12px;
+}
+
+.stars {
+  color: #d4af37;
+  letter-spacing: 2px;
+  font-size: 13px;
+}
+
+.review-count {
+  font-size: 12px;
+  color: rgba(232, 224, 204, 0.5);
+}
+
+/* Bottom Row */
+.luxury-bottom-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.luxury-price-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.sale-price {
+  font-size: 16px;
+  font-weight: 700;
+  color: #d4af37;
+}
+
+.compare-price {
+  font-size: 13px;
+  color: rgba(232, 224, 204, 0.45);
+  text-decoration: line-through;
+}
+
+/* View Button */
+.luxury-btn {
+  display: inline-block;
+  background: linear-gradient(135deg, #d4af37 0%, #b98f1b 100%);
+  color: #0a0a0a;
+  border: none;
+  padding: 9px 18px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  text-decoration: none;
+  transition: box-shadow 0.3s ease, transform 0.2s ease;
+  flex-shrink: 0;
+}
+
+.luxury-btn:hover {
+  box-shadow: 0 4px 18px rgba(212, 175, 55, 0.45);
+  transform: translateY(-2px);
+}
+
+/* Swiper pagination */
+.luxury-carousel-section-{{ section.id }} .swiper-pagination-bullet {
+  background: rgba(212, 175, 55, 0.3);
+  opacity: 1;
+}
+
+.luxury-carousel-section-{{ section.id }} .swiper-pagination-bullet-active {
+  background: #d4af37;
+}
+
+/* Swiper Navigation */
+.luxury-prev-{{ section.id }},
+.luxury-next-{{ section.id }} {
+  width: 44px;
+  height: 44px;
+  background: rgba(15, 26, 20, 0.9);
+  border: 1px solid rgba(212, 175, 55, 0.35);
+  border-radius: 50%;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+}
+
+.luxury-prev-{{ section.id }}:after,
+.luxury-next-{{ section.id }}:after {
+  font-size: 16px;
+  color: #d4af37;
+}
+
+.luxury-swiper-{{ section.id }} {
+  padding-top: 20px;
+  padding-bottom: 48px;
+}
+
+@media (max-width: 768px) {
+  .luxury-carousel-heading { font-size: 26px; }
+  .luxury-fullwidth-wrapper { padding: 0 16px; }
+}
+
+</style>
+
+<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+
+  new Swiper('.luxury-swiper-{{ section.id }}', {
+    loop: true,
+    slidesPerView: 5,
+    spaceBetween: 16,
+    autoplay: {
+      delay: {{ section.settings.autoplay_speed | default: 4000 }},
+      disableOnInteraction: false
+    },
+    speed: {{ section.settings.transition_speed | default: 800 }},
+    navigation: {
+      nextEl: '.luxury-next-{{ section.id }}',
+      prevEl: '.luxury-prev-{{ section.id }}'
+    },
+    pagination: {
+      el: '.luxury-swiper-{{ section.id }} .swiper-pagination',
+      clickable: true
+    },
+    breakpoints: {
+      0: { slidesPerView: 1 },
+      640: { slidesPerView: 2 },
+      992: { slidesPerView: 3 },
+      1200: { slidesPerView: 5 }
+    }
+  });
+
+
+  /* ==============================
+     CORRECT AJAX ADD TO CART
+  ==============================*/
+
+  document.querySelectorAll('.ajax-add-to-cart')
+    .forEach(button => {
+
+      button.addEventListener('click', function () {
+
+        const variantId = this.dataset.variantId;
+        const btn = this;
+
+        btn.disabled = true;
+        btn.innerText = "Adding...";
+
+        fetch('/cart/add.js', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            id: variantId,
+            quantity: 1
+          })
+        })
+        .then(response => response.json())
+        .then(() => {
+
+          /* 🔥 RELOAD CART DRAWER SECTION */
+          return fetch(window.location.pathname + '?sections=cart-drawer,cart-icon-bubble');
+        })
+        .then(res => res.json())
+        .then(sections => {
+
+          /* Update drawer HTML */
+          /* SAFE DRAWER UPDATE — DAWN COMPATIBLE */
+          const drawer = document.querySelector('cart-drawer');
+
+          if (drawer && sections['cart-drawer']) {
+
+            const newHTML = new DOMParser()
+              .parseFromString(sections['cart-drawer'], 'text/html')
+              .querySelector('cart-drawer');
+
+            if (newHTML) {
+              drawer.replaceWith(newHTML);
+            }
+
+          }
+
+          /* Update cart bubble */
+          const bubble = document.querySelector('#cart-icon-bubble');
+          if (bubble && sections['cart-icon-bubble']) {
+            bubble.innerHTML = sections['cart-icon-bubble'];
+          }
+
+          /* Open Drawer */
+          const cartDrawer = document.querySelector('cart-drawer');
+          if (cartDrawer && typeof cartDrawer.open === 'function') {
+            cartDrawer.open();
+          }
+
+          btn.innerText = "Added ✓";
+
+          setTimeout(() => {
+            btn.innerText = "Add";
+            btn.disabled = false;
+          }, 1200);
+
+        })
+        .catch(error => {
+          console.error("Cart Error:", error);
+          btn.innerText = "Add";
+          btn.disabled = false;
+        });
+
+      });
+
+    });
+
+});
+</script>
+
+
+
+
+{% schema %}
+{
+  "name": "Luxury Carousel",
+  "tag": "section",
+  "class": "section",
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Featured Products"
+    },
+    {
+      "type": "range",
+      "id": "autoplay_speed",
+      "label": "Autoplay Delay (milliseconds)",
+      "min": 1000,
+      "max": 7000,
+      "step": 500,
+      "default": 3000
+    },
+    {
+      "type": "range",
+      "id": "transition_speed",
+      "label": "Slide Transition Speed (milliseconds)",
+      "min": 300,
+      "max": 2000,
+      "step": 100,
+      "default": 600
+    },
+    {
+      "type": "checkbox",
+      "id": "pause_on_hover",
+      "label": "Pause on hover",
+      "default": true
+    }
+  ],
+  "blocks": [
+    {
+      "type": "product",
+      "name": "Product",
+      "settings": [
+        {
+          "type": "product",
+          "id": "product",
+          "label": "Select Product"
+        }
+      ]
+    }
+  ],
+  "max_blocks": 20,
+  "presets": [
+    {
+      "name": "Luxury Carousel",
+      "blocks": [
+        { "type": "product" },
+        { "type": "product" },
+        { "type": "product" },
+        { "type": "product" }
+      ]
+    }
+  ]
+}
+{% endschema %}
+
+

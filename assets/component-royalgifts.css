@@ -1,0 +1,700 @@
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Manrope:wght@400;500;600;700&display=swap');
+
+.royalgifts-theme {
+  background: #0b0f0d;
+  color: #dfe6de;
+  font-family: 'Manrope', 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
+}
+
+.royalgifts-shell {
+  padding: clamp(24px, 4vw, 64px) 0;
+}
+
+.royalgifts-product-grid {
+  gap: clamp(20px, 4vw, 48px);
+  align-items: start;
+}
+
+@media screen and (min-width: 990px) {
+  .royalgifts-product-grid {
+    grid-template-columns: minmax(0, 55%) minmax(0, 45%);
+  }
+}
+
+.royalgifts-media-card {
+  background: radial-gradient(120% 120% at 18% 20%, #113025 0%, #0b0f0d 52%, #060907 100%);
+  border-radius: 24px;
+  padding: clamp(10px, 1.6vw, 18px);
+  box-shadow: 0 22px 70px rgba(0, 0, 0, 0.55), 0 0 0 1px rgba(212, 175, 55, 0.12);
+}
+
+.royalgifts-theme media-gallery {
+  width: 100%;
+}
+
+/* ════════════════════════════════════════════════════
+   GALLERY SHOWCASE — thumbnails LEFT, main image RIGHT
+   ════════════════════════════════════════════════════ */
+
+/* Media wrapper: don't stretch to info column height */
+.royalgifts-theme .product__media-wrapper {
+  align-self: start;
+}
+
+.royalgifts-media-card {
+  height: fit-content;
+}
+
+/* Desktop: thumbnails LEFT, main image RIGHT via DOM order + flexbox */
+@media screen and (min-width: 750px) {
+  .royalgifts-media-card media-gallery {
+    display: flex !important;
+    flex-direction: row;
+    align-items: flex-start;
+    gap: 12px;
+    width: 100%;
+  }
+
+  /* Main image — takes remaining space (second in DOM = right) */
+  .royalgifts-media-card .rg-main-viewer {
+    flex: 1 1 0%;
+    min-width: 0;
+    width: 100% !important;
+  }
+
+  /* Thumbnail strip — fixed width (first in DOM = left) */
+  .royalgifts-media-card .thumbnail-slider {
+    flex-shrink: 0;
+    width: 90px !important;
+    display: flex !important;
+    flex-direction: column;
+    gap: 8px;
+    padding: 0 !important;
+    max-height: none !important;
+    margin: 0 !important;
+  }
+
+  .royalgifts-media-card .thumbnail-list {
+    display: flex !important;
+    flex-direction: column;
+    gap: 8px;
+    overflow-y: auto;
+    scrollbar-width: none;
+  }
+
+  .royalgifts-media-card .thumbnail-list::-webkit-scrollbar {
+    display: none;
+  }
+
+  .royalgifts-media-card .thumbnail-list__item {
+    width: 90px;
+    flex-shrink: 0;
+  }
+
+  .royalgifts-media-card .thumbnail-list__item button.thumbnail {
+    display: block;
+    width: 90px;
+    height: 72px;
+    padding: 0;
+    border-radius: 10px;
+    overflow: hidden;
+    border: 2px solid rgba(212, 175, 55, 0.15);
+    background: #0b0f0d;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.35);
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  .royalgifts-media-card .thumbnail-list__item button.thumbnail img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .royalgifts-media-card .thumbnail-list__item button.thumbnail:hover,
+  .royalgifts-media-card .thumbnail-list__item button.thumbnail[aria-current="true"] {
+    border-color: #d4af37;
+    box-shadow: 0 0 0 1px rgba(212, 175, 55, 0.4), 0 4px 14px rgba(0, 0, 0, 0.4);
+  }
+
+  /* Hide prev/next scroll arrows */
+  .royalgifts-media-card .thumbnail-slider .slider-button {
+    display: none !important;
+  }
+}
+
+/* Mobile: main image full width, thumbnails horizontal strip below */
+@media screen and (max-width: 749px) {
+  .royalgifts-media-card media-gallery {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    width: 100%;
+  }
+
+  .royalgifts-media-card .thumbnail-slider {
+    order: 2;
+    width: 100%;
+    padding: 0 !important;
+  }
+
+  .royalgifts-media-card .rg-main-viewer {
+    order: 1;
+  }
+
+  .royalgifts-media-card .thumbnail-list {
+    display: flex !important;
+    flex-direction: row;
+    gap: 8px;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+
+  .royalgifts-media-card .thumbnail-list::-webkit-scrollbar {
+    display: none;
+  }
+
+  .royalgifts-media-card .thumbnail-list__item {
+    flex-shrink: 0;
+    width: 64px;
+  }
+
+  .royalgifts-media-card .thumbnail-list__item button.thumbnail {
+    display: block;
+    width: 64px;
+    height: 52px;
+    padding: 0;
+    border-radius: 8px;
+    overflow: hidden;
+    border: 2px solid rgba(212, 175, 55, 0.15);
+    background: #0b0f0d;
+  }
+
+  .royalgifts-media-card .thumbnail-list__item button.thumbnail img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .royalgifts-media-card .thumbnail-list__item button.thumbnail[aria-current="true"] {
+    border-color: #d4af37;
+  }
+}
+
+/* ── Product page — 1:1 square image box ── */
+
+/* 1. Outer container: square anchor for everything inside */
+.royalgifts-media-card .product-media-container {
+  aspect-ratio: 1 / 1 !important;
+  width: 100%;
+  overflow: hidden;
+  position: relative !important;
+}
+
+/* 2. modal-opener fills the square absolutely (was position:relative, display:block) */
+.royalgifts-media-card .product-media-container .product__modal-opener {
+  position: absolute !important;
+  inset: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+}
+
+/* 3. Kill the padding-top height hack — media fills opener instead */
+.royalgifts-media-card .product-media-container .media {
+  padding-top: 0 !important;
+  position: absolute !important;
+  inset: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+}
+
+/* 4. Images fill the square */
+.royalgifts-media-card .product-media-container .media img,
+.royalgifts-media-card .product-media-container .media video {
+  position: absolute !important;
+  inset: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+  object-position: center center !important;
+}
+
+/* Remove dark background behind images */
+.royalgifts-theme .product__media-item .media {
+  background: transparent;
+}
+
+/* ── Media items ── */
+.royalgifts-theme .product__media-item {
+  border-radius: 16px;
+  overflow: hidden;
+  background: transparent;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.45), 0 0 0 1px rgba(212, 175, 55, 0.12);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.royalgifts-theme .product__media img,
+.royalgifts-theme .product__media video,
+.royalgifts-theme .product__media model-viewer {
+  transition: transform 0.35s ease;
+}
+
+.royalgifts-theme .product__media:hover img,
+.royalgifts-theme .product__media:hover video,
+.royalgifts-theme .product__media:hover model-viewer {
+  transform: scale(1.02);
+}
+
+/* Hide mobile slider counter/arrows */
+.royalgifts-media-card .slider-buttons {
+  display: none;
+}
+
+/* .royalgifts-info-card {
+  background: linear-gradient(145deg, #0f1512 0%, #0b0f0d 65%);
+  border: 1px solid rgba(212, 175, 55, 0.18);
+  box-shadow: 0 18px 45px rgba(0, 0, 0, 0.45), 0 0 0 1px rgba(212, 175, 55, 0.08);
+  border-radius: 22px;
+  padding: clamp(18px, 3vw, 32px);
+  backdrop-filter: blur(2px);
+} */
+
+.royalgifts-title {
+  font-family: 'Playfair Display', Georgia, serif;
+  color: #d4af37;
+  font-size: clamp(28px, 3.6vw, 44px);
+  line-height: 1.1;
+  margin: 0 0 6px;
+}
+
+.royalgifts-rating {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: #d4af37;
+  margin-bottom: 12px;
+}
+
+.royalgifts-rating .rating {
+  --rating-star-color: #d4af37;
+}
+
+.royalgifts-rating .rating-star {
+  color: #d4af37;
+}
+
+.royalgifts-price-block {
+  display: block;
+  align-items: baseline;
+  gap: 12px;
+  margin: 12px 0 6px;
+}
+
+.royalgifts-price {
+  font-size: clamp(22px, 2.5vw, 32px);
+  color: #f3f4ee;
+  font-weight: 700;
+  letter-spacing: 0.4px;
+}
+
+.royalgifts-gst {
+  color: #8a958b;
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.royalgifts-quote {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-style: italic;
+  color: #c5d0c7;
+  line-height: 1.6;
+  margin: 10px 0 18px;
+}
+
+.royalgifts-engraving {
+  margin: 18px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.royalgifts-engraving label {
+  color: #d4af37;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  font-size: 12px;
+}
+
+.royalgifts-engraving input {
+  background: #0f1512;
+  border: 1px solid rgba(212, 175, 55, 0.36);
+  color: #f1f3ec;
+  padding: 14px 16px;
+  border-radius: 12px;
+  transition: border-color 0.25s ease, box-shadow 0.25s ease, transform 0.25s ease;
+}
+
+.royalgifts-engraving input::placeholder {
+  color: #7e8a80;
+}
+
+.royalgifts-engraving input:focus {
+  outline: none;
+  border-color: #d4af37;
+  box-shadow: 0 0 0 2px rgba(212, 175, 55, 0.35);
+  transform: translateY(-1px);
+}
+
+.royalgifts-theme .form__label {
+  color: #d4af37;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+}
+
+.royalgifts-theme .product-form__input--dropdown .select {
+  background: #0f1512;
+  border: 1px solid rgba(212, 175, 55, 0.32);
+  border-radius: 12px;
+  color: #f1f3ec;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.02);
+}
+
+.royalgifts-theme .product-form__input--dropdown .select__select {
+  background: transparent;
+  color: #f1f3ec;
+  border-radius: 12px;
+  padding: 12px 44px 12px 14px;
+  border: none;
+}
+
+.royalgifts-theme .product-form__input--dropdown .select .svg-wrapper {
+  right: 14px;
+  color: #d4af37;
+}
+
+.royalgifts-theme .product-form__input--dropdown select option {
+  background: #0b0f0d;
+  color: #f1f3ec;
+}
+
+/* .royalgifts-theme .product-form__quantity {
+  background: #0f1512;
+  border: 1px solid rgba(212, 175, 55, 0.28);
+  border-radius: 14px;
+  padding: 12px;
+} */
+
+.royalgifts-theme .quantity {
+  gap: 10px;
+  background-color: #0b0f0d;
+}
+
+.royalgifts-theme .quantity__button {
+  background: #111812;
+  border: 1px solid rgba(212, 175, 55, 0.32);
+  color: #d4af37;
+  border-radius: 10px;
+  transition: background 0.25s ease, transform 0.2s ease, box-shadow 0.25s ease;
+}
+
+.royalgifts-theme .quantity__button:hover {
+  background: rgba(212, 175, 55, 0.12);
+  transform: translateY(-1px);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.35);
+}
+
+.royalgifts-theme .quantity__input {
+  background: transparent;
+  color: #e6ede4;
+  font-weight: 700;
+  font-size: 16px;
+}
+
+.royalgifts-theme .product-form__buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding-top: 20px;
+}
+
+.royalgifts-theme .product-form__submit.button--primary {
+  background: linear-gradient(135deg, #d4af37 0%, #b98f1b 100%);
+  color: #0b0f0d;
+  border-radius: 999px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-weight: 800;
+  box-shadow: 0 12px 30px rgba(212, 175, 55, 0.28), 0 0 0 1px rgba(212, 175, 55, 0.25);
+  transition: transform 0.25s ease, box-shadow 0.25s ease, filter 0.25s ease;
+}
+
+.royalgifts-theme .product-form__submit.button--primary:hover:not([disabled]) {
+  background: linear-gradient(135deg, #c99b2d 0%, #a77f17 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.45), 0 0 0 2px rgba(212, 175, 55, 0.35);
+}
+
+.royalgifts-theme .shopify-payment-button__button--unbranded,
+.royalgifts-theme .shopify-payment-button__button {
+  border-radius: 999px;
+  border: 1px solid #d4af37;
+  background: transparent;
+  color: #d4af37;
+  letter-spacing: 0.08em;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.royalgifts-theme .shopify-payment-button__button:hover {
+  background: rgba(212, 175, 55, 0.12);
+}
+
+.royalgifts-feature-strip {
+  margin-top: 32px;
+  padding: 18px 0;
+  border-top: 1px solid rgba(212, 175, 55, 0.18);
+  border-bottom: 1px solid rgba(212, 175, 55, 0.18);
+  display: flex;
+  justify-content: center;
+  gap: clamp(12px, 4vw, 36px);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #d7c58b;
+}
+
+.royalgifts-feature {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+}
+
+.royalgifts-feature svg {
+  width: 20px;
+  height: 20px;
+  color: #d4af37;
+  filter: drop-shadow(0 0 8px rgba(212, 175, 55, 0.35));
+}
+
+.royalgifts-tabs {
+  margin: clamp(36px, 5vw, 60px) auto;
+  background: #0f1512;
+  border: 1px solid rgba(212, 175, 55, 0.16);
+  border-radius: 20px;
+  overflow: visible;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.4);
+}
+
+.royalgifts-description-box {
+  margin: clamp(36px, 5vw, 60px) auto;
+  background: #0f1512;
+  border: 1px solid rgba(212, 175, 55, 0.16);
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.4);
+}
+
+.royalgifts-description-heading {
+  padding: 16px 10px;
+  font-weight: 700;
+  font-size: 16px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #d4af37;
+  border-bottom: 2px solid #d4af37;
+  background: rgba(212, 175, 55, 0.05);
+  text-align: center;
+}
+
+.royalgifts-description-box .rte,
+.royalgifts-description-box > p {
+  padding: 20px 24px 26px;
+  line-height: 1.7;
+  color: #dfe6df;
+}
+
+.royalgifts-tablist {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  border-bottom: 1px solid rgba(212, 175, 55, 0.16);
+}
+
+.royalgifts-tablist button {
+  background: none;
+  border: none;
+  color: #8f9a92;
+  padding: 16px 10px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  transition: color 0.2s ease, border-color 0.2s ease, background 0.2s ease;
+}
+
+.royalgifts-tablist button.is-active {
+  color: #d4af37;
+  border-bottom: 2px solid #d4af37;
+  background: rgba(212, 175, 55, 0.05);
+}
+
+.royalgifts-tabcontent {
+  display: none;
+  padding: 20px 24px 26px;
+  line-height: 1.7;
+  color: #dfe6df;
+}
+
+.rte h4 {
+    font-size: 24px;
+    font-family: emoji;
+}
+
+.royalgifts-tabcontent.is-active {
+  display: block;
+  animation: royalgiftsFadeIn 0.35s ease;
+}
+
+.jdgm-write-rev-link {
+  display: inline-block !important;
+}
+
+@keyframes royalgiftsFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.royalgifts-related {
+  margin: clamp(42px, 6vw, 72px) 0;
+}
+
+.royalgifts-related__heading {
+  font-family: 'Playfair Display', Georgia, serif;
+  color: #d4af37;
+  text-align: center;
+  margin-bottom: 22px;
+  letter-spacing: 0.06em;
+}
+
+.royalgifts-related-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+  gap: 22px;
+}
+
+@media screen and (min-width: 990px) {
+  .royalgifts-related-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+.royalgifts-related-card {
+  background: linear-gradient(145deg, #102118 0%, #0c120f 70%);
+  border: 1px solid rgba(212, 175, 55, 0.18);
+  border-radius: 18px;
+  overflow: hidden;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.45);
+}
+
+.royalgifts-related-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.55), 0 0 0 2px rgba(212, 175, 55, 0.18);
+}
+
+.royalgifts-related-image {
+  overflow: hidden;
+}
+
+.royalgifts-related-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.royalgifts-related-body a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.royalgifts-related-card:hover .royalgifts-related-image img {
+  transform: scale(1.05);
+}
+
+.royalgifts-related-body {
+  padding: 16px 16px 18px;
+  display: grid;
+  gap: 6px;
+  color: #e8ede6;
+}
+
+.royalgifts-related-title {
+  font-weight: 700;
+}
+
+.royalgifts-related-meta {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: #d4af37;
+  font-weight: 700;
+}
+
+
+.royalgifts-related-star {
+  margin-left: auto;
+  color: #d4af37;
+}
+
+.royalgifts-feature-strip,
+.royalgifts-tabs,
+.royalgifts-related {
+  width: min(1180px, 100%);
+  margin-left: auto;
+  margin-right: auto;
+}
+
+@media screen and (max-width: 989px) {
+  .royalgifts-theme .product {
+    grid-template-columns: 1fr;
+  }
+
+  .royalgifts-feature-strip {
+    flex-wrap: wrap;
+    gap: 14px;
+    text-align: center;
+  }
+
+
+}
+
+@media screen and (max-width: 749px) {
+  .royalgifts-info-card {
+    padding: 16px;
+  }
+
+  .royalgifts-title {
+    font-size: 26px;
+  }
+
+  .royalgifts-price {
+    font-size: 22px;
+  }
+
+  .royalgifts-feature-strip {
+    padding: 14px 0;
+  }
+
+  .royalgifts-tabcontent {
+    padding: 16px;
+    text-align: left;
+  }
+}
+

@@ -1,0 +1,575 @@
+{% comment %}theme-check-disable UndefinedObject{% endcomment %}
+{{ 'section-footer.css' | asset_url | stylesheet_tag }}
+{{ 'component-newsletter.css' | asset_url | stylesheet_tag }}
+{{ 'component-list-menu.css' | asset_url | stylesheet_tag }}
+{{ 'component-list-payment.css' | asset_url | stylesheet_tag }}
+{{ 'component-list-social.css' | asset_url | stylesheet_tag }}
+{{ 'luxury-theme.css' | asset_url | stylesheet_tag }}
+
+{%- style -%}
+  .footer {
+    margin-top: {{ section.settings.margin_top | times: 0.75 | round: 0 }}px;
+  }
+
+  .section-{{ section.id }}-padding {
+    padding-top: {{ section.settings.padding_top | times: 0.75 | round: 0 }}px;
+  }
+
+  @media screen and (min-width: 750px) {
+    .footer {
+      margin-top: {{ section.settings.margin_top }}px;
+    }
+
+    .section-{{ section.id }}-padding {
+      padding-top: {{ section.settings.padding_top }}px;
+    }
+  }
+  .rg-footer__logo-img {
+    max-height: 60px;
+    width: auto;
+    object-fit: contain;
+  }
+
+  .rg-footer__contact-info {
+    margin-top: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .rg-footer__contact-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    color: rgba(255,255,255,0.8);
+    font-size: 14px;
+  }
+
+  .rg-footer__contact-icon {
+    width: 17px;
+    height: 17px;
+    min-width: 17px;
+    margin-top: 3px;
+    fill: none;
+    stroke: #C6A13A;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  .rg-footer .rg-footer__contact-link,
+  .rg-footer .rg-footer__contact-link:visited {
+    color: rgba(255,255,255,0.85);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+
+  .rg-footer .rg-footer__contact-link:hover {
+    color: #C6A13A;
+    text-decoration: none;
+  }
+
+  .rg-footer__contact-hours {
+    display: block;
+    font-size: 0.82rem;
+    color: rgba(255,255,255,0.5);
+    margin-top: 3px;
+  }
+{%- endstyle -%}
+
+<footer class="footer color-{{ section.settings.color_scheme }} gradient section-{{ section.id }}-padding rg-footer">
+  <div class="rg-footer__inner page-width">
+    <div class="rg-footer__grid">
+
+      {%- comment -%}=== Column 1: Brand ==={%- endcomment -%}
+      <div class="rg-footer__col">
+        <a href="{{ routes.root_url }}" class="rg-footer__logo" aria-label="{{ shop.name }}">
+          {%- if section.settings.footer_logo != blank -%}
+            <img src="{{ section.settings.footer_logo | image_url: width: 200 }}" alt="{{ shop.name }}" width="200" loading="lazy" class="rg-footer__logo-img">
+          {%- else -%}
+            <span class="rg-header__logo-royal">ROYAL</span>
+            <span class="rg-header__logo-gifts">GIFTS</span>
+          {%- endif -%}
+        </a>
+        <p class="rg-footer__brand-desc">
+          {%- if section.settings.footer_description != blank -%}
+            {{ section.settings.footer_description }}
+          {%- else -%}
+            India's premium destination for handcrafted nameplates, personalized gifts, and luxury home decor. Every piece tells a story of elegance.
+          {%- endif -%}
+        </p>
+
+        {%- comment -%}=== Social Media Icons ==={%- endcomment -%}
+        <div class="rg-footer__social-links">
+          {%- if section.settings.footer_instagram_link != blank -%}
+            <a href="{{ section.settings.footer_instagram_link }}" class="rg-footer__social-link" aria-label="Instagram" target="_blank" rel="noopener">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+            </a>
+          {%- endif -%}
+          {%- if section.settings.footer_facebook_link != blank -%}
+            <a href="{{ section.settings.footer_facebook_link }}" class="rg-footer__social-link" aria-label="Facebook" target="_blank" rel="noopener">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
+            </a>
+          {%- endif -%}
+          {%- if section.settings.footer_youtube_link != blank -%}
+            <a href="{{ section.settings.footer_youtube_link }}" class="rg-footer__social-link" aria-label="YouTube" target="_blank" rel="noopener">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M22.54 6.42a2.78 2.78 0 0 0-1.94-2C18.88 4 12 4 12 4s-6.88 0-8.6.46a2.78 2.78 0 0 0-1.94 2A29 29 0 0 0 1 11.75a29 29 0 0 0 .46 5.33A2.78 2.78 0 0 0 3.4 19.1c1.72.46 8.6.46 8.6.46s6.88 0 8.6-.46a2.78 2.78 0 0 0 1.94-2 29 29 0 0 0 .46-5.25 29 29 0 0 0-.46-5.33z"/><polygon points="9.75 15.02 15.5 11.75 9.75 8.48 9.75 15.02"/></svg>
+            </a>
+          {%- endif -%}
+          {%- if section.settings.footer_whatsapp_link != blank -%}
+            <a href="{{ section.settings.footer_whatsapp_link }}" class="rg-footer__social-link" aria-label="WhatsApp" target="_blank" rel="noopener">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
+            </a>
+          {%- endif -%}
+        </div>
+      </div>
+
+      {%- comment -%}=== Column 2: Shop By ==={%- endcomment -%}
+      <div class="rg-footer__col">
+        <h4 class="rg-footer__col-title">Shop By</h4>
+        <ul class="rg-footer__links">
+          <li><a href="/collections/metal-name-plates" class="rg-footer__link">Metal Name Plates</a></li>
+          <li><a href="/collections/acrylic-name-plates" class="rg-footer__link">Acrylic Name Plates</a></li>
+          <li><a href="/collections/metal-wall-art" class="rg-footer__link">Metal Wall Art</a></li>
+          <li><a href="/collections/office-desk-name-plates" class="rg-footer__link">Desk Name Plates</a></li>
+          <li><a href="/collections/wooden-name-plates" class="rg-footer__link">Wooden Name Plates</a></li>
+        </ul>
+      </div>
+
+      {%- comment -%}=== Column 3: Quick Links ==={%- endcomment -%}
+      <div class="rg-footer__col">
+        <h4 class="rg-footer__col-title">Quick Links</h4>
+        <ul class="rg-footer__links">
+          <li><a href="/pages/about-us" class="rg-footer__link">About US</a></li>
+          <li><a href="/policies/shipping-policy" class="rg-footer__link">Shipping Policy</a></li>
+          <li><a href="/pages/bulk-inquiries" class="rg-footer__link">Bulk Inquiries</a></li>
+          <li><a href="/pages/contact" class="rg-footer__link">Contact Us</a></li>
+        </ul>
+      </div>
+
+      {%- comment -%}=== Additional Dawn blocks ==={%- endcomment -%}
+      {%- for block in section.blocks -%}
+        <div class="rg-footer__col" {{ block.shopify_attributes }}>
+          {%- if block.settings.heading != blank -%}
+            <h4 class="rg-footer__col-title">{{ block.settings.heading }}</h4>
+          {%- endif -%}
+
+          {%- case block.type -%}
+            {%- when '@app' -%}
+              {% render block %}
+            {%- when 'text' -%}
+              <div class="rg-footer__brand-desc rte">
+                {{ block.settings.subtext }}
+              </div>
+            {%- when 'link_list' -%}
+              {%- if block.settings.menu != blank -%}
+                <ul class="rg-footer__links">
+                  {%- for link in block.settings.menu.links -%}
+                    <li>
+                      <a href="{{ link.url }}" class="rg-footer__link{% if link.active %} rg-footer__link--active{% endif %}">
+                        {{ link.title | escape }}
+                      </a>
+                    </li>
+                  {%- endfor -%}
+                </ul>
+              {%- endif -%}
+            {%- when 'brand_information' -%}
+              <div class="rg-footer__brand-info">
+                {%- if settings.brand_image != blank -%}
+                  {%- assign brand_image_height = settings.brand_image_width | divided_by: settings.brand_image.aspect_ratio -%}
+                  <div style="max-width: min(100%, {{ settings.brand_image_width }}px);">
+                    {{ settings.brand_image | image_url: width: 1100 | image_tag: loading: 'lazy', widths: '50, 100, 150, 200, 300, 400, 550, 800, 1100', height: brand_image_height, width: settings.brand_image_width }}
+                  </div>
+                {%- endif -%}
+                {%- if settings.brand_headline != blank -%}
+                  <h2 class="rg-footer__col-title rte">{{ settings.brand_headline }}</h2>
+                {%- endif -%}
+                {%- if settings.brand_description != blank -%}
+                  <div class="rg-footer__brand-desc rte">{{ settings.brand_description }}</div>
+                {%- endif -%}
+                {%- if block.settings.show_social and has_social_icons -%}
+                  {%- render 'social-icons', class: 'footer__list-social' -%}
+                {%- endif -%}
+              </div>
+            {%- when 'image' -%}
+              <div class="footer-block__details-content footer-block-image {{ block.settings.alignment }}">
+                {%- if block.settings.image != blank -%}
+                  {%- assign image_size_2x = block.settings.image_width | times: 2 | at_most: 5760 -%}
+                  <div style="max-width: min(100%, {{ block.settings.image_width }}px);">
+                    <img
+                      srcset="{{ block.settings.image | image_url: width: block.settings.image_width }}, {{ block.settings.image | image_url: width: image_size_2x }} 2x"
+                      src="{{ block.settings.image | image_url: width: 760 }}"
+                      alt="{{ block.settings.image.alt | escape }}"
+                      loading="lazy"
+                      width="{{ block.settings.image.width }}"
+                      height="{{ block.settings.image.height }}"
+                    >
+                  </div>
+                {%- else -%}
+                  {{ 'image' | placeholder_svg_tag: 'placeholder-svg placeholder' }}
+                {%- endif -%}
+              </div>
+          {%- endcase -%}
+        </div>
+      {%- endfor -%}
+
+      {%- comment -%}=== Column 4: Policies ==={%- endcomment -%}
+      <div class="rg-footer__col">
+        <h4 class="rg-footer__col-title">Policies</h4>
+        <ul class="rg-footer__links">
+          <li><a href="/pages/faq" class="rg-footer__link">FAQ</a></li>
+          <li><a href="/policies/refund-policy" class="rg-footer__link">Refund Policy</a></li>
+          <li><a href="/policies/privacy-policy" class="rg-footer__link">Privacy Policy</a></li>
+          <li><a href="/policies/terms-of-service" class="rg-footer__link">Terms of Service</a></li>
+        </ul>
+      </div>
+
+      {%- comment -%}=== Column 5: Google Map ==={%- endcomment -%}
+      <div class="rg-footer__col rg-footer__col--map">
+        <h4 class="rg-footer__col-title">Find Us</h4>
+        <div class="rg-footer__map">
+          <iframe
+            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d4360.211043620976!2d74.7770947759339!3d24.03850507765361!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x396685ff4173c4db%3A0x3bd13bd49f160d4e!2sRoyal%20Gifts!5e1!3m2!1sen!2sin!4v1772788503267!5m2!1sen!2sin"
+            width="100%"
+            height="200"
+            style="border:0;"
+            allowfullscreen=""
+            loading="lazy"
+            referrerpolicy="no-referrer-when-downgrade"
+            title="Royal Gifts location"
+          ></iframe>
+        </div>
+        {%- if section.settings.footer_contact_phone != blank or section.settings.footer_contact_email != blank -%}
+          <div class="rg-footer__contact-info">
+            {%- if section.settings.footer_contact_phone != blank -%}
+              <div class="rg-footer__contact-item">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="rg-footer__contact-icon"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.6 1h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.59a16 16 0 0 0 6 6l.95-.95a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+                <div>
+                  <a href="tel:{{ section.settings.footer_contact_phone }}" class="rg-footer__contact-link">{{ section.settings.footer_contact_phone }}</a>
+                </div>
+              </div>
+            {%- endif -%}
+            {%- if section.settings.footer_contact_email != blank -%}
+              <div class="rg-footer__contact-item">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="rg-footer__contact-icon"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+                <a href="mailto:{{ section.settings.footer_contact_email }}" class="rg-footer__contact-link">{{ section.settings.footer_contact_email }}</a>
+              </div>
+            {%- endif -%}
+          </div>
+        {%- endif -%}
+      </div>
+
+    </div>
+  </div>
+
+  {%- comment -%}=== Bottom Bar ==={%- endcomment -%}
+  <div class="rg-footer__bottom">
+    <div class="rg-footer__bottom-inner page-width">
+      <p class="rg-footer__copyright">
+        &copy; {{ 'now' | date: '%Y' }} <span class="rg-footer__copyright-brand">{{ shop.name }}</span>. All rights reserved.
+      </p>
+      <div class="rg-footer__bottom-links">
+        {%- if section.settings.payment_enable -%}
+          <div class="footer__payment">
+            <span class="visually-hidden">{{ 'sections.footer.payment' | t }}</span>
+            <ul class="list list-payment" role="list">
+              {%- for type in shop.enabled_payment_types -%}
+                <li class="list-payment__item">
+                  {{ type | payment_type_svg_tag: class: 'icon icon--full-color' }}
+                </li>
+              {%- endfor -%}
+            </ul>
+          </div>
+        {%- endif -%}
+        {%- if section.settings.show_policy -%}
+          {%- for policy in shop.policies -%}
+            {% comment %} {%- if policy != blank -%}
+              <a href="{{ policy.url }}" class="rg-footer__bottom-link">{{ policy.title | escape }}</a>
+            {%- endif -%} {% endcomment %}
+          {%- endfor -%}
+        {%- endif -%}
+      </div>
+    </div>
+  </div>
+</footer>
+
+{% schema %}
+{
+  "name": "t:sections.footer.name",
+  "blocks": [
+    {
+      "type": "@app"
+    },
+    {
+      "type": "link_list",
+      "name": "t:sections.footer.blocks.link_list.name",
+      "settings": [
+        {
+          "type": "inline_richtext",
+          "id": "heading",
+          "default": "t:sections.footer.blocks.link_list.settings.heading.default",
+          "label": "t:sections.footer.blocks.link_list.settings.heading.label"
+        },
+        {
+          "type": "link_list",
+          "id": "menu",
+          "default": "footer",
+          "label": "t:sections.footer.blocks.link_list.settings.menu.label"
+        }
+      ]
+    },
+    {
+      "type": "brand_information",
+      "name": "t:sections.footer.blocks.brand_information.name",
+      "settings": [
+        {
+          "type": "paragraph",
+          "content": "t:sections.footer.blocks.brand_information.settings.paragraph.content"
+        },
+        {
+          "type": "checkbox",
+          "id": "show_social",
+          "default": true,
+          "label": "t:sections.footer.blocks.brand_information.settings.show_social.label",
+          "info": "t:sections.footer.blocks.brand_information.settings.show_social.info"
+        }
+      ]
+    },
+    {
+      "type": "text",
+      "name": "t:sections.footer.blocks.text.name",
+      "settings": [
+        {
+          "type": "inline_richtext",
+          "id": "heading",
+          "default": "t:sections.footer.blocks.text.settings.heading.default",
+          "label": "t:sections.footer.blocks.text.settings.heading.label"
+        },
+        {
+          "type": "richtext",
+          "id": "subtext",
+          "default": "t:sections.footer.blocks.text.settings.subtext.default",
+          "label": "t:sections.footer.blocks.text.settings.subtext.label"
+        }
+      ]
+    },
+    {
+      "type": "image",
+      "name": "Image",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Image"
+        },
+        {
+          "type": "range",
+          "id": "image_width",
+          "min": 50,
+          "max": 550,
+          "step": 5,
+          "unit": "px",
+          "label": "Width",
+          "default": 100
+        },
+        {
+          "type": "select",
+          "id": "alignment",
+          "label": "Alignment",
+          "options": [
+            {
+              "value": "",
+              "label": "Left"
+            },
+            {
+              "value": "center",
+              "label": "Center"
+            },
+            {
+              "value": "right",
+              "label": "Right"
+            }
+          ],
+          "default": "center"
+        }
+      ]
+    }
+  ],
+  "settings": [
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "t:sections.all.colors.label",
+      "default": "scheme-1"
+    },
+    {
+      "type": "header",
+      "content": "t:sections.footer.settings.header__1.content",
+      "info": "t:sections.footer.settings.header__1.info"
+    },
+    {
+      "type": "checkbox",
+      "id": "newsletter_enable",
+      "default": true,
+      "label": "t:sections.footer.settings.newsletter_enable.label"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "newsletter_heading",
+      "default": "t:sections.footer.settings.newsletter_heading.default",
+      "label": "t:sections.footer.settings.newsletter_heading.label"
+    },
+    {
+      "type": "header",
+      "content": "t:sections.footer.settings.header__9.content"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_follow_on_shop",
+      "default": true,
+      "label": "t:sections.footer.settings.enable_follow_on_shop.label",
+      "info": "t:sections.footer.settings.enable_follow_on_shop.info"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_social",
+      "default": true,
+      "label": "t:sections.footer.settings.show_social.label",
+      "info": "t:sections.footer.settings.show_social.info"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_country_selector",
+      "default": true,
+      "label": "t:sections.footer.settings.enable_country_selector.label",
+      "info": "t:sections.footer.settings.enable_country_selector.info"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_language_selector",
+      "default": true,
+      "label": "t:sections.footer.settings.enable_language_selector.label",
+      "info": "t:sections.footer.settings.enable_language_selector.info"
+    },
+    {
+      "type": "checkbox",
+      "id": "payment_enable",
+      "default": true,
+      "label": "t:sections.footer.settings.payment_enable.label"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_policy",
+      "default": true,
+      "label": "t:sections.footer.settings.show_policy.label",
+      "info": "t:sections.footer.settings.show_policy.info"
+    },
+    {
+      "type": "header",
+      "content": "t:sections.all.spacing"
+    },
+    {
+      "type": "range",
+      "id": "margin_top",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "t:sections.footer.settings.margin_top.label",
+      "default": 0
+    },
+    {
+      "type": "header",
+      "content": "t:sections.all.padding.section_padding_heading"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "t:sections.all.padding.padding_top",
+      "default": 36
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "t:sections.all.padding.padding_bottom",
+      "default": 36
+    },
+    {
+      "type": "header",
+      "content": "Brand Column"
+    },
+    {
+      "type": "image_picker",
+      "id": "footer_logo",
+      "label": "Logo Image"
+    },
+    {
+      "type": "textarea",
+      "id": "footer_description",
+      "label": "Brand Description",
+      "default": "India's premium destination for handcrafted nameplates, personalized gifts, and luxury home decor. Every piece tells a story of elegance."
+    },
+    {
+      "type": "url",
+      "id": "footer_instagram_link",
+      "label": "Instagram URL"
+    },
+    {
+      "type": "url",
+      "id": "footer_facebook_link",
+      "label": "Facebook URL"
+    },
+    {
+      "type": "url",
+      "id": "footer_youtube_link",
+      "label": "YouTube URL"
+    },
+    {
+      "type": "url",
+      "id": "footer_whatsapp_link",
+      "label": "WhatsApp URL",
+      "info": "e.g. https://wa.me/917742377328"
+    },
+    {
+      "type": "header",
+      "content": "Contact Info (below map)"
+    },
+    {
+      "type": "text",
+      "id": "footer_contact_phone",
+      "label": "Phone Number",
+      "default": "+91 7742377328"
+    },
+    {
+      "type": "text",
+      "id": "footer_contact_hours",
+      "label": "Phone Hours",
+      "default": "Mon - Sat: 10:00 AM - 07:00 PM IST"
+    },
+    {
+      "type": "text",
+      "id": "footer_contact_email",
+      "label": "Email Address",
+      "default": "support@royalgifts.co.in"
+    }
+  ],
+  "default": {
+    "blocks": [
+      {
+        "type": "link_list"
+      },
+      {
+        "type": "text"
+      }
+    ]
+  }
+}
+{% endschema %}

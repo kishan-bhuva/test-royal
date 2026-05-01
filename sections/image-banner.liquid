@@ -1,0 +1,1015 @@
+{{ 'section-image-banner.css' | asset_url | stylesheet_tag }}
+
+{%- if section.settings.image_height == 'adapt' and section.settings.image != blank -%}
+  {%- style -%}
+    @media screen and (max-width: 749px) {
+      #Banner-{{ section.id }}::before,
+      #Banner-{{ section.id }} .banner__media::before,
+      #Banner-{{ section.id }}:not(.banner--mobile-bottom) .banner__content::before {
+        padding-bottom: {{ 1 | divided_by: section.settings.image.aspect_ratio | times: 100 }}%;
+        content: '';
+        display: block;
+      }
+    }
+    @media screen and (min-width: 750px) {
+      #Banner-{{ section.id }}::before,
+      #Banner-{{ section.id }} .banner__media::before {
+        padding-bottom: {{ 1 | divided_by: section.settings.image.aspect_ratio | times: 100 }}%;
+        content: '';
+        display: block;
+      }
+    }
+  {%- endstyle -%}
+{%- endif -%}
+
+{%- style -%}
+  #Banner-{{ section.id }}::after {
+    opacity: {{ section.settings.image_overlay_opacity | divided_by: 100.0 }};
+  }
+{%- endstyle -%}
+
+{%- liquid
+  assign full_width = '100vw'
+  assign widths = '375, 550, 750, 1100, 1500, 1780, 2000, 3000, 3840'
+  if section.settings.image_behavior == 'ambient'
+    assign half_width = '60vw'
+    assign full_width = '120vw'
+    assign stacked_sizes = '(min-width: 750px) 60vw, 120vw'
+    assign widths = '450, 660, 900, 1320, 1800, 2136, 2400, 3600, 7680'
+  elsif section.settings.image_behavior == 'fixed' or section.settings.image_behavior == 'zoom-in'
+    assign half_width = '100vw'
+    assign stacked_sizes = '100vw'
+  else
+    assign half_width = '50vw'
+    assign stacked_sizes = '(min-width: 750px) 50vw, 100vw'
+  endif
+  assign fetch_priority = 'auto'
+  if section.index == 1
+    assign fetch_priority = 'high'
+  endif
+-%}
+
+{%- comment %} ─────────────────────────────────────────────────────────────
+  LUXURY OVERRIDE STYLES
+  Scoped entirely to #Banner-{{ section.id }} so nothing bleeds out.
+───────────────────────────────────────────────────────────────────────── {%- endcomment %}
+<style>
+  /* ── Tokens ──────────────────────────────────────────────────── */
+  #Banner-{{ section.id }} {
+    --lxb-gold:        #D4AF37;
+    --lxb-gold-light:  #f0d278;
+    --lxb-gold-dim:    #a8872a;
+    --lxb-text:        #f5f0e8;
+    --lxb-muted:       rgba(220,212,196,.62);
+    --lxb-border:      rgba(212,175,55,.2);
+    --lxb-radius:      4px;
+  }
+
+  /* ── Section shell ───────────────────────────────────────────── */
+  #Banner-{{ section.id }}.banner {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: clamp(600px, 88vh, 960px);
+    padding: clamp(64px, 8vw, 100px) clamp(20px, 4vw, 48px);
+    overflow: hidden;
+    background:
+      radial-gradient(ellipse 65% 55% at 50% 0%,   rgba(212,175,55,.09) 0%, transparent 60%),
+      radial-gradient(ellipse 70% 60% at 50% 100%,  rgba(11,43,26,.55)  0%, transparent 65%),
+      linear-gradient(165deg, #050505 0%, #070f0a 30%, #081510 55%, #0b2b1a 100%);
+  }
+
+  /* decorative gold horizontal rule */
+  #Banner-{{ section.id }}.banner::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 50%;
+    transform: translateX(-50%);
+    width: clamp(80px, 12vw, 140px);
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--lxb-gold), transparent);
+    opacity: .55;
+  }
+
+  /* bottom rule */
+  #Banner-{{ section.id }}.banner::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 50%;
+    transform: translateX(-50%);
+    width: clamp(80px, 12vw, 140px);
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--lxb-gold), transparent);
+    opacity: .55;
+  }
+
+  /* ── Hide Dawn's original media/content wrappers ─────────────── */
+  #Banner-{{ section.id }} .banner__media,
+  #Banner-{{ section.id }} .banner__content {
+    all: unset;
+    display: contents;
+  }
+
+  /* ── Luxury layout wrapper ───────────────────────────────────── */
+  #Banner-{{ section.id }} .lxb-wrap {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    width: 100%;
+    max-width: 900px;
+    margin: 0 auto;
+    gap: 0;
+  }
+
+  /* ── Eyebrow label ───────────────────────────────────────────── */
+  #Banner-{{ section.id }} .lxb-eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 28px;
+    color: var(--lxb-gold);
+    font: 400 11px/1 "Sora", "Helvetica Neue", sans-serif;
+    letter-spacing: .28em;
+    text-transform: uppercase;
+    opacity: .9;
+  }
+  #Banner-{{ section.id }} .lxb-eyebrow::before,
+  #Banner-{{ section.id }} .lxb-eyebrow::after {
+    content: '';
+    display: block;
+    width: 28px;
+    height: 1px;
+    background: var(--lxb-gold);
+    opacity: .6;
+  }
+
+  /* ── Heading block ───────────────────────────────────────────── */
+  #Banner-{{ section.id }} .lxb-heading-wrap {
+    margin-bottom: 20px;
+  }
+  #Banner-{{ section.id }} .banner__heading,
+  #Banner-{{ section.id }} .lxb-heading-wrap .banner__heading {
+    display: block;
+    margin: 0;
+    padding: 0;
+    color: var(--lxb-text) !important;
+    font-family: "Cormorant Garamond", "Playfair Display", Georgia, serif !important;
+    font-size: clamp(48px, 7vw, 88px) !important;
+    font-weight: 600 !important;
+    line-height: .95 !important;
+    letter-spacing: .04em !important;
+    text-transform: none !important;
+    background: none !important;
+  }
+
+  /* ── Text / subtext ──────────────────────────────────────────── */
+  #Banner-{{ section.id }} .lxb-text-wrap {
+    margin-bottom: 32px;
+  }
+  #Banner-{{ section.id }} .banner__text,
+  #Banner-{{ section.id }} .lxb-text-wrap .banner__text {
+    margin: 0;
+    padding: 0;
+  }
+  #Banner-{{ section.id }} .banner__text p,
+  #Banner-{{ section.id }} .lxb-text-wrap p {
+    margin: 0;
+    color: var(--lxb-muted) !important;
+    font: 300 clamp(13px, 1.4vw, 15.5px)/1.8 "Sora", "Helvetica Neue", sans-serif !important;
+    letter-spacing: .12em !important;
+    text-transform: uppercase !important;
+  }
+
+  /* ── Button row ──────────────────────────────────────────────── */
+  #Banner-{{ section.id }} .banner__buttons {
+    display: flex !important;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 14px;
+    margin-bottom: 56px;
+  }
+
+  /* reset Dawn button styles */
+  #Banner-{{ section.id }} .banner__buttons .button {
+    all: unset;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    min-width: 180px;
+    padding: 14px 32px;
+    border-radius: var(--lxb-radius);
+    font: 600 11px/1 "Sora", "Helvetica Neue", sans-serif;
+    letter-spacing: .22em;
+    text-transform: uppercase;
+    text-decoration: none;
+    transition: transform .28s ease, box-shadow .28s ease, opacity .28s ease, background .28s ease;
+  }
+
+  /* primary = gold */
+  #Banner-{{ section.id }} .banner__buttons .button--primary {
+    background: linear-gradient(135deg, var(--lxb-gold-light) 0%, var(--lxb-gold) 50%, var(--lxb-gold-dim) 100%);
+    color: #0e0a04;
+    box-shadow: 0 8px 28px rgba(212,175,55,.22);
+  }
+  #Banner-{{ section.id }} .banner__buttons .button--primary:hover,
+  #Banner-{{ section.id }} .banner__buttons .button--primary:focus-visible {
+    transform: translateY(-2px);
+    box-shadow: 0 14px 38px rgba(212,175,55,.36), 0 0 28px rgba(212,175,55,.18);
+    opacity: .92;
+  }
+
+  /* secondary = outlined gold */
+  #Banner-{{ section.id }} .banner__buttons .button--secondary {
+    background: transparent;
+    color: var(--lxb-gold);
+    border: 1px solid var(--lxb-border);
+    box-shadow: inset 0 0 0 0 rgba(212,175,55,.08);
+  }
+  #Banner-{{ section.id }} .banner__buttons .button--secondary:hover,
+  #Banner-{{ section.id }} .banner__buttons .button--secondary:focus-visible {
+    transform: translateY(-2px);
+    border-color: rgba(212,175,55,.5);
+    box-shadow: 0 0 24px rgba(212,175,55,.12);
+    background: rgba(212,175,55,.06);
+  }
+  #Banner-{{ section.id }} .banner__buttons .button:focus-visible {
+    outline: 2px solid rgba(212,175,55,.45);
+    outline-offset: 3px;
+  }
+
+  /* ── Product image container ─────────────────────────────────── */
+  #Banner-{{ section.id }} .lxb-product {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    max-width: 560px;
+    margin: 0 auto;
+  }
+
+  /* ambient glow behind the image */
+  #Banner-{{ section.id }} .lxb-product-glow {
+    position: absolute;
+    inset: 8% 12%;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(212,175,55,.26) 0%, transparent 68%);
+    filter: blur(36px);
+    pointer-events: none;
+  }
+
+  /* ── Slider ──────────────────────────────────────────────────── */
+  #Banner-{{ section.id }} .lxb-slider {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    aspect-ratio: 1 / 1.05;
+    overflow: hidden;
+  }
+
+  #Banner-{{ section.id }} .lxb-slide {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity .9s cubic-bezier(.4,0,.2,1);
+    overflow: hidden;
+  }
+  #Banner-{{ section.id }} .lxb-slide.is-active {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  /* Ken Burns zoom on each entering slide */
+  #Banner-{{ section.id }} .lxb-slide .lxb-product-img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    filter: drop-shadow(0 28px 56px rgba(0,0,0,.7)) drop-shadow(0 0 36px rgba(212,175,55,.14));
+    transform: scale(1);
+    transition: transform 5.5s ease-out;
+    will-change: transform;
+  }
+  #Banner-{{ section.id }} .lxb-slide.is-active .lxb-product-img {
+    transform: scale(1.06);
+  }
+
+  /* subtle slide-up on new active slide */
+  #Banner-{{ section.id }} .lxb-slide.is-entering {
+    animation: lxbSlideUp-{{ section.id }} .9s cubic-bezier(.16,1,.3,1) both;
+  }
+
+  #Banner-{{ section.id }} .lxb-placeholder-img {
+    display: block;
+    width: 100%;
+    color: rgba(212,175,55,.35);
+    filter: drop-shadow(0 20px 40px rgba(0,0,0,.55));
+  }
+
+  /* ── Dot navigation ──────────────────────────────────────────── */
+  #Banner-{{ section.id }} .lxb-dots {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 20px;
+    padding: 0;
+  }
+  #Banner-{{ section.id }} .lxb-dot {
+    width: 28px;
+    height: 2px;
+    padding: 0;
+    border: 0;
+    border-radius: 999px;
+    background: rgba(212,175,55,.22);
+    cursor: pointer;
+    transition: background .3s ease, width .3s ease;
+  }
+  #Banner-{{ section.id }} .lxb-dot.is-active {
+    width: 44px;
+    background: linear-gradient(90deg, var(--lxb-gold-light), var(--lxb-gold));
+    box-shadow: 0 0 8px rgba(212,175,55,.35);
+  }
+
+  /* ── Badge on image ──────────────────────────────────────────── */
+  #Banner-{{ section.id }} .lxb-badge {
+    position: absolute;
+    bottom: 20px;
+    right: -10px;
+    z-index: 2;
+    display: inline-flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 2px;
+    padding: 10px 14px;
+    border: 1px solid var(--lxb-border);
+    border-radius: 2px;
+    background: rgba(5,8,6,.78);
+    backdrop-filter: blur(12px);
+    color: var(--lxb-gold);
+    font: 400 9px/1.3 "Sora", "Helvetica Neue", sans-serif;
+    letter-spacing: .18em;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+  #Banner-{{ section.id }} .lxb-badge strong {
+    display: block;
+    font: 600 11px/1.2 "Cormorant Garamond", Georgia, serif;
+    color: var(--lxb-text);
+    letter-spacing: .06em;
+    text-transform: none;
+  }
+
+  /* ── Floating ambient label ──────────────────────────────────── */
+  #Banner-{{ section.id }} .lxb-float-label {
+    position: absolute;
+    top: 20px;
+    left: -14px;
+    z-index: 2;
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 7px 12px;
+    border: 1px solid var(--lxb-border);
+    border-radius: 2px;
+    background: rgba(5,8,6,.78);
+    backdrop-filter: blur(12px);
+    color: var(--lxb-muted);
+    font: 500 10px/1.2 "Sora", "Helvetica Neue", sans-serif;
+    letter-spacing: .16em;
+    text-transform: uppercase;
+  }
+  #Banner-{{ section.id }} .lxb-float-label::before {
+    content: '';
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--lxb-gold);
+    flex-shrink: 0;
+  }
+
+  /* ── Divider ornament between text & image ───────────────────── */
+  #Banner-{{ section.id }} .lxb-ornament {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 40px;
+    color: var(--lxb-gold);
+    opacity: .5;
+  }
+  #Banner-{{ section.id }} .lxb-ornament::before,
+  #Banner-{{ section.id }} .lxb-ornament::after {
+    content: '';
+    display: block;
+    width: 48px;
+    height: 1px;
+    background: currentColor;
+  }
+  #Banner-{{ section.id }} .lxb-ornament svg {
+    width: 16px;
+    height: 16px;
+  }
+
+  /* ── Background corner particles ────────────────────────────── */
+  #Banner-{{ section.id }} .lxb-particle {
+    position: absolute;
+    border-radius: 50%;
+    pointer-events: none;
+  }
+  #Banner-{{ section.id }} .lxb-particle--1 {
+    top: -80px; left: -80px;
+    width: 280px; height: 280px;
+    background: radial-gradient(circle, rgba(212,175,55,.07) 0%, transparent 68%);
+    filter: blur(20px);
+    animation: lxbDrift-{{ section.id }} 12s ease-in-out infinite;
+  }
+  #Banner-{{ section.id }} .lxb-particle--2 {
+    bottom: -60px; right: -60px;
+    width: 240px; height: 240px;
+    background: radial-gradient(circle, rgba(11,43,26,.45) 0%, transparent 68%);
+    filter: blur(18px);
+    animation: lxbDrift-{{ section.id }} 15s ease-in-out infinite reverse;
+  }
+
+  /* ── Keyframes ───────────────────────────────────────────────── */
+  @keyframes lxbFloat-{{ section.id }} {
+    0%, 100% { transform: translateY(0); }
+    50%       { transform: translateY(-14px); }
+  }
+  @keyframes lxbDrift-{{ section.id }} {
+    0%, 100% { transform: translate(0, 0) scale(1); }
+    50%       { transform: translate(20px, 16px) scale(1.06); }
+  }
+  @keyframes lxbReveal-{{ section.id }} {
+    from { opacity: 0; transform: translateY(22px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes lxbSlideUp-{{ section.id }} {
+    from { opacity: 0; transform: translateY(18px) scale(.98); }
+    to   { opacity: 1; transform: translateY(0)    scale(1); }
+  }
+
+  /* ── Reveal animations ───────────────────────────────────────── */
+  #Banner-{{ section.id }} .lxb-eyebrow   { animation: lxbReveal-{{ section.id }} .8s cubic-bezier(.16,1,.3,1) .05s both; }
+  #Banner-{{ section.id }} .lxb-heading-wrap { animation: lxbReveal-{{ section.id }} .8s cubic-bezier(.16,1,.3,1) .15s both; }
+  #Banner-{{ section.id }} .lxb-text-wrap    { animation: lxbReveal-{{ section.id }} .8s cubic-bezier(.16,1,.3,1) .24s both; }
+  #Banner-{{ section.id }} .banner__buttons  { animation: lxbReveal-{{ section.id }} .8s cubic-bezier(.16,1,.3,1) .32s both; }
+  #Banner-{{ section.id }} .lxb-ornament     { animation: lxbReveal-{{ section.id }} .8s cubic-bezier(.16,1,.3,1) .40s both; }
+  #Banner-{{ section.id }} .lxb-product      { animation: lxbReveal-{{ section.id }} .9s cubic-bezier(.16,1,.3,1) .50s both; }
+
+  /* ── Responsive ──────────────────────────────────────────────── */
+  @media screen and (max-width: 749px) {
+    #Banner-{{ section.id }}.banner {
+      padding: clamp(48px, 10vw, 72px) clamp(16px, 4vw, 28px);
+      min-height: auto;
+    }
+    #Banner-{{ section.id }} .lxb-product {
+      max-width: 92vw;
+    }
+    #Banner-{{ section.id }} .lxb-badge { right: 0; bottom: 12px; }
+    #Banner-{{ section.id }} .lxb-float-label { left: 0; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    #Banner-{{ section.id }} .lxb-slide .lxb-product-img,
+    #Banner-{{ section.id }} .lxb-particle--1,
+    #Banner-{{ section.id }} .lxb-particle--2 { animation: none; }
+    #Banner-{{ section.id }} .lxb-slide,
+    #Banner-{{ section.id }} .lxb-dot { transition: none; }
+    #Banner-{{ section.id }} .lxb-eyebrow,
+    #Banner-{{ section.id }} .lxb-heading-wrap,
+    #Banner-{{ section.id }} .lxb-text-wrap,
+    #Banner-{{ section.id }} .banner__buttons,
+    #Banner-{{ section.id }} .lxb-ornament,
+    #Banner-{{ section.id }} .lxb-product { animation: none; opacity: 1; transform: none; }
+    #Banner-{{ section.id }} .banner__buttons .button { transition: none; }
+  }
+</style>
+
+{%- comment %} ── Section markup ───────────────────────────────────── {%- endcomment %}
+<div
+  id="Banner-{{ section.id }}"
+  class="banner banner--content-align-{{ section.settings.desktop_content_alignment }} banner--content-align-mobile-{{ section.settings.mobile_content_alignment }} banner--{{ section.settings.image_height }}{% if section.settings.stack_images_on_mobile and section.settings.image != blank and section.settings.image_2 != blank %} banner--stacked{% endif %}{% if section.settings.image_height == 'adapt' and section.settings.image != blank %} banner--adapt{% endif %}{% if section.settings.show_text_below %} banner--mobile-bottom{%- endif -%}{% if section.settings.show_text_box == false %} banner--desktop-transparent{% endif %}"
+>
+  {%- comment %} Background particles {%- endcomment %}
+  <span class="lxb-particle lxb-particle--1" aria-hidden="true"></span>
+  <span class="lxb-particle lxb-particle--2" aria-hidden="true"></span>
+
+  {%- comment %} Keep Dawn's media wrappers in DOM for JS/CSS compat {%- endcomment %}
+  <div class="banner__media media" style="display:none" aria-hidden="true">
+    {%- if section.settings.image != blank -%}
+      {%- assign _ih = section.settings.image.width | divided_by: section.settings.image.aspect_ratio -%}
+      {{
+        section.settings.image
+        | image_url: width: 3840
+        | image_tag:
+          width: section.settings.image.width,
+          height: _ih,
+          sizes: full_width,
+          widths: widths,
+          fetchpriority: fetch_priority
+      }}
+    {%- endif -%}
+  </div>
+
+  {%- comment %} ── Luxury content wrapper ── {%- endcomment %}
+  <div class="lxb-wrap">
+
+    {%- comment %} Eyebrow {%- endcomment %}
+    {%- if section.settings.eyebrow_text != blank -%}
+      <p class="lxb-eyebrow">{{ section.settings.eyebrow_text | escape }}</p>
+    {%- else -%}
+      <p class="lxb-eyebrow">Luxury Collection</p>
+    {%- endif -%}
+
+    {%- comment %} Heading block {%- endcomment %}
+    {%- for block in section.blocks -%}
+      {%- if block.type == 'heading' -%}
+        <div class="lxb-heading-wrap" {{ block.shopify_attributes }}>
+          <h2 class="banner__heading inline-richtext {{ block.settings.heading_size }}">
+            {{ block.settings.heading }}
+          </h2>
+        </div>
+      {%- endif -%}
+    {%- endfor -%}
+
+    {%- comment %} Text / subtext block {%- endcomment %}
+    {%- for block in section.blocks -%}
+      {%- if block.type == 'text' -%}
+        <div class="lxb-text-wrap" {{ block.shopify_attributes }}>
+          <div class="banner__text rte {{ block.settings.text_style }}">
+            <p>{{ block.settings.text }}</p>
+          </div>
+        </div>
+      {%- endif -%}
+    {%- endfor -%}
+
+    {%- comment %} Buttons block {%- endcomment %}
+    {%- for block in section.blocks -%}
+      {%- if block.type == 'buttons' -%}
+        <div
+          class="banner__buttons{% if block.settings.button_label_1 != blank and block.settings.button_label_2 != blank %} banner__buttons--multiple{% endif %}"
+          {{ block.shopify_attributes }}
+        >
+          {%- if block.settings.button_label_1 != blank -%}
+            <a
+              {% if block.settings.button_link_1 == blank %}role="link" aria-disabled="true"{% else %}href="{{ block.settings.button_link_1 }}"{% endif %}
+              class="button{% if block.settings.button_style_secondary_1 %} button--secondary{% else %} button--primary{% endif %}"
+            >
+              {{- block.settings.button_label_1 | escape -}}
+            </a>
+          {%- endif -%}
+          {%- if block.settings.button_label_2 != blank -%}
+            <a
+              {% if block.settings.button_link_2 == blank %}role="link" aria-disabled="true"{% else %}href="{{ block.settings.button_link_2 }}"{% endif %}
+              class="button{% if block.settings.button_style_secondary_2 %} button--secondary{% else %} button--primary{% endif %}"
+            >
+              {{- block.settings.button_label_2 | escape -}}
+            </a>
+          {%- endif -%}
+        </div>
+      {%- endif -%}
+    {%- endfor -%}
+
+    {%- comment %} Gold ornament divider {%- endcomment %}
+    <div class="lxb-ornament" aria-hidden="true">
+      <svg viewBox="0 0 24 24" fill="none">
+        <path d="M12 3.5 13.9 8h4.35l-3.52 2.56 1.35 4.15L12 12.15 7.92 14.7l1.35-4.14L5.75 8H10.1L12 3.5Z" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"/>
+      </svg>
+    </div>
+
+    {%- comment %} Product image {%- endcomment %}
+    <div class="lxb-product">
+      <span class="lxb-product-glow" aria-hidden="true"></span>
+
+      {%- if section.settings.badge_text != blank or section.settings.badge_edition != blank -%}
+        <p class="lxb-float-label" aria-label="{{ section.settings.badge_text | escape }}">
+          {{- section.settings.badge_text | default: 'Handcrafted' | escape -}}
+        </p>
+      {%- endif -%}
+
+      {%- liquid
+        assign slider_images = '' | split: ''
+        if section.settings.image != blank
+          assign slider_images = slider_images | concat: section.settings.image
+        endif
+        if section.settings.image_2 != blank
+          assign slider_images = slider_images | concat: section.settings.image_2
+        endif
+        if section.settings.image_3 != blank
+          assign slider_images = slider_images | concat: section.settings.image_3
+        endif
+        if section.settings.image_4 != blank
+          assign slider_images = slider_images | concat: section.settings.image_4
+        endif
+        assign slide_count = slider_images | size
+      -%}
+
+      <div
+        class="lxb-slider"
+        id="LxbSlider-{{ section.id }}"
+        data-autoplay-speed="{{ section.settings.slide_speed | default: 4 | times: 1000 }}"
+      >
+        {%- if slide_count > 0 -%}
+          {%- for img in slider_images -%}
+            <div class="lxb-slide{% if forloop.first %} is-active{% endif %}" data-lxb-slide>
+              <img
+                src="{{ img | image_url: width: 1000 }}"
+                srcset="
+                  {{ img | image_url: width: 480 }}  480w,
+                  {{ img | image_url: width: 720 }}  720w,
+                  {{ img | image_url: width: 1000 }} 1000w,
+                  {{ img | image_url: width: 1200 }} 1200w
+                "
+                sizes="(max-width: 749px) 92vw, 560px"
+                alt="{{ img.alt | default: shop.name | escape }}"
+                class="lxb-product-img"
+                loading="{% if forloop.first and fetch_priority == 'high' %}eager{% else %}lazy{% endif %}"
+                width="{{ img.width }}"
+                height="{{ img.width | divided_by: img.aspect_ratio | round }}"
+              >
+            </div>
+          {%- endfor -%}
+        {%- else -%}
+          <div class="lxb-slide is-active" data-lxb-slide>
+            {{ 'product-1' | placeholder_svg_tag: 'lxb-placeholder-img' }}
+          </div>
+        {%- endif -%}
+      </div>
+
+      {%- if slide_count > 1 -%}
+        <div class="lxb-dots" aria-label="Image navigation" role="list">
+          {%- for img in slider_images -%}
+            <button
+              type="button"
+              class="lxb-dot{% if forloop.first %} is-active{% endif %}"
+              data-lxb-dot="{{ forloop.index0 }}"
+              aria-label="Show image {{ forloop.index }}"
+              {% if forloop.first %}aria-current="true"{% endif %}
+              role="listitem"
+            ></button>
+          {%- endfor -%}
+        </div>
+      {%- endif -%}
+
+      {%- if section.settings.badge_edition != blank -%}
+        <div class="lxb-badge">
+          <span>{{ section.settings.badge_edition | escape }}</span>
+          {%- if section.settings.badge_signature != blank -%}
+            <strong>{{ section.settings.badge_signature | escape }}</strong>
+          {%- endif -%}
+        </div>
+      {%- endif -%}
+    </div>
+
+  </div>{%- comment %} /lxb-wrap {%- endcomment %}
+
+  {%- comment %} Keep Dawn's content wrapper in DOM (hidden) for editor compat {%- endcomment %}
+  <div class="banner__content banner__content--{{ section.settings.desktop_content_position }} page-width" style="display:none" aria-hidden="true"></div>
+
+</div>
+
+<script>
+(function () {
+  var root   = document.getElementById('LxbSlider-{{ section.id }}');
+  if (!root) return;
+
+  var slides = Array.prototype.slice.call(root.querySelectorAll('[data-lxb-slide]'));
+  if (slides.length <= 1) return;
+
+  var dotWrap = root.parentElement.querySelector('.lxb-dots');
+  var dots    = dotWrap ? Array.prototype.slice.call(dotWrap.querySelectorAll('[data-lxb-dot]')) : [];
+  var delay   = Number(root.getAttribute('data-autoplay-speed')) || 4000;
+  var current = 0;
+  var timer   = null;
+  var reduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  function goTo(index) {
+    slides[current].classList.remove('is-active', 'is-entering');
+    if (dots[current]) { dots[current].classList.remove('is-active'); dots[current].removeAttribute('aria-current'); }
+
+    current = (index + slides.length) % slides.length;
+
+    slides[current].classList.add('is-active');
+    if (!reduced) {
+      slides[current].classList.remove('is-entering');
+      void slides[current].offsetWidth; /* reflow to restart animation */
+      slides[current].classList.add('is-entering');
+    }
+    if (dots[current]) { dots[current].classList.add('is-active'); dots[current].setAttribute('aria-current', 'true'); }
+  }
+
+  function stop()  { clearInterval(timer); timer = null; }
+  function start() {
+    stop();
+    if (reduced) return;
+    timer = setInterval(function () { goTo(current + 1); }, delay);
+  }
+
+  dots.forEach(function (dot) {
+    dot.addEventListener('click', function () {
+      var idx = Number(dot.getAttribute('data-lxb-dot'));
+      if (!Number.isNaN(idx)) { goTo(idx); start(); }
+    });
+  });
+
+  root.addEventListener('mouseenter', stop);
+  root.addEventListener('mouseleave', start);
+
+  start();
+
+  document.addEventListener('shopify:section:unload', function (e) {
+    if (e.detail && e.detail.sectionId === '{{ section.id }}') stop();
+  });
+})();
+</script>
+
+{% schema %}
+{
+  "name": "t:sections.image-banner.name",
+  "tag": "section",
+  "class": "section",
+  "disabled_on": {
+    "groups": ["header", "footer"]
+  },
+  "settings": [
+    {
+      "type": "header",
+      "content": "Luxury Banner Settings"
+    },
+    {
+      "type": "text",
+      "id": "eyebrow_text",
+      "label": "Eyebrow label",
+      "default": "Luxury Collection"
+    },
+    {
+      "type": "text",
+      "id": "badge_text",
+      "label": "Floating label (above image)",
+      "default": "Handcrafted"
+    },
+    {
+      "type": "text",
+      "id": "badge_edition",
+      "label": "Edition badge text",
+      "default": "Edition No. 01"
+    },
+    {
+      "type": "text",
+      "id": "badge_signature",
+      "label": "Badge signature line",
+      "default": "Hand Signature"
+    },
+    {
+      "type": "header",
+      "content": "t:sections.image-banner.settings.content.content"
+    },
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Product image"
+    },
+    {
+      "type": "image_picker",
+      "id": "image_2",
+      "label": "Slider image 2"
+    },
+    {
+      "type": "image_picker",
+      "id": "image_3",
+      "label": "Slider image 3"
+    },
+    {
+      "type": "image_picker",
+      "id": "image_4",
+      "label": "Slider image 4"
+    },
+    {
+      "type": "range",
+      "id": "slide_speed",
+      "label": "Slide interval (seconds)",
+      "min": 2,
+      "max": 8,
+      "step": 1,
+      "unit": "s",
+      "default": 4
+    },
+    {
+      "type": "range",
+      "id": "image_overlay_opacity",
+      "min": 0,
+      "max": 100,
+      "step": 10,
+      "unit": "%",
+      "label": "t:sections.image-banner.settings.image_overlay_opacity.label",
+      "default": 0
+    },
+    {
+      "type": "select",
+      "id": "image_height",
+      "options": [
+        { "value": "adapt", "label": "t:sections.image-banner.settings.image_height.options__1.label" },
+        { "value": "small", "label": "t:sections.image-banner.settings.image_height.options__2.label" },
+        { "value": "medium", "label": "t:sections.image-banner.settings.image_height.options__3.label" },
+        { "value": "large", "label": "t:sections.image-banner.settings.image_height.options__4.label" }
+      ],
+      "default": "medium",
+      "label": "t:sections.image-banner.settings.image_height.label"
+    },
+    {
+      "type": "select",
+      "id": "image_behavior",
+      "options": [
+        { "value": "none",    "label": "t:sections.all.animation.image_behavior.options__1.label" },
+        { "value": "ambient", "label": "t:sections.all.animation.image_behavior.options__2.label" },
+        { "value": "fixed",   "label": "t:sections.all.animation.image_behavior.options__3.label" },
+        { "value": "zoom-in", "label": "t:sections.all.animation.image_behavior.options__4.label" }
+      ],
+      "default": "none",
+      "label": "t:sections.all.animation.image_behavior.label"
+    },
+    {
+      "type": "select",
+      "id": "desktop_content_position",
+      "options": [
+        { "value": "top-left",      "label": "t:sections.image-banner.settings.desktop_content_position.options__1.label" },
+        { "value": "top-center",    "label": "t:sections.image-banner.settings.desktop_content_position.options__2.label" },
+        { "value": "top-right",     "label": "t:sections.image-banner.settings.desktop_content_position.options__3.label" },
+        { "value": "middle-left",   "label": "t:sections.image-banner.settings.desktop_content_position.options__4.label" },
+        { "value": "middle-center", "label": "t:sections.image-banner.settings.desktop_content_position.options__5.label" },
+        { "value": "middle-right",  "label": "t:sections.image-banner.settings.desktop_content_position.options__6.label" },
+        { "value": "bottom-left",   "label": "t:sections.image-banner.settings.desktop_content_position.options__7.label" },
+        { "value": "bottom-center", "label": "t:sections.image-banner.settings.desktop_content_position.options__8.label" },
+        { "value": "bottom-right",  "label": "t:sections.image-banner.settings.desktop_content_position.options__9.label" }
+      ],
+      "default": "middle-center",
+      "label": "t:sections.image-banner.settings.desktop_content_position.label"
+    },
+    {
+      "type": "select",
+      "id": "desktop_content_alignment",
+      "options": [
+        { "value": "left",   "label": "t:sections.image-banner.settings.desktop_content_alignment.options__1.label" },
+        { "value": "center", "label": "t:sections.image-banner.settings.desktop_content_alignment.options__2.label" },
+        { "value": "right",  "label": "t:sections.image-banner.settings.desktop_content_alignment.options__3.label" }
+      ],
+      "default": "center",
+      "label": "t:sections.image-banner.settings.desktop_content_alignment.label"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_text_box",
+      "default": true,
+      "label": "t:sections.image-banner.settings.show_text_box.label"
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "t:sections.all.colors.label",
+      "default": "scheme-1"
+    },
+    {
+      "type": "header",
+      "content": "t:sections.image-banner.settings.mobile.content"
+    },
+    {
+      "type": "checkbox",
+      "id": "stack_images_on_mobile",
+      "default": true,
+      "label": "t:sections.image-banner.settings.stack_images_on_mobile.label"
+    },
+    {
+      "type": "select",
+      "id": "mobile_content_alignment",
+      "options": [
+        { "value": "left",   "label": "t:sections.image-banner.settings.mobile_content_alignment.options__1.label" },
+        { "value": "center", "label": "t:sections.image-banner.settings.mobile_content_alignment.options__2.label" },
+        { "value": "right",  "label": "t:sections.image-banner.settings.mobile_content_alignment.options__3.label" }
+      ],
+      "default": "center",
+      "label": "t:sections.image-banner.settings.mobile_content_alignment.label"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_text_below",
+      "default": true,
+      "label": "t:sections.image-banner.settings.show_text_below.label"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "heading",
+      "name": "t:sections.image-banner.blocks.heading.name",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "inline_richtext",
+          "id": "heading",
+          "default": "t:sections.image-banner.blocks.heading.settings.heading.default",
+          "label": "t:sections.image-banner.blocks.heading.settings.heading.label"
+        },
+        {
+          "type": "select",
+          "id": "heading_size",
+          "options": [
+            { "value": "h2",   "label": "t:sections.all.heading_size.options__1.label" },
+            { "value": "h1",   "label": "t:sections.all.heading_size.options__2.label" },
+            { "value": "h0",   "label": "t:sections.all.heading_size.options__3.label" },
+            { "value": "hxl",  "label": "t:sections.all.heading_size.options__4.label" },
+            { "value": "hxxl", "label": "t:sections.all.heading_size.options__5.label" }
+          ],
+          "default": "h1",
+          "label": "t:sections.all.heading_size.label"
+        }
+      ]
+    },
+    {
+      "type": "text",
+      "name": "t:sections.image-banner.blocks.text.name",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "inline_richtext",
+          "id": "text",
+          "default": "t:sections.image-banner.blocks.text.settings.text.default",
+          "label": "t:sections.image-banner.blocks.text.settings.text.label"
+        },
+        {
+          "type": "select",
+          "id": "text_style",
+          "options": [
+            { "value": "body",                       "label": "t:sections.image-banner.blocks.text.settings.text_style.options__1.label" },
+            { "value": "subtitle",                   "label": "t:sections.image-banner.blocks.text.settings.text_style.options__2.label" },
+            { "value": "caption-with-letter-spacing","label": "t:sections.image-banner.blocks.text.settings.text_style.options__3.label" }
+          ],
+          "default": "body",
+          "label": "t:sections.image-banner.blocks.text.settings.text_style.label"
+        }
+      ]
+    },
+    {
+      "type": "buttons",
+      "name": "t:sections.image-banner.blocks.buttons.name",
+      "limit": 1,
+      "settings": [
+        { "type": "header", "content": "t:sections.image-banner.blocks.buttons.settings.header_1.content" },
+        {
+          "type": "text",
+          "id": "button_label_1",
+          "default": "t:sections.image-banner.blocks.buttons.settings.button_label_1.default",
+          "label": "t:sections.image-banner.blocks.buttons.settings.button_label_1.label",
+          "info": "t:sections.image-banner.blocks.buttons.settings.button_label_1.info"
+        },
+        {
+          "type": "url",
+          "id": "button_link_1",
+          "label": "t:sections.image-banner.blocks.buttons.settings.button_link_1.label"
+        },
+        {
+          "type": "checkbox",
+          "id": "button_style_secondary_1",
+          "default": false,
+          "label": "t:sections.image-banner.blocks.buttons.settings.button_style_secondary_1.label"
+        },
+        { "type": "header", "content": "t:sections.image-banner.blocks.buttons.settings.header_2.content" },
+        {
+          "type": "text",
+          "id": "button_label_2",
+          "default": "t:sections.image-banner.blocks.buttons.settings.button_label_2.default",
+          "label": "t:sections.image-banner.blocks.buttons.settings.button_label_2.label",
+          "info": "t:sections.image-banner.blocks.buttons.settings.button_label_2.info"
+        },
+        {
+          "type": "url",
+          "id": "button_link_2",
+          "label": "t:sections.image-banner.blocks.buttons.settings.button_link_2.label"
+        },
+        {
+          "type": "checkbox",
+          "id": "button_style_secondary_2",
+          "default": true,
+          "label": "t:sections.image-banner.blocks.buttons.settings.button_style_secondary_2.label"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "t:sections.image-banner.presets.name",
+      "blocks": [
+        { "type": "heading" },
+        { "type": "text" },
+        { "type": "buttons" }
+      ]
+    }
+  ]
+}
+{% endschema %}

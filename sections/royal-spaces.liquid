@@ -1,0 +1,294 @@
+{{ 'luxury-theme.css' | asset_url | stylesheet_tag }}
+
+<section
+  class="lux-spaces lux-home-section lux-home-section--spaces"
+  data-section-id="{{ section.id }}"
+  data-spaces-gallery
+>
+  <div class="lux-spaces__inner">
+    <header class="lux-section-header lux-spaces__header" data-lux-reveal>
+      <p class="lux-spaces__eyebrow">REAL HOMES &middot; REAL STORIES</p>
+      <h2 class="lux-section-header__title">{{ section.settings.title | default: 'Customer Gallery' }}</h2>
+      <div class="lux-spaces__ornament" aria-hidden="true">
+        <span class="lux-spaces__ornament-line"></span>
+        <span class="lux-spaces__ornament-mark"></span>
+        <span class="lux-spaces__ornament-line"></span>
+      </div>
+    </header>
+
+    <div class="lux-spaces__fan-wrap" data-fan-wrap>
+      <div class="lux-spaces__fan-stage" data-fan-stage>
+        {%- assign placeholder_images = 'lifestyle-1,collection-1,hero-apparel-1,product-1,lifestyle-2' | split: ',' -%}
+
+        {%- if section.blocks.size > 0 -%}
+          {%- for block in section.blocks -%}
+            {%- if block.type == 'royal_space' -%}
+              {%- assign placeholder_index = forloop.index0 | modulo: placeholder_images.size -%}
+              {%- assign slide_alt = 'Customer gallery image ' | append: forloop.index -%}
+              <div
+                class="lux-spaces__fan-slide"
+                data-fan-slide
+                data-index="{{ forloop.index0 }}"
+                role="img"
+                aria-label="{{ block.settings.title | default: slide_alt | escape }}"
+                {{ block.shopify_attributes }}
+              >
+                <div class="lux-spaces__fan-card">
+                  {%- if block.settings.image != blank -%}
+                    <img
+                      src="{{ block.settings.image | image_url: width: 900 }}"
+                      srcset="
+                        {{ block.settings.image | image_url: width: 480 }} 480w,
+                        {{ block.settings.image | image_url: width: 720 }} 720w,
+                        {{ block.settings.image | image_url: width: 900 }} 900w
+                      "
+                      sizes="(max-width: 767px) 80vw, 36vw"
+                      alt="{{ block.settings.image.alt | default: slide_alt | escape }}"
+                      class="lux-spaces__fan-image"
+                      loading="lazy"
+                      width="{{ block.settings.image.width }}"
+                      height="{{ block.settings.image.height }}"
+                    >
+                  {%- else -%}
+                    <div class="lux-spaces__fan-placeholder-wrap">
+                      {{ placeholder_images[placeholder_index] | placeholder_svg_tag: 'lux-spaces__fan-placeholder' }}
+                    </div>
+                  {%- endif -%}
+                  {%- if block.settings.title != blank -%}
+                    <div class="lux-spaces__fan-label">
+                      <span>{{ block.settings.title }}</span>
+                    </div>
+                  {%- endif -%}
+                </div>
+              </div>
+            {%- endif -%}
+          {%- endfor -%}
+        {%- else -%}
+          {%- for placeholder in placeholder_images -%}
+            <div class="lux-spaces__fan-slide" data-fan-slide data-index="{{ forloop.index0 }}">
+              <div class="lux-spaces__fan-card">
+                <div class="lux-spaces__fan-placeholder-wrap">
+                  {{ placeholder | placeholder_svg_tag: 'lux-spaces__fan-placeholder' }}
+                </div>
+              </div>
+            </div>
+          {%- endfor -%}
+        {%- endif -%}
+      </div>
+    </div>
+
+    <div class="lux-spaces__fan-controls" data-fan-controls>
+      <button
+        type="button"
+        class="lux-spaces__fan-btn lux-spaces__fan-btn--prev"
+        data-fan-prev
+        aria-label="Previous image"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M15 18l-6-6 6-6"/>
+        </svg>
+      </button>
+      <div class="lux-spaces__fan-dots" data-fan-dots aria-hidden="true"></div>
+      <button
+        type="button"
+        class="lux-spaces__fan-btn lux-spaces__fan-btn--next"
+        data-fan-next
+        aria-label="Next image"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M9 18l6-6-6-6"/>
+        </svg>
+      </button>
+    </div>
+  </div>
+</section>
+
+<script>
+(function () {
+  var sectionId = '{{ section.id }}';
+
+  function initFan(section) {
+    if (section.dataset.fanInit === 'true') return;
+    section.dataset.fanInit = 'true';
+
+    var stage = section.querySelector('[data-fan-stage]');
+    var prevBtn = section.querySelector('[data-fan-prev]');
+    var nextBtn = section.querySelector('[data-fan-next]');
+    var dotsWrap = section.querySelector('[data-fan-dots]');
+    if (!stage) return;
+
+    var slides = Array.prototype.slice.call(stage.querySelectorAll('[data-fan-slide]'));
+    var total = slides.length;
+    if (total === 0) return;
+
+    var current = Math.floor(total / 2);
+    var isAnimating = false;
+
+    // Build dots
+    if (dotsWrap) {
+      dotsWrap.innerHTML = '';
+      slides.forEach(function (_, i) {
+        var dot = document.createElement('button');
+        dot.type = 'button';
+        dot.className = 'lux-spaces__fan-dot';
+        dot.setAttribute('aria-label', 'Go to slide ' + (i + 1));
+        dot.addEventListener('click', function () { goTo(i); });
+        dotsWrap.appendChild(dot);
+      });
+    }
+
+    function getOffset(i) {
+      return i - current;
+    }
+
+    function render() {
+      var dots = dotsWrap ? dotsWrap.querySelectorAll('.lux-spaces__fan-dot') : [];
+      slides.forEach(function (slide, i) {
+        var offset = getOffset(i);
+        var absOffset = Math.abs(offset);
+
+        // Only show up to 2 slides on each side
+        var visible = absOffset <= 2;
+        slide.style.display = visible ? '' : 'none';
+        if (!visible) return;
+
+        var scale = offset === 0 ? 1 : (absOffset === 1 ? 0.78 : 0.62);
+        var zIndex = offset === 0 ? 10 : (absOffset === 1 ? 7 : 4);
+        var rotateY = offset * 28; // degrees
+        var translateX = offset * 52; // percent of container
+        var translateZ = offset === 0 ? 80 : (absOffset === 1 ? 0 : -40);
+        var opacity = offset === 0 ? 1 : (absOffset === 1 ? 0.85 : 0.55);
+
+        slide.style.zIndex = zIndex;
+        slide.style.opacity = opacity;
+        slide.style.transform = 'translateX(' + translateX + '%) translateZ(' + translateZ + 'px) rotateY(' + rotateY + 'deg) scale(' + scale + ')';
+        slide.classList.toggle('is-active', offset === 0);
+      });
+
+      if (dots.length) {
+        Array.prototype.forEach.call(dots, function (dot, i) {
+          dot.classList.toggle('is-active', i === current);
+        });
+      }
+
+      if (prevBtn) prevBtn.disabled = current === 0;
+      if (nextBtn) nextBtn.disabled = current === total - 1;
+    }
+
+    function goTo(index) {
+      if (isAnimating || index === current) return;
+      current = Math.max(0, Math.min(index, total - 1));
+      render();
+    }
+
+    function prev() { goTo(current - 1); }
+    function next() { goTo(current + 1); }
+
+    if (prevBtn) prevBtn.addEventListener('click', prev);
+    if (nextBtn) nextBtn.addEventListener('click', next);
+
+    // Keyboard nav
+    stage.addEventListener('keydown', function (e) {
+      if (e.key === 'ArrowLeft') prev();
+      if (e.key === 'ArrowRight') next();
+    });
+
+    // Click side slides to navigate
+    stage.addEventListener('click', function (e) {
+      var slide = e.target.closest('[data-fan-slide]');
+      if (!slide) return;
+      var idx = parseInt(slide.dataset.index, 10);
+      if (!isNaN(idx) && idx !== current) goTo(idx);
+    });
+
+    // Touch swipe
+    var touchStartX = null;
+    stage.addEventListener('touchstart', function (e) {
+      touchStartX = e.touches[0].clientX;
+    }, { passive: true });
+    stage.addEventListener('touchend', function (e) {
+      if (touchStartX === null) return;
+      var diff = touchStartX - e.changedTouches[0].clientX;
+      if (Math.abs(diff) > 40) {
+        diff > 0 ? next() : prev();
+      }
+      touchStartX = null;
+    }, { passive: true });
+
+    render();
+  }
+
+  function boot() {
+    document.querySelectorAll('[data-spaces-gallery][data-section-id="' + sectionId + '"]').forEach(initFan);
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', boot);
+  } else {
+    boot();
+  }
+
+  document.addEventListener('shopify:section:load', function (e) {
+    if (e.detail && e.detail.sectionId === sectionId) {
+      document.querySelectorAll('[data-spaces-gallery][data-section-id="' + sectionId + '"]').forEach(function (s) {
+        s.dataset.fanInit = '';
+        initFan(s);
+      });
+    }
+  });
+})();
+</script>
+
+{% schema %}
+{
+  "name": "Customer Gallery",
+  "tag": "section",
+  "class": "royal-spaces-section",
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Section title",
+      "default": "Customer Gallery"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "royal_space",
+      "name": "Gallery slide",
+      "limit": 12,
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Image"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Caption label",
+          "default": "Happy Customer"
+        },
+        {
+          "type": "textarea",
+          "id": "feature_text",
+          "label": "Hover feature text",
+          "default": "Premium finish, elegant design, and a beautiful final result."
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Customer Gallery",
+      "blocks": [
+        { "type": "royal_space", "settings": { "title": "House Nameplate" } },
+        { "type": "royal_space", "settings": { "title": "Wedding Gift" } },
+        { "type": "royal_space", "settings": { "title": "Wall Decor" } },
+        { "type": "royal_space", "settings": { "title": "Acrylic Nameplate" } },
+        { "type": "royal_space", "settings": { "title": "Brass Nameplate" } }
+      ]
+    }
+  ]
+}
+{% endschema %}
