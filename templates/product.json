@@ -38,12 +38,6 @@
           "type": "quantity_selector",
           "settings": {}
         },
-        "zepto_product_personalizer_product_personalizer_page_bdkej4": {
-          "type": "shopify://apps/zepto-product-personalizer/blocks/product_personalizer_page/7411210d-7b32-4c09-9455-e129e3be4729",
-          "settings": {
-            "product": "{{product}}"
-          }
-        },
         "buy_buttons": {
           "type": "buy_buttons",
           "settings": {
@@ -68,7 +62,6 @@
         "price",
         "variant_picker",
         "quantity_selector",
-        "zepto_product_personalizer_product_personalizer_page_bdkej4",
         "buy_buttons",
         "description",
         "share"
@@ -200,31 +193,12 @@
         "padding_top": 36,
         "padding_bottom": 28
       }
-    },
-    "177761568867a5e441": {
-      "type": "apps",
-      "blocks": {
-        "zepto_product_personalizer_product_personalizer_page_nwxAQ7": {
-          "type": "shopify://apps/zepto-product-personalizer/blocks/product_personalizer_page/7411210d-7b32-4c09-9455-e129e3be4729",
-          "disabled": true,
-          "settings": {
-            "product": "{{product}}"
-          }
-        }
-      },
-      "block_order": [
-        "zepto_product_personalizer_product_personalizer_page_nwxAQ7"
-      ],
-      "settings": {
-        "include_margins": true
-      }
     }
   },
   "order": [
     "main",
     "177374998122b3c438",
     "product-faq",
-    "related-products",
-    "177761568867a5e441"
+    "related-products"
   ]
 }
